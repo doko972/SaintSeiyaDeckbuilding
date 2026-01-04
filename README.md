@@ -53,3 +53,9 @@ php artisan migrate:fresh --seed
 ## juste relancer les seeders sans toucher aux migrations
 php artisan db:seed --class=AttackSeeder
 php artisan db:seed --class=CardSeeder
+
+## Lancer tous les seeders
+php artisan db:seed
+
+## migration + seeder
+php artisan migrate --seed
