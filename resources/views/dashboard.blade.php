@@ -65,36 +65,54 @@
                 </div>
             </div>
 
-            <!-- Quick Actions -->
-            <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-6">
-                <h3 class="text-xl font-bold text-white mb-6">🚀 Actions rapides</h3>
+            <!-- Bannière PvP -->
+            <a href="{{ route('pvp.lobby') }}" class="block mb-6 bg-gradient-to-r from-red-600/20 via-orange-500/20 to-red-600/20 border border-red-500/40 rounded-2xl p-5 hover:from-red-600/30 hover:via-orange-500/30 hover:to-red-600/30 hover:border-red-500/60 transition group relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                 
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                    <a href="{{ route('game.index') }}" class="action-card bg-gradient-to-br from-red-500/20 to-orange-500/20 border border-red-500/30 rounded-xl p-4 text-center hover:from-red-500/30 hover:to-orange-500/30 hover:border-red-500/50 transition group">
-                        <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">⚔️</div>
-                        <div class="text-white font-semibold">Jouer</div>
-                    </a>
-                    <a href="{{ route('shop.index') }}" class="action-card bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-xl p-4 text-center hover:from-yellow-500/30 hover:to-orange-500/30 hover:border-yellow-500/50 transition group">
-                        <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">🛒</div>
-                        <div class="text-white font-semibold">Boutique</div>
-                    </a>
-                    <a href="{{ route('collection.index') }}" class="action-card bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-xl p-4 text-center hover:from-purple-500/30 hover:to-pink-500/30 hover:border-purple-500/50 transition group">
-                        <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">📚</div>
-                        <div class="text-white font-semibold">Collection</div>
-                    </a>
-                    <a href="{{ route('decks.index') }}" class="action-card bg-gradient-to-br from-indigo-500/20 to-blue-500/20 border border-indigo-500/30 rounded-xl p-4 text-center hover:from-indigo-500/30 hover:to-blue-500/30 hover:border-indigo-500/50 transition group">
-                        <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">🎴</div>
-                        <div class="text-white font-semibold">Mes Decks</div>
-                    </a>
-                    <a href="{{ route('cards.index') }}" class="action-card bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-4 text-center hover:from-green-500/30 hover:to-emerald-500/30 hover:border-green-500/50 transition group">
-                        <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">🃏</div>
-                        <div class="text-white font-semibold">Cartes</div>
-                    </a>
-                    <a href="{{ route('factions.index') }}" class="action-card bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 rounded-xl p-4 text-center hover:from-cyan-500/30 hover:to-blue-500/30 hover:border-cyan-500/50 transition group">
-                        <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">🏛️</div>
-                        <div class="text-white font-semibold">Factions</div>
-                    </a>
+                <div class="flex items-center justify-center gap-6 relative z-10">
+                    <div class="text-5xl group-hover:scale-110 transition-transform duration-300">🆚</div>
+                    <div class="text-left">
+                        <div class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">Arena PvP</div>
+                        <div class="text-gray-400 text-sm">Affrontez d'autres joueurs en temps réel !</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="relative flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                        </span>
+                        <span class="text-green-400 text-sm font-medium">En ligne</span>
+                    </div>
+                    <div class="text-3xl animate-pulse">⚔️</div>
                 </div>
+            </a>
+
+            <!-- Actions rapides -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <a href="{{ route('game.index') }}" class="action-card bg-gradient-to-br from-red-500/20 to-orange-500/20 border border-red-500/30 rounded-xl p-4 text-center hover:from-red-500/30 hover:to-orange-500/30 hover:border-red-500/50 transition group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">🤖</div>
+                    <div class="text-white font-semibold">Vs IA</div>
+                </a>
+                <a href="{{ route('shop.index') }}" class="action-card bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-xl p-4 text-center hover:from-yellow-500/30 hover:to-orange-500/30 hover:border-yellow-500/50 transition group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">🛒</div>
+                    <div class="text-white font-semibold">Boutique</div>
+                </a>
+                <a href="{{ route('collection.index') }}" class="action-card bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-xl p-4 text-center hover:from-purple-500/30 hover:to-pink-500/30 hover:border-purple-500/50 transition group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">📚</div>
+                    <div class="text-white font-semibold">Collection</div>
+                </a>
+                <a href="{{ route('decks.index') }}" class="action-card bg-gradient-to-br from-indigo-500/20 to-blue-500/20 border border-indigo-500/30 rounded-xl p-4 text-center hover:from-indigo-500/30 hover:to-blue-500/30 hover:border-indigo-500/50 transition group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">🎴</div>
+                    <div class="text-white font-semibold">Mes Decks</div>
+                </a>
+                <a href="{{ route('cards.index') }}" class="action-card bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-4 text-center hover:from-green-500/30 hover:to-emerald-500/30 hover:border-green-500/50 transition group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">🃏</div>
+                    <div class="text-white font-semibold">Cartes</div>
+                </a>
+                <a href="{{ route('factions.index') }}" class="action-card bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 rounded-xl p-4 text-center hover:from-cyan-500/30 hover:to-blue-500/30 hover:border-cyan-500/50 transition group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">🏛️</div>
+                    <div class="text-white font-semibold">Factions</div>
+                </a>
+            </div>
 
                 @if(auth()->user()->isAdmin())
                     <div class="mt-6 pt-6 border-t border-white/10">

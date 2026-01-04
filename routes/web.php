@@ -8,6 +8,7 @@ use App\Http\Controllers\DeckController;
 use App\Http\Controllers\GameViewController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\PvpController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -92,6 +93,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/cards/{card}/edit', [CardController::class, 'edit'])->name('cards.edit');
     Route::put('/cards/{card}', [CardController::class, 'update'])->name('cards.update');
     Route::delete('/cards/{card}', [CardController::class, 'destroy'])->name('cards.destroy');
+});
+
+
+
+// Routes PvP
+Route::middleware('auth')->prefix('pvp')->name('pvp.')->group(function () {
+    Route::get('/lobby', [PvpController::class, 'lobby'])->name('lobby');
+    Route::post('/create', [PvpController::class, 'create'])->name('create');
+    Route::post('/join/{battle}', [PvpController::class, 'join'])->name('join');
+    Route::get('/waiting/{battle}', [PvpController::class, 'waiting'])->name('waiting');
+    Route::post('/cancel/{battle}', [PvpController::class, 'cancel'])->name('cancel');
+    Route::get('/battle/{battle}', [PvpController::class, 'battle'])->name('battle');
 });
 
 require __DIR__.'/auth.php';

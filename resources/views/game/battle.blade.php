@@ -1214,40 +1214,81 @@
 
         // Afficher le panneau d'attaque
         function showAttackPanel(card) {
-            const panel = document.getElementById('actionPanel');
-            const list = document.getElementById('attackList');
-            list.innerHTML = '';
+    const panel = document.getElementById('actionPanel');
+    const list = document.getElementById('attackList');
+    list.innerHTML = '';
 
-            const attacks = [
-                { key: 'main', name: card.main_attack?.name || 'Attaque', damage: card.main_attack?.damage || 50, endCost: card.main_attack?.endurance_cost || 20, cosCost: card.main_attack?.cosmos_cost || 10 }
-            ];
+    const state = getMyState();
+    
+    // Attaque principale (toujours disponible)
+    const mainAttack = card.main_attack || {
+        name: 'Attaque de base',
+        damage: 40 + (card.power || 0),
+        endurance_cost: 20,
+        cosmos_cost: 0
+    };
 
-            if (card.secondary_attack_1) {
-                attacks.push({ key: 'secondary1', name: card.secondary_attack_1.name, damage: card.secondary_attack_1.damage, endCost: card.secondary_attack_1.endurance_cost, cosCost: card.secondary_attack_1.cosmos_cost });
-            }
-
-            if (card.secondary_attack_2) {
-                attacks.push({ key: 'secondary2', name: card.secondary_attack_2.name, damage: card.secondary_attack_2.damage, endCost: card.secondary_attack_2.endurance_cost, cosCost: card.secondary_attack_2.cosmos_cost });
-            }
-
-            attacks.forEach(atk => {
-                const canUse = card.current_endurance >= atk.endCost && gameState.player.cosmos >= atk.cosCost;
-                const btn = document.createElement('button');
-                btn.className = 'attack-btn';
-                btn.disabled = !canUse;
-                btn.innerHTML = `
-                    <span class="attack-name">${atk.name}</span>
-                    <span class="attack-info">
-                        <span class="attack-damage">⚔️ ${atk.damage}</span>
-                        <span class="attack-cost">⚡${atk.endCost} 🌟${atk.cosCost}</span>
-                    </span>
-                `;
-                btn.onclick = () => selectAttack(atk.key);
-                list.appendChild(btn);
-            });
-
-            panel.classList.add('visible');
+    const attacks = [
+        { 
+            key: 'main', 
+            name: mainAttack.name, 
+            damage: mainAttack.damage, 
+            endCost: mainAttack.endurance_cost || 20, 
+            cosCost: mainAttack.cosmos_cost || 0 
         }
+    ];
+
+    // Attaques secondaires si disponibles
+    if (card.secondary_attack_1) {
+        attacks.push({ 
+            key: 'secondary1', 
+            name: card.secondary_attack_1.name, 
+            damage: card.secondary_attack_1.damage, 
+            endCost: card.secondary_attack_1.endurance_cost, 
+            cosCost: card.secondary_attack_1.cosmos_cost 
+        });
+    }
+
+    if (card.secondary_attack_2) {
+        attacks.push({ 
+            key: 'secondary2', 
+            name: card.secondary_attack_2.name, 
+            damage: card.secondary_attack_2.damage, 
+            endCost: card.secondary_attack_2.endurance_cost, 
+            cosCost: card.secondary_attack_2.cosmos_cost 
+        });
+    }
+
+    console.log('Attaques disponibles:', attacks); // Debug
+
+    attacks.forEach(atk => {
+        const canUse = (card.current_endurance || 100) >= atk.endCost && state.cosmos >= atk.cosCost;
+        
+        const btn = document.createElement('button');
+        btn.className = 'attack-btn';
+        btn.disabled = !canUse;
+        btn.innerHTML = `
+            <div>
+                <div style="font-weight: 600;">${atk.name}</div>
+                <div style="font-size: 0.7rem; color: #9CA3AF;">
+                    ⚡ ${atk.endCost} END | 🌟 ${atk.cosCost} COS
+                </div>
+            </div>
+            <div style="font-size: 1.2rem; color: #EF4444; font-weight: bold;">
+                ${atk.damage} 💥
+            </div>
+        `;
+        btn.onclick = () => {
+            if (canUse) selectAttack(atk.key);
+        };
+        list.appendChild(btn);
+    });
+
+    panel.classList.add('visible');
+    
+    // Positionner le panneau près de la carte
+    console.log('Panneau d\'attaque affiché');
+}
 
         // Sélectionner une attaque
         function selectAttack(attackKey) {

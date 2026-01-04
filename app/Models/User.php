@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Battle;
 
 class User extends Authenticatable
 {
@@ -93,7 +94,7 @@ class User extends Authenticatable
     public function addCard(Card $card, int $quantity = 1): void
     {
         $existing = $this->cards()->where('card_id', $card->id)->first();
-        
+
         if ($existing) {
             $this->cards()->updateExistingPivot($card->id, [
                 'quantity' => $existing->pivot->quantity + $quantity,
@@ -138,5 +139,31 @@ class User extends Authenticatable
     {
         $this->increment('losses');
         $this->addCoins($coinsReward);
+    }
+
+
+    // Dans la classe User, ajouter :
+
+    public function battlesAsPlayer1()
+    {
+        return $this->hasMany(Battle::class, 'player1_id');
+    }
+
+    public function battlesAsPlayer2()
+    {
+        return $this->hasMany(Battle::class, 'player2_id');
+    }
+
+    public function activeBattle()
+    {
+        return Battle::where(function ($query) {
+            $query->where('player1_id', $this->id)
+                ->orWhere('player2_id', $this->id);
+        })->whereIn('status', ['waiting', 'in_progress'])->first();
+    }
+
+    public function isInBattle(): bool
+    {
+        return $this->activeBattle() !== null;
     }
 }

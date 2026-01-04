@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AttackController;
 use App\Http\Controllers\Api\DeckController;
 use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\GameApiController;
+use App\Http\Controllers\Api\PvpApiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -57,4 +58,12 @@ Route::prefix('v1/game')->middleware('web')->group(function () {
     Route::post('/attack', [GameApiController::class, 'attack']);
     Route::post('/end-turn', [GameApiController::class, 'endTurn']);
     Route::post('/claim-reward', [GameApiController::class, 'claimReward']);
+});
+
+// Routes API PvP
+Route::prefix('v1/pvp')->middleware('web')->group(function () {
+    Route::get('/battle-state/{battle}', [PvpApiController::class, 'getBattleState']);
+    Route::post('/play-card', [PvpApiController::class, 'playCard']);
+    Route::post('/attack', [PvpApiController::class, 'attack']);
+    Route::post('/end-turn', [PvpApiController::class, 'endTurn']);
 });
