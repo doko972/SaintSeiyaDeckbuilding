@@ -1,0 +1,1169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// ===========================================
+// Variables
+// ===========================================
+$color-gold: #FFD700;
+$color-silver: #C0C0C0;
+$color-bronze: #CD7F32;
+$color-divine: #8B5CF6;
+
+$color-fire: #EF4444;
+$color-water: #3B82F6;
+$color-ice: #06B6D4;
+$color-thunder: #EAB308;
+$color-darkness: #1F2937;
+$color-light: #FCD34D;
+
+// ===========================================
+// Animations
+// ===========================================
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+// ===========================================
+// Classes utilitaires personnalisées
+// ===========================================
+.legendary-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.card-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.shimmer-effect {
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+// ===========================================
+// Cartes de jeu
+// ===========================================
+.game-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    // Raretés
+    &.rarity-common {
+        border: 2px solid #9CA3AF;
+    }
+
+    &.rarity-rare {
+        border: 2px solid #3B82F6;
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    }
+
+    &.rarity-epic {
+        border: 2px solid #8B5CF6;
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+    }
+
+    &.rarity-legendary {
+        border: 2px solid $color-gold;
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        animation: pulse-glow 2s ease-in-out infinite;
+    }
+}
+
+// ===========================================
+// Badges d'éléments
+// ===========================================
+.element-badge {
+    @apply px-2 py-1 text-xs font-bold rounded;
+
+    &.element-fire {
+        background-color: rgba($color-fire, 0.2);
+        color: $color-fire;
+    }
+
+    &.element-water {
+        background-color: rgba($color-water, 0.2);
+        color: $color-water;
+    }
+
+    &.element-ice {
+        background-color: rgba($color-ice, 0.2);
+        color: $color-ice;
+    }
+
+    &.element-thunder {
+        background-color: rgba($color-thunder, 0.2);
+        color: darken($color-thunder, 10%);
+    }
+
+    &.element-darkness {
+        background-color: rgba($color-darkness, 0.8);
+        color: #E5E7EB;
+    }
+
+    &.element-light {
+        background-color: rgba($color-light, 0.3);
+        color: darken($color-light, 30%);
+    }
+}
+
+// ===========================================
+// Badges d'armures
+// ===========================================
+.armor-badge {
+    @apply px-2 py-1 text-xs font-bold rounded;
+
+    &.armor-bronze {
+        background: linear-gradient(135deg, $color-bronze, darken($color-bronze, 15%));
+        color: white;
+    }
+
+    &.armor-silver {
+        background: linear-gradient(135deg, $color-silver, darken($color-silver, 20%));
+        color: #1F2937;
+    }
+
+    &.armor-gold {
+        background: linear-gradient(135deg, $color-gold, darken($color-gold, 15%));
+        color: #1F2937;
+    }
+
+    &.armor-divine {
+        background: linear-gradient(135deg, $color-divine, darken($color-divine, 15%));
+        color: white;
+    }
+}
+
+// ===========================================
+// Stats bars
+// ===========================================
+.stat-bar {
+    @apply h-2 rounded-full bg-gray-200 overflow-hidden;
+
+    .stat-fill {
+        @apply h-full rounded-full transition-all duration-500;
+
+        &.stat-hp {
+            @apply bg-red-500;
+        }
+
+        &.stat-endurance {
+            @apply bg-yellow-500;
+        }
+
+        &.stat-defense {
+            @apply bg-blue-500;
+        }
+
+        &.stat-power {
+            @apply bg-orange-500;
+        }
+
+        &.stat-cosmos {
+            @apply bg-purple-500;
+        }
+    }
+}
+
+// ===========================================
+// Effets de cosmos
+// ===========================================
+.cosmos-aura {
+    position: relative;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        right: -5px;
+        bottom: -5px;
+        background: linear-gradient(45deg, 
+            rgba(139, 92, 246, 0.3), 
+            rgba(59, 130, 246, 0.3), 
+            rgba(236, 72, 153, 0.3)
+        );
+        border-radius: inherit;
+        z-index: -1;
+        filter: blur(10px);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    &:hover::before {
+        opacity: 1;
+    }
+}
+
+// ===========================================
+// Boutons stylisés
+// ===========================================
+.btn-cosmos {
+    @apply px-4 py-2 font-bold rounded-lg transition-all duration-300;
+    background: linear-gradient(135deg, #6366F1, #8B5CF6);
+    color: white;
+    
+    &:hover {
+        background: linear-gradient(135deg, #4F46E5, #7C3AED);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+    }
+}
+
+.btn-gold {
+    @apply px-4 py-2 font-bold rounded-lg transition-all duration-300;
+    background: linear-gradient(135deg, $color-gold, darken($color-gold, 15%));
+    color: #1F2937;
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(255, 215, 0, 0.5);
+    }
+}
+
+// ===========================================
+// Deck builder
+// ===========================================
+.deck-slot {
+    @apply border-2 border-dashed border-gray-300 rounded-lg p-4 transition-all duration-300;
+    
+    &:hover {
+        @apply border-purple-400 bg-purple-50;
+    }
+
+    &.filled {
+        @apply border-solid border-purple-500 bg-purple-100;
+    }
+}
+
+// ===========================================
+// Responsive adjustments
+// ===========================================
+@media (max-width: 640px) {
+    .game-card {
+        &:hover {
+            transform: none;
+        }
+    }
+}
+
+// ===========================================
+// Print styles (pour imprimer des cartes)
+// ===========================================
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .game-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+}
+// ===========================================
+// HOLO CARD EFFECT - Cartes holographiques
+// ===========================================
+
+.card-wrapper {
+    perspective: 1000px;
+    display: inline-block;
+    
+    &.interactive .holo-card {
+        cursor: pointer;
+    }
+}
+
+.holo-card {
+    position: relative;
+    border-radius: 4.5% / 3.2%;
+    overflow: hidden;
+    background: linear-gradient(145deg, var(--color1), var(--color2));
+    box-shadow: 
+        0 0 0 2px rgba(255, 255, 255, 0.2),
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 0 30px -10px var(--color1);
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease, box-shadow 0.3s ease;
+    will-change: transform;
+
+    &:hover {
+        box-shadow: 
+            0 0 0 2px rgba(255, 255, 255, 0.4),
+            0 35px 60px -15px rgba(0, 0, 0, 0.6),
+            0 0 50px -5px var(--color1),
+            0 0 80px -10px var(--color2);
+    }
+}
+
+// Contenu de la carte
+.card-content {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+}
+
+// Header
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.card-title {
+    .card-name {
+        font-size: 1.1em;
+        font-weight: 800;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        margin: 0;
+        line-height: 1.2;
+    }
+    .card-faction {
+        font-size: 0.7em;
+        color: rgba(255, 255, 255, 0.8);
+    }
+}
+
+.card-cost {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 4px 10px;
+    
+    span {
+        font-size: 1em;
+        font-weight: 800;
+        color: white;
+    }
+}
+
+// Image
+.card-image-container {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+}
+
+.card-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.5));
+    
+    span {
+        font-size: 4em;
+    }
+}
+
+// Badges
+.card-badge {
+    position: absolute;
+    padding: 2px 8px;
+    font-size: 0.65em;
+    font-weight: 700;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+}
+
+.card-badge-grade {
+    top: 8px;
+    left: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+}
+
+.card-badge-rarity {
+    top: 8px;
+    right: 8px;
+    
+    .rarity-common & {
+        background: #6B7280;
+        color: white;
+    }
+    .rarity-rare & {
+        background: #3B82F6;
+        color: white;
+    }
+    .rarity-epic & {
+        background: #8B5CF6;
+        color: white;
+    }
+    .rarity-legendary & {
+        background: linear-gradient(135deg, #F59E0B, #EF4444);
+        color: white;
+        animation: pulse-badge 2s infinite;
+    }
+}
+
+@keyframes pulse-badge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+// Tags
+.card-tags {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 0;
+}
+
+.card-tag {
+    font-size: 0.65em;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    
+    &.tag-bronze { background: linear-gradient(135deg, #CD7F32, #8B4513); color: white; }
+    &.tag-silver { background: linear-gradient(135deg, #C0C0C0, #808080); color: #1a1a1a; }
+    &.tag-gold { background: linear-gradient(135deg, #FFD700, #DAA520); color: #1a1a1a; }
+    &.tag-divine { background: linear-gradient(135deg, #8B5CF6, #EC4899); color: white; }
+    
+    &.tag-fire { background: #DC2626; color: white; }
+    &.tag-water { background: #2563EB; color: white; }
+    &.tag-ice { background: #06B6D4; color: white; }
+    &.tag-thunder { background: #EAB308; color: #1a1a1a; }
+    &.tag-darkness { background: #1F2937; color: white; }
+    &.tag-light { background: #FCD34D; color: #1a1a1a; }
+}
+
+// Stats
+.card-stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    padding: 4px 0;
+}
+
+.stat {
+    text-align: center;
+    padding: 6px 4px;
+    border-radius: 6px;
+    
+    &.stat-hp { background: #DC2626; }
+    &.stat-end { background: #D97706; }
+    &.stat-def { background: #2563EB; }
+    &.stat-pwr { background: #EA580C; }
+    &.stat-cos { background: #7C3AED; }
+    
+    .stat-value {
+        display: block;
+        font-size: 1em;
+        font-weight: 800;
+        color: white;
+        line-height: 1;
+    }
+    
+    .stat-label {
+        display: block;
+        font-size: 0.5em;
+        color: rgba(255, 255, 255, 0.8);
+        text-transform: uppercase;
+        margin-top: 2px;
+    }
+}
+
+// Passive
+.card-passive {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    border-radius: 8px;
+    padding: 8px;
+    margin-top: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    .passive-label {
+        font-size: 0.5em;
+        color: rgba(255, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .passive-name {
+        font-size: 0.8em;
+        font-weight: 700;
+        color: #FCD34D;
+        margin: 2px 0;
+    }
+    
+    .passive-desc {
+        font-size: 0.65em;
+        color: rgba(255, 255, 255, 0.8);
+        margin: 0;
+        line-height: 1.3;
+    }
+}
+
+// ===========================================
+// EFFETS HOLOGRAPHIQUES
+// ===========================================
+
+.holo-overlay,
+.holo-sparkle,
+.holo-shine {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+// Effet de base pour toutes les cartes
+.holo-overlay {
+    background: linear-gradient(
+        115deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 30%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.1) 70%,
+        transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    
+    .holo-card:hover & {
+        opacity: 0.5;
+    }
+}
+
+// ===========================================
+// EFFETS PAR RARETÉ
+// ===========================================
+
+// RARE - Léger reflet
+.rarity-rare {
+    .holo-overlay {
+        background: linear-gradient(
+            115deg,
+            transparent 20%,
+            var(--color1) 40%,
+            transparent 50%,
+            var(--color2) 60%,
+            transparent 80%
+        );
+        background-size: 200% 200%;
+        mix-blend-mode: color-dodge;
+        opacity: 0;
+        transition: opacity 0.3s ease, background-position 0.3s ease;
+    }
+    
+    &:hover .holo-overlay {
+        opacity: 0.3;
+    }
+}
+
+// EPIC - Effet holo léger
+.rarity-epic {
+    .holo-overlay {
+        background: linear-gradient(
+            115deg,
+            transparent 0%,
+            var(--color1) 25%,
+            transparent 47%,
+            transparent 53%,
+            var(--color2) 75%,
+            transparent 100%
+        );
+        background-size: 300% 300%;
+        mix-blend-mode: color-dodge;
+        opacity: 0;
+        filter: brightness(0.8) contrast(1.2);
+        transition: all 0.3s ease;
+    }
+    
+    .holo-sparkle {
+        background-image: 
+            linear-gradient(125deg, 
+                rgba(255, 0, 132, 0.2) 15%, 
+                rgba(252, 164, 0, 0.2) 30%, 
+                rgba(255, 255, 0, 0.15) 40%, 
+                rgba(0, 255, 138, 0.1) 60%, 
+                rgba(0, 207, 255, 0.2) 70%, 
+                rgba(204, 76, 250, 0.2) 85%
+            );
+        background-size: 160%;
+        mix-blend-mode: color-dodge;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    &:hover {
+        .holo-overlay {
+            opacity: 0.5;
+        }
+        .holo-sparkle {
+            opacity: 0.5;
+        }
+    }
+}
+
+// LEGENDARY - Effet holo complet avec sparkles
+.rarity-legendary {
+    animation: legendary-float 3s ease-in-out infinite;
+    
+    .holo-overlay {
+        background: linear-gradient(
+            115deg,
+            transparent 0%,
+            var(--color1) 25%,
+            transparent 47%,
+            transparent 53%,
+            var(--color2) 75%,
+            transparent 100%
+        );
+        background-size: 300% 300%;
+        background-position: 0% 50%;
+        mix-blend-mode: color-dodge;
+        opacity: 0.5;
+        filter: brightness(0.5) contrast(1);
+        animation: holo-gradient 8s ease infinite;
+    }
+    
+    .holo-sparkle {
+        background-image: 
+            url("https://assets.codepen.io/13471/sparkles.gif"),
+            url("https://assets.codepen.io/13471/holo.png"),
+            linear-gradient(125deg, 
+                rgba(255, 0, 132, 0.3) 15%, 
+                rgba(252, 164, 0, 0.25) 30%, 
+                rgba(255, 255, 0, 0.2) 40%, 
+                rgba(0, 255, 138, 0.15) 60%, 
+                rgba(0, 207, 255, 0.25) 70%, 
+                rgba(204, 76, 250, 0.3) 85%
+            );
+        background-position: 50% 50%;
+        background-size: 160%;
+        background-blend-mode: overlay;
+        mix-blend-mode: color-dodge;
+        opacity: 0.6;
+        animation: holo-sparkle 8s ease infinite;
+    }
+    
+    .holo-shine {
+        background: linear-gradient(
+            135deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.4) 50%,
+            transparent 100%
+        );
+        background-size: 200% 200%;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    &:hover {
+        animation: none;
+        
+        .holo-overlay {
+            animation: none;
+            opacity: 0.8;
+            filter: brightness(0.7) contrast(1.3);
+        }
+        
+        .holo-sparkle {
+            animation: none;
+            opacity: 1;
+            filter: brightness(1.2) contrast(1);
+        }
+        
+        .holo-shine {
+            opacity: 0.3;
+        }
+    }
+}
+
+@keyframes legendary-float {
+    0%, 100% {
+        transform: translateY(0) rotateX(0) rotateY(0);
+    }
+    50% {
+        transform: translateY(-5px) rotateX(2deg) rotateY(2deg);
+    }
+}
+
+@keyframes holo-gradient {
+    0%, 100% {
+        background-position: 0% 50%;
+        opacity: 0.5;
+        filter: brightness(0.5) contrast(1);
+    }
+    25% {
+        background-position: 100% 100%;
+        opacity: 0.7;
+        filter: brightness(0.7) contrast(1.2);
+    }
+    50% {
+        background-position: 50% 0%;
+        opacity: 0.5;
+    }
+    75% {
+        background-position: 0% 100%;
+        opacity: 0.8;
+        filter: brightness(0.6) contrast(1.1);
+    }
+}
+
+@keyframes holo-sparkle {
+    0%, 100% {
+        opacity: 0.6;
+        background-position: 50% 50%;
+        filter: brightness(1) contrast(1);
+    }
+    25% {
+        opacity: 0.8;
+        background-position: 40% 40%;
+        filter: brightness(0.9) contrast(1.2);
+    }
+    50% {
+        opacity: 0.5;
+        background-position: 60% 60%;
+        filter: brightness(1.1) contrast(0.9);
+    }
+    75% {
+        opacity: 0.9;
+        background-position: 45% 55%;
+        filter: brightness(1) contrast(1.1);
+    }
+}
+
+// ===========================================
+// EFFET 3D AU SURVOL (pour les cartes interactives)
+// ===========================================
+
+.interactive .holo-card {
+    transition: transform 0.1s ease-out, box-shadow 0.3s ease;
+}
+
+.interactive .holo-card.tilting {
+    transition: none;
+}
+// ===========================================
+// CARDS GRID - Liste des cartes
+// ===========================================
+
+.card-grid-item {
+    position: relative;
+}
+
+.holo-card-mini {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #1a1a2e, #16213e);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    transform: translateY(0);
+
+    &:hover {
+        transform: translateY(-8px);
+        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 
+            0 20px 40px -10px rgba(0, 0, 0, 0.5),
+            0 0 30px -5px var(--color1);
+    }
+}
+
+// Image de la carte mini
+.card-mini-image {
+    position: relative;
+    aspect-ratio: 4/5;
+    overflow: hidden;
+    background: linear-gradient(145deg, var(--color1), var(--color2));
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+        transition: transform 0.5s ease;
+    }
+
+    .holo-card-mini:hover & img {
+        transform: scale(1.05);
+    }
+}
+
+.card-mini-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, rgba(0,0,0,0.3), rgba(0,0,0,0.5));
+
+    span {
+        font-size: 4rem;
+        opacity: 0.5;
+    }
+}
+
+// Badges sur l'image
+.card-mini-rarity {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+
+    span {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .rarity-common {
+        background: rgba(107, 114, 128, 0.9);
+        color: white;
+    }
+    .rarity-rare {
+        background: rgba(59, 130, 246, 0.9);
+        color: white;
+    }
+    .rarity-epic {
+        background: rgba(139, 92, 246, 0.9);
+        color: white;
+    }
+    .rarity-legendary {
+        background: linear-gradient(135deg, #F59E0B, #EF4444);
+        color: white;
+        animation: pulse-mini 2s infinite;
+    }
+}
+
+@keyframes pulse-mini {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5); }
+    50% { box-shadow: 0 0 15px 3px rgba(245, 158, 11, 0.3); }
+}
+
+.card-mini-grade {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+}
+
+// Effet Holo sur l'image
+.card-mini-holo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: linear-gradient(
+        115deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 30%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.1) 70%,
+        transparent 100%
+    );
+    mix-blend-mode: overlay;
+
+    .holo-card-mini:hover & {
+        opacity: 1;
+    }
+}
+
+// Effets holo par rareté
+.rarity-rare .card-mini-holo {
+    background: linear-gradient(
+        115deg,
+        transparent 20%,
+        var(--color1) 40%,
+        transparent 50%,
+        var(--color2) 60%,
+        transparent 80%
+    );
+    mix-blend-mode: color-dodge;
+
+    .holo-card-mini:hover & {
+        opacity: 0.3;
+    }
+}
+
+.rarity-epic .card-mini-holo {
+    background: linear-gradient(
+        115deg,
+        transparent 0%,
+        var(--color1) 25%,
+        transparent 47%,
+        transparent 53%,
+        var(--color2) 75%,
+        transparent 100%
+    );
+    mix-blend-mode: color-dodge;
+
+    .holo-card-mini:hover & {
+        opacity: 0.5;
+    }
+}
+
+.rarity-legendary {
+    .card-mini-holo {
+        background: 
+            linear-gradient(
+                115deg,
+                transparent 0%,
+                rgba(255, 215, 0, 0.3) 25%,
+                transparent 47%,
+                transparent 53%,
+                rgba(255, 100, 0, 0.3) 75%,
+                transparent 100%
+            );
+        mix-blend-mode: color-dodge;
+        opacity: 0.5;
+        animation: holo-mini-gradient 4s ease infinite;
+    }
+
+    &:hover .card-mini-holo {
+        opacity: 0.8;
+        animation: none;
+    }
+
+    // Bordure dorée
+    border: 2px solid rgba(255, 215, 0, 0.5);
+
+    &:hover {
+        border-color: rgba(255, 215, 0, 0.8);
+        box-shadow: 
+            0 20px 40px -10px rgba(0, 0, 0, 0.5),
+            0 0 40px -5px rgba(255, 215, 0, 0.5),
+            0 0 60px -10px rgba(255, 100, 0, 0.3);
+    }
+}
+
+@keyframes holo-mini-gradient {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+}
+
+// Infos de la carte
+.card-mini-info {
+    padding: 12px;
+    background: linear-gradient(180deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.95));
+}
+
+.card-mini-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-mini-faction {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0 0 8px 0;
+}
+
+.faction-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+// Tags armure et élément
+.card-mini-tags {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+
+    span {
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .tag-armor-bronze { background: linear-gradient(135deg, rgba(205, 127, 50, 0.3), rgba(139, 69, 19, 0.3)); }
+    .tag-armor-silver { background: linear-gradient(135deg, rgba(192, 192, 192, 0.3), rgba(128, 128, 128, 0.3)); }
+    .tag-armor-gold { background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(218, 165, 32, 0.3)); color: #FFD700; }
+    .tag-armor-divine { background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3)); }
+
+    .tag-element-fire { color: #EF4444; }
+    .tag-element-water { color: #3B82F6; }
+    .tag-element-ice { color: #06B6D4; }
+    .tag-element-thunder { color: #EAB308; }
+    .tag-element-darkness { color: #9CA3AF; }
+    .tag-element-light { color: #FCD34D; }
+}
+
+// Stats mini
+.card-mini-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+}
+
+.mini-stat {
+    text-align: center;
+    padding: 6px 4px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+
+    &.stat-hp { background: rgba(220, 38, 38, 0.2); border: 1px solid rgba(220, 38, 38, 0.3); }
+    &.stat-def { background: rgba(37, 99, 235, 0.2); border: 1px solid rgba(37, 99, 235, 0.3); }
+    &.stat-pwr { background: rgba(234, 88, 12, 0.2); border: 1px solid rgba(234, 88, 12, 0.3); }
+    &.stat-cost { background: rgba(124, 58, 237, 0.2); border: 1px solid rgba(124, 58, 237, 0.3); }
+}
+
+.mini-stat-value {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: white;
+    line-height: 1;
+}
+
+.mini-stat-label {
+    display: block;
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+// Actions admin
+.card-mini-actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 0 0 14px 14px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+
+    .card-grid-item:hover & {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+
+    &.action-view {
+        background: rgba(59, 130, 246, 0.3);
+        &:hover { background: rgba(59, 130, 246, 0.5); }
+    }
+
+    &.action-edit {
+        background: rgba(234, 179, 8, 0.3);
+        &:hover { background: rgba(234, 179, 8, 0.5); }
+    }
+
+    &.action-delete {
+        background: rgba(239, 68, 68, 0.3);
+        &:hover { background: rgba(239, 68, 68, 0.5); }
+    }
+}
+
+// ===========================================
+// SELECT STYLE FIX (pour les filtres sombres)
+// ===========================================
+
+select option {
+    background: #1a1a2e;
+    color: white;
+}
+// Badge quantité pour la collection
+.card-mini-quantity {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    background: linear-gradient(135deg, #8B5CF6, #6366F1);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    box-shadow: 0 2px 10px rgba(139, 92, 246, 0.5);
+}
