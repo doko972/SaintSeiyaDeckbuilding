@@ -10,8 +10,14 @@
         </div>
     </x-slot>
 
-    <div class="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black py-12 relative overflow-hidden">
+    
+    <!-- Fond Sanctuaire -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <img src="{{ asset('images/baniere.webp') }}" alt="" class="w-full h-full object-cover opacity-[0.10]">
+        <div class="absolute inset-0 bg-gradient-to-b from-gray-900/60 via-gray-900/40 to-gray-900/80"></div>
+    </div>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 relative z-10">
 
             <!-- Statistiques -->
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">

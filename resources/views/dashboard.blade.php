@@ -5,8 +5,14 @@
         </h2>
     </x-slot>
 
-    <div class="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black py-12 relative overflow-hidden">
+    
+    <!-- Fond Sanctuaire -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <img src="{{ asset('images/baniere.webp') }}" alt="" class="w-full h-full object-cover opacity-[0.12]">
+        <div class="absolute inset-0 bg-gradient-to-b from-gray-900/60 via-gray-900/40 to-gray-900/80"></div>
+    </div>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 relative z-10">
 
             <!-- Hero Stats -->
             <div class="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 rounded-2xl shadow-2xl p-8 mb-8 relative overflow-hidden">
