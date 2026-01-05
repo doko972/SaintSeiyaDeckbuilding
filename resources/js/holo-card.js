@@ -1,8 +1,3 @@
-/**
- * Holo Card Effect
- * Effet 3D interactif au survol de la souris
- */
-
 document.addEventListener('DOMContentLoaded', function() {
     const cards = document.querySelectorAll('.interactive .holo-card');
     

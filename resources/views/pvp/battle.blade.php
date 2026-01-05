@@ -189,6 +189,7 @@
             border: 2px solid rgba(255, 255, 255, 0.2);
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .battle-card:hover {
@@ -520,23 +521,23 @@
             </div>
         </div>
 
-<!-- Main du joueur -->
-<div class="player-hand-zone">
-    <div class="hand-header">
-        <div class="flex items-center gap-4">
-            <span class="text-gray-400">🎴 Votre main</span>
-            <span class="text-xs text-yellow-400 bg-yellow-400/20 px-2 py-1 rounded" id="helpText">
-                👆 Cliquez sur une carte pour la jouer sur le terrain
-            </span>
+        <!-- Main du joueur -->
+        <div class="player-hand-zone">
+            <div class="hand-header">
+                <div class="flex items-center gap-4">
+                    <span class="text-gray-400">🎴 Votre main</span>
+                    <span class="text-xs text-yellow-400 bg-yellow-400/20 px-2 py-1 rounded" id="helpText">
+                        👆 Cliquez sur une carte pour la jouer sur le terrain
+                    </span>
+                </div>
+                <div class="cosmos-display">
+                    🌟 <span id="playerCosmos">0</span> / <span id="playerMaxCosmos">0</span>
+                </div>
+            </div>
+            <div class="player-hand" id="playerHand">
+                <!-- Cartes en main -->
+            </div>
         </div>
-        <div class="cosmos-display">
-            🌟 <span id="playerCosmos">0</span> / <span id="playerMaxCosmos">0</span>
-        </div>
-    </div>
-    <div class="player-hand" id="playerHand">
-        <!-- Cartes en main -->
-    </div>
-</div>
     </div>
 
     <!-- Panneau d'actions -->
@@ -562,6 +563,9 @@
         </div>
     </div>
 
+    <!-- Script des animations -->
+    <script src="{{ asset('js/battle-animations.js') }}"></script>
+
     <script>
         const battleId = {{ $battle->id }};
         const playerNumber = {{ $playerNumber }};
@@ -572,6 +576,9 @@
         let selectedAttacker = null;
         let selectedAttack = null;
         let phase = 'idle';
+
+        // Instance des animations
+        const animations = window.BattleAnimations;
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
@@ -711,6 +718,8 @@
         function createBattleCard(card, index, owner) {
             const div = document.createElement('div');
             div.className = 'battle-card';
+            div.dataset.cardIndex = index;
+            div.dataset.owner = owner;
             
             if (card.faction) {
                 div.style.setProperty('--color1', card.faction.color_primary || '#333');
@@ -750,6 +759,7 @@
         function createHandCard(card, index) {
             const div = document.createElement('div');
             div.className = 'hand-card';
+            div.dataset.cardIndex = index;
             
             const state = getMyState();
             const canPlay = isMyTurn && state.cosmos >= card.cost && state.field.length < 3;
@@ -770,7 +780,7 @@
             `;
 
             if (canPlay) {
-                div.onclick = () => playCard(index);
+                div.onclick = () => playCard(index, div);
             }
 
             return div;
@@ -782,9 +792,20 @@
             document.getElementById('playerMaxCosmos').textContent = state.max_cosmos || 0;
         }
 
-        // Actions
-        async function playCard(index) {
+        // Actions avec animations
+        async function playCard(index, cardElement) {
             if (!isMyTurn) return;
+
+            // Position cible (centre du terrain joueur)
+            const fieldZone = document.getElementById('playerField');
+            const fieldRect = fieldZone.getBoundingClientRect();
+            const targetPos = {
+                x: fieldRect.left + (fieldRect.width / 2) - 65,
+                y: fieldRect.top + (fieldRect.height / 2) - 80
+            };
+
+            // Animation de la carte
+            await animations.playCardAnimation(cardElement, targetPos);
 
             try {
                 const response = await fetch('/api/v1/pvp/play-card', {
@@ -864,6 +885,26 @@
         async function selectTarget(targetIndex) {
             if (!isMyTurn) return;
 
+            // Récupérer les éléments
+            const attackerCard = document.querySelector(`.battle-card[data-owner="player"][data-card-index="${selectedAttacker}"]`);
+            const targetCard = document.querySelector(`.battle-card[data-owner="opponent"][data-card-index="${targetIndex}"]`);
+
+            if (!attackerCard || !targetCard) {
+                console.error('Elements not found');
+                cancelSelection();
+                return;
+            }
+
+            // Animation d'attaque
+            const myState = getMyState();
+            const card = myState.field[selectedAttacker];
+            const attackData = {
+                element: 'fire', // TODO: récupérer l'élément réel
+                damage: card.main_attack?.damage || 50
+            };
+
+            await animations.attackAnimation(attackerCard, targetCard, attackData);
+
             try {
                 const response = await fetch('/api/v1/pvp/attack', {
                     method: 'POST',
@@ -883,8 +924,20 @@
                 const data = await response.json();
 
                 if (data.success) {
+                    // Afficher les dégâts
+                    if (data.damage) {
+                        animations.showDamage(targetCard, data.damage, 'damage');
+                    }
+
                     gameState = data.battle_state;
                     addLogEntry(`⚔️ ${data.message}`, 'damage');
+
+                    // Vérifier si la carte cible est morte
+                    const opponentState = getOpponentState();
+                    const targetCardData = opponentState.field[targetIndex];
+                    if (targetCardData && targetCardData.current_hp <= 0) {
+                        await animations.destroyCardAnimation(targetCard);
+                    }
 
                     if (data.battle_ended) {
                         window.location.reload();
@@ -948,24 +1001,25 @@
             log.appendChild(entry);
             log.scrollTop = log.scrollHeight;
         }
+
         function updateHelpText() {
-    const helpText = document.getElementById('helpText');
-    const myState = getMyState();
-    
-    if (!isMyTurn) {
-        helpText.textContent = "⏳ Attendez votre tour...";
-        helpText.className = "text-xs text-gray-400 bg-gray-400/20 px-2 py-1 rounded";
-    } else if (myState.field.length === 0) {
-        helpText.textContent = "👆 Cliquez sur une carte pour la jouer sur le terrain";
-        helpText.className = "text-xs text-yellow-400 bg-yellow-400/20 px-2 py-1 rounded";
-    } else if (phase === 'idle') {
-        helpText.textContent = "⚔️ Cliquez sur une carte du terrain pour attaquer";
-        helpText.className = "text-xs text-red-400 bg-red-400/20 px-2 py-1 rounded";
-    } else if (phase === 'selectingTarget') {
-        helpText.textContent = "🎯 Cliquez sur une carte adverse pour l'attaquer";
-        helpText.className = "text-xs text-orange-400 bg-orange-400/20 px-2 py-1 rounded";
-    }
-}
+            const helpText = document.getElementById('helpText');
+            const myState = getMyState();
+            
+            if (!isMyTurn) {
+                helpText.textContent = "⏳ Attendez votre tour...";
+                helpText.className = "text-xs text-gray-400 bg-gray-400/20 px-2 py-1 rounded";
+            } else if (myState.field.length === 0) {
+                helpText.textContent = "👆 Cliquez sur une carte pour la jouer sur le terrain";
+                helpText.className = "text-xs text-yellow-400 bg-yellow-400/20 px-2 py-1 rounded";
+            } else if (phase === 'idle') {
+                helpText.textContent = "⚔️ Cliquez sur une carte du terrain pour attaquer";
+                helpText.className = "text-xs text-red-400 bg-red-400/20 px-2 py-1 rounded";
+            } else if (phase === 'selectingTarget') {
+                helpText.textContent = "🎯 Cliquez sur une carte adverse pour l'attaquer";
+                helpText.className = "text-xs text-orange-400 bg-orange-400/20 px-2 py-1 rounded";
+            }
+        }
     </script>
 </body>
 </html>

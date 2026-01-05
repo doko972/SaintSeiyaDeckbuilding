@@ -66,7 +66,7 @@
             </div>
 
             <!-- Bannière PvP -->
-            <a href="{{ route('pvp.lobby') }}" class="block mb-6 bg-gradient-to-r from-red-600/20 via-orange-500/20 to-red-600/20 border border-red-500/40 rounded-2xl p-5 hover:from-red-600/30 hover:via-orange-500/30 hover:to-red-600/30 hover:border-red-500/60 transition group relative overflow-hidden">
+            <!-- <a href="{{ route('pvp.lobby') }}" class="block mb-6 bg-gradient-to-r from-red-600/20 via-orange-500/20 to-red-600/20 border border-red-500/40 rounded-2xl p-5 hover:from-red-600/30 hover:via-orange-500/30 hover:to-red-600/30 hover:border-red-500/60 transition group relative overflow-hidden">
                 <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                 
                 <div class="flex items-center justify-center gap-6 relative z-10">
@@ -84,7 +84,7 @@
                     </div>
                     <div class="text-3xl animate-pulse">⚔️</div>
                 </div>
-            </a>
+            </a> -->
 
             <!-- Actions rapides -->
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">

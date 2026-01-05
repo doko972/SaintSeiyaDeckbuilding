@@ -410,18 +410,21 @@
         }
 
         .cosmos-display {
-            display: flex;
+            display: flex !important;
             align-items: center;
             gap: 0.5rem;
-            background: rgba(124, 58, 237, 0.2);
-            border: 1px solid rgba(124, 58, 237, 0.4);
-            padding: 0.4rem 1rem;
+            background: rgba(124, 58, 237, 0.5) !important;
+            border: 2px solid rgba(124, 58, 237, 0.8) !important;
+            padding: 0.75rem 1.5rem !important;
             border-radius: 20px;
+            font-size: 1.2rem !important;
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.5) !important;
         }
 
         .cosmos-display span {
-            font-weight: 700;
-            color: #A78BFA;
+            font-weight: 800 !important;
+            color: #E9D5FF !important;
+            font-size: 1.3rem !important;
         }
 
         .player-hand {
@@ -644,38 +647,6 @@
             background: #4B5563;
             box-shadow: none;
             cursor: not-allowed;
-        }
-
-        /* ========================================
-           ANIMATIONS D'ATTAQUE
-        ======================================== */
-        .attack-animation {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
-            pointer-events: none;
-        }
-
-        .damage-number {
-            position: absolute;
-            font-size: 2rem;
-            font-weight: 800;
-            color: #EF4444;
-            text-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
-            animation: damageFloat 1s forwards;
-            z-index: 1000;
-        }
-
-        @keyframes damageFloat {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
-        }
-
-        .heal-number {
-            color: #10B981;
-            text-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
         }
 
         /* ========================================
@@ -943,9 +914,14 @@
         <!-- Main du joueur -->
         <div class="player-hand-zone">
             <div class="hand-header">
-                <span class="hand-title">🎴 Votre main</span>
-                <div class="cosmos-display">
-                    🌟 <span id="playerCosmos">0</span> / <span id="playerMaxCosmos">0</span>
+                <span class="hand-title">
+                    🎴 Votre main 
+                    <span style="color: #A78BFA; margin-left: 1rem; font-weight: 800; font-size: 1rem;">
+                        (🌟 <span id="playerCosmosAlt">0</span>/<span id="playerMaxCosmosAlt">0</span>)
+                    </span>
+                </span>
+                <div class="cosmos-display" style="display: flex !important; visibility: visible !important; opacity: 1 !important;">
+                    🌟 <span id="playerCosmos" style="color: #E9D5FF; font-weight: 800;">0</span> / <span id="playerMaxCosmos" style="color: #E9D5FF; font-weight: 800;">0</span>
                 </div>
             </div>
             <div class="player-hand" id="playerHand">
@@ -1000,6 +976,146 @@
         let selectedAttacker = null;
         let selectedAttack = null;
         let phase = 'idle'; // idle, selectingAttacker, selectingAttack, selectingTarget
+
+        // Instance des animations (temporaire inline)
+        const animations = {
+            playCardAnimation: async function(cardElement, targetPos) {
+                return new Promise((resolve) => {
+                    const clone = cardElement.cloneNode(true);
+                    clone.style.position = 'fixed';
+                    clone.style.zIndex = '1000';
+                    const startRect = cardElement.getBoundingClientRect();
+                    clone.style.left = startRect.left + 'px';
+                    clone.style.top = startRect.top + 'px';
+                    clone.style.width = startRect.width + 'px';
+                    document.body.appendChild(clone);
+                    cardElement.style.opacity = '0';
+                    setTimeout(() => {
+                        clone.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                        clone.style.left = targetPos.x + 'px';
+                        clone.style.top = targetPos.y + 'px';
+                        clone.style.transform = 'scale(1.1) rotateY(360deg)';
+                        clone.style.boxShadow = '0 0 30px rgba(16, 185, 129, 0.8)';
+                    }, 50);
+                    setTimeout(() => {
+                        clone.remove();
+                        cardElement.style.opacity = '1';
+                        resolve();
+                    }, 800);
+                });
+            },
+            
+            attackAnimation: async function(attackerCard, targetCard, attackData) {
+                return new Promise(async (resolve) => {
+                    const clone = attackerCard.cloneNode(true);
+                    clone.style.position = 'fixed';
+                    clone.style.zIndex = '1001';
+                    const startRect = attackerCard.getBoundingClientRect();
+                    const targetRect = targetCard.getBoundingClientRect();
+                    clone.style.left = startRect.left + 'px';
+                    clone.style.top = startRect.top + 'px';
+                    clone.style.width = startRect.width + 'px';
+                    document.body.appendChild(clone);
+                    
+                    setTimeout(() => {
+                        clone.style.transition = 'all 0.3s ease-in';
+                        clone.style.left = (targetRect.left - 20) + 'px';
+                        clone.style.top = (targetRect.top - 20) + 'px';
+                        clone.style.transform = 'scale(1.2)';
+                    }, 50);
+                    
+                    setTimeout(() => {
+                        this.shakeElement(targetCard);
+                        this.flashElement(targetCard, '#EF4444');
+                    }, 350);
+                    
+                    setTimeout(() => {
+                        clone.style.transition = 'all 0.2s ease-out';
+                        clone.style.left = startRect.left + 'px';
+                        clone.style.top = startRect.top + 'px';
+                        clone.style.transform = 'scale(1)';
+                    }, 450);
+                    
+                    setTimeout(() => {
+                        clone.remove();
+                        resolve();
+                    }, 700);
+                });
+            },
+            
+            showDamage: function(targetElement, damage, type = 'damage') {
+                const rect = targetElement.getBoundingClientRect();
+                const x = rect.left + rect.width / 2;
+                const y = rect.top + rect.height / 2;
+                const damageText = document.createElement('div');
+                damageText.textContent = type === 'heal' ? `+${damage}` : `-${damage}`;
+                damageText.style.cssText = `
+                    position: fixed;
+                    left: ${x}px;
+                    top: ${y}px;
+                    font-size: 2rem;
+                    font-weight: 900;
+                    color: ${type === 'heal' ? '#10B981' : '#EF4444'};
+                    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+                    z-index: 2000;
+                    pointer-events: none;
+                    transform: translate(-50%, -50%);
+                `;
+                document.body.appendChild(damageText);
+                setTimeout(() => {
+                    damageText.style.transition = 'all 1s ease-out';
+                    damageText.style.top = (y - 100) + 'px';
+                    damageText.style.opacity = '0';
+                    damageText.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                }, 50);
+                setTimeout(() => damageText.remove(), 1100);
+            },
+            
+            shakeElement: function(element) {
+                const keyframes = [
+                    { transform: 'translateX(0)' },
+                    { transform: 'translateX(-10px) rotate(-2deg)' },
+                    { transform: 'translateX(10px) rotate(2deg)' },
+                    { transform: 'translateX(-10px) rotate(-1deg)' },
+                    { transform: 'translateX(10px) rotate(1deg)' },
+                    { transform: 'translateX(0) rotate(0deg)' },
+                ];
+                element.animate(keyframes, { duration: 400, easing: 'ease-in-out' });
+            },
+            
+            flashElement: function(element, color = '#FFFFFF') {
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `
+                    position: absolute;
+                    top: 0; left: 0; right: 0; bottom: 0;
+                    background: ${color};
+                    opacity: 0.6;
+                    border-radius: inherit;
+                    pointer-events: none;
+                    z-index: 10;
+                `;
+                element.style.position = 'relative';
+                element.appendChild(overlay);
+                setTimeout(() => {
+                    overlay.style.transition = 'opacity 0.3s';
+                    overlay.style.opacity = '0';
+                }, 50);
+                setTimeout(() => overlay.remove(), 400);
+            },
+            
+            destroyCardAnimation: async function(cardElement) {
+                return new Promise((resolve) => {
+                    this.flashElement(cardElement, '#DC2626');
+                    this.shakeElement(cardElement, 15);
+                    setTimeout(() => {
+                        cardElement.style.transition = 'all 0.5s ease-out';
+                        cardElement.style.transform = 'scale(0) rotate(180deg)';
+                        cardElement.style.opacity = '0';
+                    }, 400);
+                    setTimeout(() => resolve(), 1000);
+                });
+            }
+        };
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
@@ -1175,14 +1291,25 @@
             `;
 
             if (canPlay) {
-                div.onclick = () => playCard(index);
+                div.onclick = () => playCard(index, div);
             }
 
             return div;
         }
 
-        // Jouer une carte
-        async function playCard(index) {
+        // Jouer une carte avec animation
+        async function playCard(index, cardElement) {
+            // Position cible (centre du terrain joueur)
+            const fieldZone = document.getElementById('playerField');
+            const fieldRect = fieldZone.getBoundingClientRect();
+            const targetPos = {
+                x: fieldRect.left + (fieldRect.width / 2) - 70,
+                y: fieldRect.top + (fieldRect.height / 2) - 90
+            };
+
+            // Animation de la carte
+            await animations.playCardAnimation(cardElement, targetPos);
+
             try {
                 const data = await apiCall('play-card', 'POST', {
                     deck_id: deckId,
@@ -1214,81 +1341,74 @@
 
         // Afficher le panneau d'attaque
         function showAttackPanel(card) {
-    const panel = document.getElementById('actionPanel');
-    const list = document.getElementById('attackList');
-    list.innerHTML = '';
+            const panel = document.getElementById('actionPanel');
+            const list = document.getElementById('attackList');
+            list.innerHTML = '';
+            
+            // Attaque principale (toujours disponible)
+            const mainAttack = card.main_attack || {
+                name: 'Attaque de base',
+                damage: 40 + (card.power || 0),
+                endurance_cost: 20,
+                cosmos_cost: 0
+            };
 
-    const state = getMyState();
-    
-    // Attaque principale (toujours disponible)
-    const mainAttack = card.main_attack || {
-        name: 'Attaque de base',
-        damage: 40 + (card.power || 0),
-        endurance_cost: 20,
-        cosmos_cost: 0
-    };
+            const attacks = [
+                { 
+                    key: 'main', 
+                    name: mainAttack.name, 
+                    damage: mainAttack.damage, 
+                    endCost: mainAttack.endurance_cost || 20, 
+                    cosCost: mainAttack.cosmos_cost || 0 
+                }
+            ];
 
-    const attacks = [
-        { 
-            key: 'main', 
-            name: mainAttack.name, 
-            damage: mainAttack.damage, 
-            endCost: mainAttack.endurance_cost || 20, 
-            cosCost: mainAttack.cosmos_cost || 0 
+            // Attaques secondaires si disponibles
+            if (card.secondary_attack_1) {
+                attacks.push({ 
+                    key: 'secondary1', 
+                    name: card.secondary_attack_1.name, 
+                    damage: card.secondary_attack_1.damage, 
+                    endCost: card.secondary_attack_1.endurance_cost, 
+                    cosCost: card.secondary_attack_1.cosmos_cost 
+                });
+            }
+
+            if (card.secondary_attack_2) {
+                attacks.push({ 
+                    key: 'secondary2', 
+                    name: card.secondary_attack_2.name, 
+                    damage: card.secondary_attack_2.damage, 
+                    endCost: card.secondary_attack_2.endurance_cost, 
+                    cosCost: card.secondary_attack_2.cosmos_cost 
+                });
+            }
+
+            attacks.forEach(atk => {
+                const canUse = (card.current_endurance || 100) >= atk.endCost && gameState.player.cosmos >= atk.cosCost;
+                
+                const btn = document.createElement('button');
+                btn.className = 'attack-btn';
+                btn.disabled = !canUse;
+                btn.innerHTML = `
+                    <div>
+                        <div style="font-weight: 600;">${atk.name}</div>
+                        <div style="font-size: 0.7rem; color: #9CA3AF;">
+                            ⚡ ${atk.endCost} END | 🌟 ${atk.cosCost} COS
+                        </div>
+                    </div>
+                    <div style="font-size: 1.2rem; color: #EF4444; font-weight: bold;">
+                        ${atk.damage} 💥
+                    </div>
+                `;
+                btn.onclick = () => {
+                    if (canUse) selectAttack(atk.key);
+                };
+                list.appendChild(btn);
+            });
+
+            panel.classList.add('visible');
         }
-    ];
-
-    // Attaques secondaires si disponibles
-    if (card.secondary_attack_1) {
-        attacks.push({ 
-            key: 'secondary1', 
-            name: card.secondary_attack_1.name, 
-            damage: card.secondary_attack_1.damage, 
-            endCost: card.secondary_attack_1.endurance_cost, 
-            cosCost: card.secondary_attack_1.cosmos_cost 
-        });
-    }
-
-    if (card.secondary_attack_2) {
-        attacks.push({ 
-            key: 'secondary2', 
-            name: card.secondary_attack_2.name, 
-            damage: card.secondary_attack_2.damage, 
-            endCost: card.secondary_attack_2.endurance_cost, 
-            cosCost: card.secondary_attack_2.cosmos_cost 
-        });
-    }
-
-    console.log('Attaques disponibles:', attacks); // Debug
-
-    attacks.forEach(atk => {
-        const canUse = (card.current_endurance || 100) >= atk.endCost && state.cosmos >= atk.cosCost;
-        
-        const btn = document.createElement('button');
-        btn.className = 'attack-btn';
-        btn.disabled = !canUse;
-        btn.innerHTML = `
-            <div>
-                <div style="font-weight: 600;">${atk.name}</div>
-                <div style="font-size: 0.7rem; color: #9CA3AF;">
-                    ⚡ ${atk.endCost} END | 🌟 ${atk.cosCost} COS
-                </div>
-            </div>
-            <div style="font-size: 1.2rem; color: #EF4444; font-weight: bold;">
-                ${atk.damage} 💥
-            </div>
-        `;
-        btn.onclick = () => {
-            if (canUse) selectAttack(atk.key);
-        };
-        list.appendChild(btn);
-    });
-
-    panel.classList.add('visible');
-    
-    // Positionner le panneau près de la carte
-    console.log('Panneau d\'attaque affiché');
-}
 
         // Sélectionner une attaque
         function selectAttack(attackKey) {
@@ -1299,8 +1419,27 @@
             renderAll();
         }
 
-        // Sélectionner une cible
+        // Sélectionner une cible avec animation
         async function selectTarget(targetIndex) {
+            // Récupérer les éléments
+            const attackerCard = document.querySelector(`.battle-card[data-owner="player"][data-index="${selectedAttacker}"]`);
+            const targetCard = document.querySelector(`.battle-card[data-owner="opponent"][data-index="${targetIndex}"]`);
+
+            if (!attackerCard || !targetCard) {
+                console.error('Elements not found');
+                cancelSelection();
+                return;
+            }
+
+            // Animation d'attaque
+            const card = gameState.player.field[selectedAttacker];
+            const attackData = {
+                element: 'fire', // TODO: récupérer l'élément réel
+                damage: card.main_attack?.damage || 50
+            };
+
+            await animations.attackAnimation(attackerCard, targetCard, attackData);
+
             try {
                 const data = await apiCall('attack', 'POST', {
                     deck_id: deckId,
@@ -1310,12 +1449,19 @@
                     battle_state: gameState
                 });
 
+                // Afficher les dégâts
+                if (data.damage) {
+                    animations.showDamage(targetCard, data.damage, 'damage');
+                }
+
                 gameState = data.battle_state;
-                
-                // Animation de dégâts
-                showDamageNumber(data.damage, targetIndex);
-                
                 addLogEntry(`⚔️ ${data.message}`, 'damage');
+
+                // Vérifier si la carte cible est morte
+                const opponentCard = gameState.opponent.field[targetIndex];
+                if (opponentCard && opponentCard.current_hp <= 0) {
+                    await animations.destroyCardAnimation(targetCard);
+                }
 
                 // Vérifier fin de partie
                 if (data.battle_ended) {
@@ -1372,23 +1518,6 @@
             }
         }
 
-        // Afficher les dégâts
-        function showDamageNumber(damage, targetIndex) {
-            const field = document.getElementById('opponentField');
-            const card = field.children[targetIndex];
-            if (!card) return;
-
-            const rect = card.getBoundingClientRect();
-            const num = document.createElement('div');
-            num.className = 'damage-number';
-            num.textContent = `-${damage}`;
-            num.style.left = rect.left + rect.width / 2 + 'px';
-            num.style.top = rect.top + 'px';
-            document.body.appendChild(num);
-
-            setTimeout(() => num.remove(), 1000);
-        }
-
         // Fin de partie
         function endGame(victory) {
             const modal = document.getElementById('gameOverModal');
@@ -1422,10 +1551,21 @@
         function updateStats() {
             if (!gameState) return;
 
+            console.log('=== UPDATE STATS ===');
+            console.log('Player cosmos:', gameState.player.cosmos);
+            console.log('Player max_cosmos:', gameState.player.max_cosmos);
+
+            const playerCosmos = gameState.player.cosmos || 0;
+            const playerMaxCosmos = gameState.player.max_cosmos || 0;
+
             document.getElementById('playerDeckCount').textContent = gameState.player.deck?.length || 0;
             document.getElementById('playerHandCount').textContent = gameState.player.hand?.length || 0;
-            document.getElementById('playerCosmos').textContent = gameState.player.cosmos || 0;
-            document.getElementById('playerMaxCosmos').textContent = gameState.player.max_cosmos || 0;
+            
+            // Mettre à jour les 2 affichages du cosmos
+            document.getElementById('playerCosmos').textContent = playerCosmos;
+            document.getElementById('playerMaxCosmos').textContent = playerMaxCosmos;
+            document.getElementById('playerCosmosAlt').textContent = playerCosmos;
+            document.getElementById('playerMaxCosmosAlt').textContent = playerMaxCosmos;
 
             document.getElementById('opponentDeckCount').textContent = gameState.opponent.deck?.length || 0;
             document.getElementById('opponentHandCount').textContent = gameState.opponent.hand?.length || 0;

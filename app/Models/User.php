@@ -22,6 +22,8 @@ class User extends Authenticatable
         'coins',
         'wins',
         'losses',
+        'has_selected_starter',
+        'starter_bronze_id',
     ];
 
     protected $hidden = [
@@ -32,6 +34,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'has_selected_starter' => 'boolean',
     ];
 
     /**
@@ -50,6 +53,14 @@ class User extends Authenticatable
         return $this->belongsToMany(Card::class, 'user_cards')
             ->withPivot('quantity', 'obtained_at')
             ->withTimestamps();
+    }
+
+    /**
+     * NOUVEAU : Relation avec le Bronze de départ sélectionné
+     */
+    public function starterBronze()
+    {
+        return $this->belongsTo(Card::class, 'starter_bronze_id');
     }
 
     /**
@@ -116,6 +127,15 @@ class User extends Authenticatable
     }
 
     /**
+     * NOUVEAU : Obtenir la quantité d'une carte spécifique
+     */
+    public function getCardQuantity(int $cardId): int
+    {
+        $card = $this->cards()->where('card_id', $cardId)->first();
+        return $card ? $card->pivot->quantity : 0;
+    }
+
+    /**
      * Nombre total de cartes dans la collection
      */
     public function getTotalCardsAttribute(): int
@@ -141,19 +161,25 @@ class User extends Authenticatable
         $this->addCoins($coinsReward);
     }
 
-
-    // Dans la classe User, ajouter :
-
+    /**
+     * Batailles en tant que joueur 1
+     */
     public function battlesAsPlayer1()
     {
         return $this->hasMany(Battle::class, 'player1_id');
     }
 
+    /**
+     * Batailles en tant que joueur 2
+     */
     public function battlesAsPlayer2()
     {
         return $this->hasMany(Battle::class, 'player2_id');
     }
 
+    /**
+     * Récupère la bataille active du joueur
+     */
     public function activeBattle()
     {
         return Battle::where(function ($query) {
@@ -162,6 +188,9 @@ class User extends Authenticatable
         })->whereIn('status', ['waiting', 'in_progress'])->first();
     }
 
+    /**
+     * Vérifie si le joueur est dans une bataille
+     */
     public function isInBattle(): bool
     {
         return $this->activeBattle() !== null;

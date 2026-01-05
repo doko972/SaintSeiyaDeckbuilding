@@ -47,15 +47,6 @@ rm database/seeders/CardSeeder.php
 rm database/seeders/AttackSeeder.php
 
 
-## Réinitialiser la base et relancer toutes les migrations + seeders
-php artisan migrate:fresh --seed
+## Réinitialiser la base et relancer toutes les migrations
 
-## juste relancer les seeders sans toucher aux migrations
-php artisan db:seed --class=AttackSeeder
-php artisan db:seed --class=CardSeeder
-
-## Lancer tous les seeders
-php artisan db:seed
-
-## migration + seeder
-php artisan migrate --seed
+saint seiya image galaxycard

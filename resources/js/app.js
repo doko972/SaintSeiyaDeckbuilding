@@ -1,5 +1,6 @@
 import './bootstrap';
 import './holo-card';
+import './battle-animations';
 
 import Alpine from 'alpinejs';
 

@@ -9,6 +9,7 @@ use App\Http\Controllers\GameViewController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\PvpController;
+use App\Http\Controllers\StarterPackController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,10 +23,21 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Routes authentifiées
+| Routes Starter Pack (accessibles sans avoir sélectionné le Bronze)
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth'])->prefix('starter-pack')->name('starter-pack.')->group(function () {
+    Route::get('/', [StarterPackController::class, 'index'])->name('index');
+    Route::post('/select', [StarterPackController::class, 'selectBronze'])->name('select');
+    Route::get('/details', [StarterPackController::class, 'details'])->name('details');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Routes authentifiées (nécessitent d'avoir sélectionné le Bronze)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'ensure.starter'])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', function () {
@@ -64,6 +76,16 @@ Route::middleware('auth')->group(function () {
     // Collection
     Route::get('/collection', [CollectionController::class, 'index'])->name('collection.index');
     Route::get('/collection/{card}', [CollectionController::class, 'show'])->name('collection.show');
+
+    // Routes PvP
+    Route::prefix('pvp')->name('pvp.')->group(function () {
+        Route::get('/lobby', [PvpController::class, 'lobby'])->name('lobby');
+        Route::post('/create', [PvpController::class, 'create'])->name('create');
+        Route::post('/join/{battle}', [PvpController::class, 'join'])->name('join');
+        Route::get('/waiting/{battle}', [PvpController::class, 'waiting'])->name('waiting');
+        Route::post('/cancel/{battle}', [PvpController::class, 'cancel'])->name('cancel');
+        Route::get('/battle/{battle}', [PvpController::class, 'battle'])->name('battle');
+    });
 });
 
 /*
@@ -72,7 +94,7 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    
+
     // Gestion des Factions
     Route::get('/factions/create', [FactionController::class, 'create'])->name('factions.create');
     Route::post('/factions', [FactionController::class, 'store'])->name('factions.store');
@@ -95,16 +117,4 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/cards/{card}', [CardController::class, 'destroy'])->name('cards.destroy');
 });
 
-
-
-// Routes PvP
-Route::middleware('auth')->prefix('pvp')->name('pvp.')->group(function () {
-    Route::get('/lobby', [PvpController::class, 'lobby'])->name('lobby');
-    Route::post('/create', [PvpController::class, 'create'])->name('create');
-    Route::post('/join/{battle}', [PvpController::class, 'join'])->name('join');
-    Route::get('/waiting/{battle}', [PvpController::class, 'waiting'])->name('waiting');
-    Route::post('/cancel/{battle}', [PvpController::class, 'cancel'])->name('cancel');
-    Route::get('/battle/{battle}', [PvpController::class, 'battle'])->name('battle');
-});
-
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
