@@ -1114,6 +1114,73 @@
                     }, 400);
                     setTimeout(() => resolve(), 1000);
                 });
+            },
+            
+            drawCardAnimation: async function(startPos, endPos) {
+                return new Promise((resolve) => {
+                    const cardBack = document.createElement('div');
+                    cardBack.style.cssText = `
+                        position: fixed;
+                        left: ${startPos.x}px;
+                        top: ${startPos.y}px;
+                        width: 80px;
+                        height: 110px;
+                        background: linear-gradient(135deg, #7C3AED, #5B21B6);
+                        border: 2px solid rgba(255, 255, 255, 0.3);
+                        border-radius: 8px;
+                        z-index: 1002;
+                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+                    `;
+                    document.body.appendChild(cardBack);
+                    
+                    setTimeout(() => {
+                        cardBack.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                        cardBack.style.left = endPos.x + 'px';
+                        cardBack.style.top = endPos.y + 'px';
+                        cardBack.style.transform = 'rotateY(180deg)';
+                    }, 50);
+                    
+                    setTimeout(() => {
+                        cardBack.remove();
+                        resolve();
+                    }, 700);
+                });
+            },
+            
+            createSparkles: function(x, y, color = '#FFD700') {
+                for (let i = 0; i < 12; i++) {
+                    setTimeout(() => {
+                        const sparkle = document.createElement('div');
+                        const angle = (Math.PI * 2 * i) / 12;
+                        const distance = 40;
+                        const targetX = x + Math.cos(angle) * distance;
+                        const targetY = y + Math.sin(angle) * distance;
+
+                        sparkle.style.cssText = `
+                            position: fixed;
+                            left: ${x}px;
+                            top: ${y}px;
+                            width: 6px;
+                            height: 6px;
+                            background: ${color};
+                            border-radius: 50%;
+                            pointer-events: none;
+                            box-shadow: 0 0 10px ${color};
+                            z-index: 1500;
+                        `;
+
+                        document.body.appendChild(sparkle);
+
+                        setTimeout(() => {
+                            sparkle.style.transition = 'all 0.5s ease-out';
+                            sparkle.style.left = targetX + 'px';
+                            sparkle.style.top = targetY + 'px';
+                            sparkle.style.opacity = '0';
+                        }, 50);
+
+                        setTimeout(() => sparkle.remove(), 600);
+                    }, i * 30);
+                }
             }
         };
 
@@ -1497,11 +1564,17 @@
                 
                 addLogEntry('⏭️ Fin de votre tour', 'turn');
                 
-                // Actions IA
+                // Rendu avant les animations IA pour voir l'état initial
+                renderAll();
+                
+                // Animer les actions IA
                 if (data.ai_actions) {
+                    addLogEntry('🤖 Tour de l\'IA...', 'turn');
+                    await sleep(800);
+                    
                     for (const action of data.ai_actions) {
-                        addLogEntry(`🤖 ${action}`, 'info');
-                        await sleep(500);
+                        await animateAIAction(action);
+                        await sleep(600);
                     }
                 }
 
@@ -1515,6 +1588,171 @@
                 renderAll();
             } catch (error) {
                 console.error('End turn failed:', error);
+            }
+        }
+
+        // Animer une action de l'IA
+        async function animateAIAction(actionText) {
+            console.log('AI Action:', actionText);
+            
+            // Parser l'action pour identifier le type
+            if (actionText.includes('pioche') || actionText.includes('tire')) {
+                // Animation de pioche
+                await animateAIDraw();
+                addLogEntry(`🤖 ${actionText}`, 'info');
+            }
+            else if (actionText.includes('joue') || actionText.includes('invoque')) {
+                // Animation de jeu de carte
+                const cardName = extractCardName(actionText);
+                await animateAIPlayCard(cardName);
+                addLogEntry(`🤖 ${actionText}`, 'info');
+            }
+            else if (actionText.includes('attaque') || actionText.includes('inflige')) {
+                // Animation d'attaque
+                await animateAIAttack(actionText);
+                addLogEntry(`🤖 ${actionText}`, 'damage');
+            }
+            else if (actionText.includes('déploie')) {
+                // Juste afficher dans le log
+                addLogEntry(`🤖 ${actionText}`, 'info');
+                renderAll();
+                await sleep(400);
+            }
+            else {
+                // Action générique
+                addLogEntry(`🤖 ${actionText}`, 'info');
+            }
+        }
+
+        // Extraire le nom de la carte du texte d'action
+        function extractCardName(text) {
+            // Chercher le texte entre guillemets ou après "joue"
+            const match = text.match(/joue (.+)/i) || text.match(/"(.+)"/) || text.match(/invoque (.+)/i);
+            return match ? match[1].trim() : 'une carte';
+        }
+
+        // Animation : IA pioche une carte
+        async function animateAIDraw() {
+            const opponentField = document.getElementById('opponentField');
+            const rect = opponentField.getBoundingClientRect();
+            
+            // Position de départ (deck IA - en haut à gauche)
+            const startPos = { x: 100, y: 100 };
+            
+            // Position d'arrivée (zone main IA - invisible)
+            const endPos = { x: rect.left + 50, y: rect.top - 100 };
+            
+            await animations.drawCardAnimation(startPos, endPos);
+        }
+
+        // Animation : IA joue une carte
+        async function animateAIPlayCard(cardName) {
+            // Créer une carte temporaire pour l'animation
+            const tempCard = document.createElement('div');
+            tempCard.className = 'battle-card';
+            tempCard.style.position = 'fixed';
+            tempCard.style.width = '140px';
+            tempCard.style.height = '180px';
+            tempCard.style.background = 'linear-gradient(145deg, #EF4444, #DC2626)';
+            tempCard.style.border = '2px solid rgba(255, 255, 255, 0.3)';
+            tempCard.style.borderRadius = '12px';
+            tempCard.style.display = 'flex';
+            tempCard.style.alignItems = 'center';
+            tempCard.style.justifyContent = 'center';
+            tempCard.style.color = 'white';
+            tempCard.style.fontWeight = 'bold';
+            tempCard.style.fontSize = '0.9rem';
+            tempCard.style.textAlign = 'center';
+            tempCard.style.padding = '1rem';
+            tempCard.style.zIndex = '1000';
+            tempCard.textContent = cardName;
+            
+            const opponentField = document.getElementById('opponentField');
+            const fieldRect = opponentField.getBoundingClientRect();
+            
+            // Position de départ (main IA - en haut)
+            tempCard.style.left = (fieldRect.left - 100) + 'px';
+            tempCard.style.top = '50px';
+            tempCard.style.opacity = '0';
+            
+            document.body.appendChild(tempCard);
+            
+            // Animation d'apparition et descente
+            setTimeout(() => {
+                tempCard.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                tempCard.style.left = (fieldRect.left + fieldRect.width / 2 - 70) + 'px';
+                tempCard.style.top = (fieldRect.top + 20) + 'px';
+                tempCard.style.opacity = '1';
+                tempCard.style.transform = 'rotateY(360deg) scale(1.1)';
+            }, 50);
+            
+            await sleep(500);
+            
+            // Sparkles
+            animations.createSparkles(
+                fieldRect.left + fieldRect.width / 2, 
+                fieldRect.top + fieldRect.height / 2, 
+                '#EF4444'
+            );
+            
+            await sleep(300);
+            
+            // Transition vers la vraie carte
+            tempCard.style.transition = 'all 0.3s ease-out';
+            tempCard.style.transform = 'scale(1)';
+            
+            await sleep(300);
+            
+            tempCard.remove();
+            
+            // Afficher la vraie carte
+            renderAll();
+        }
+
+        // Animation : IA attaque
+        async function animateAIAttack(actionText) {
+            // Extraire les infos de l'attaque (attaquant, cible, dégâts)
+            const damageMatch = actionText.match(/(\d+)\s*(?:dégâts|points)/i);
+            const damage = damageMatch ? parseInt(damageMatch[1]) : 50;
+            
+            // Trouver les cartes sur le terrain
+            const opponentCards = document.querySelectorAll('.battle-card[data-owner="opponent"]');
+            const playerCards = document.querySelectorAll('.battle-card[data-owner="player"]');
+            
+            if (opponentCards.length === 0 || playerCards.length === 0) {
+                // Pas de cartes à animer
+                return;
+            }
+            
+            // Prendre la première carte IA comme attaquant
+            const attackerCard = opponentCards[0];
+            
+            // Prendre une carte joueur aléatoire comme cible
+            const targetCard = playerCards[Math.floor(Math.random() * playerCards.length)];
+            
+            // Animation d'attaque
+            await animations.attackAnimation(attackerCard, targetCard, {
+                element: 'fire',
+                damage: damage
+            });
+            
+            // Afficher les dégâts
+            animations.showDamage(targetCard, damage, 'damage');
+            
+            // Shake de la cible
+            animations.shakeElement(targetCard, 12);
+            
+            // Mettre à jour l'affichage
+            renderAll();
+            
+            // Vérifier si une carte est détruite
+            await sleep(200);
+            const targetIndex = parseInt(targetCard.dataset.index);
+            const playerState = gameState.player;
+            if (playerState.field[targetIndex] && playerState.field[targetIndex].current_hp <= 0) {
+                await animations.destroyCardAnimation(targetCard);
+                await sleep(300);
+                renderAll();
             }
         }
 

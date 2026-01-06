@@ -410,6 +410,7 @@ class GameApiController extends Controller
 
     /**
      * IA attaque
+     * 🔧 CORRIGÉ : L'IA doit maintenant payer le cosmos pour attaquer !
      */
     private function aiAttack(array $state): array
     {
@@ -436,17 +437,29 @@ class GameApiController extends Controller
 
             $target = &$state['player']['field'][$targetIndex];
             
-            // Calculer les dégâts
-            $attack = $attacker['main_attack'] ?? ['damage' => 50, 'endurance_cost' => 20];
+            // Choisir l'attaque (main ou attaque basique)
+            $attack = $attacker['main_attack'] ?? [
+                'name' => 'Attaque', 
+                'damage' => 50, 
+                'endurance_cost' => 20, 
+                'cosmos_cost' => 0
+            ];
             
+            // ✅ Vérifier l'endurance
             if ($attacker['current_endurance'] < $attack['endurance_cost']) {
                 continue;
+            }
+
+            // ✅ FIX DU BUG : Vérifier le cosmos !
+            if ($state['opponent']['cosmos'] < $attack['cosmos_cost']) {
+                continue; // Pas assez de cosmos, skip cette attaque
             }
 
             $damage = max(0, $attack['damage'] + ($attacker['power'] ?? 0) - ($target['defense'] ?? 0));
             
             $target['current_hp'] -= $damage;
             $attacker['current_endurance'] -= $attack['endurance_cost'];
+            $state['opponent']['cosmos'] -= $attack['cosmos_cost']; // ✅ L'IA PAYE maintenant !
             $attacker['has_attacked'] = true;
 
             $actions[] = "{$attacker['name']} attaque {$target['name']} (-{$damage} PV)";

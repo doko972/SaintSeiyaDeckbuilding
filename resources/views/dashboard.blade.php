@@ -26,15 +26,15 @@
                     </div>
                     <div class="flex gap-8">
                         <div class="text-center">
-                            <div class="text-4xl font-bold text-yellow-400">🪙 {{ number_format(auth()->user()->coins) }}</div>
+                            <div class="text-4xl font-bold text-yellow-400">{{ number_format(auth()->user()->coins) }}</div>
                             <div class="text-purple-200">Pièces</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-4xl font-bold text-green-400">🏆 {{ auth()->user()->wins }}</div>
+                            <div class="text-4xl font-bold text-green-400">{{ auth()->user()->wins }}</div>
                             <div class="text-purple-200">Victoires</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-4xl font-bold text-red-400">💀 {{ auth()->user()->losses }}</div>
+                            <div class="text-4xl font-bold text-red-400">{{ auth()->user()->losses }}</div>
                             <div class="text-purple-200">Défaites</div>
                         </div>
                     </div>
