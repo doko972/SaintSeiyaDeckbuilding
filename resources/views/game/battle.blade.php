@@ -1104,16 +1104,143 @@
             },
             
             destroyCardAnimation: async function(cardElement) {
-                return new Promise((resolve) => {
-                    this.flashElement(cardElement, '#DC2626');
-                    this.shakeElement(cardElement, 15);
+                console.log('💥 destroyCardAnimation appelée', cardElement);
+                
+                if (!cardElement) {
+                    console.error('❌ Pas d\'élément à détruire !');
+                    return;
+                }
+                
+                return new Promise(async (resolve) => {
+                    const rect = cardElement.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    
+                    console.log('⚠️ Phase 1: Warning');
+                    // Phase 1 : Warning (clignote en rouge) - 0.4s
+                    cardElement.style.transition = 'all 0.1s ease-in-out';
+                    for (let i = 0; i < 3; i++) {
+                        await new Promise(r => setTimeout(r, 100));
+                        cardElement.style.boxShadow = '0 0 30px 10px rgba(239, 68, 68, 0.9)';
+                        cardElement.style.filter = 'brightness(1.5)';
+                        await new Promise(r => setTimeout(r, 100));
+                        cardElement.style.boxShadow = '';
+                        cardElement.style.filter = '';
+                    }
+                    
+                    console.log('💥 Phase 2: Impact');
+                    // Phase 2 : Impact violent - 0.3s
+                    this.flashElement(cardElement, '#FFFFFF');
+                    this.shakeElement(cardElement, 20);
+                    
+                    await new Promise(r => setTimeout(r, 200));
+                    
+                    console.log('🎆 Phase 3: Particules');
+                    // Phase 3 : Explosion de particules - 0.6s
+                    this.createDestructionParticles(centerX, centerY);
+                    
+                    console.log('🌀 Phase 4: Rotation');
+                    // Phase 4 : Brisure et rotation - 0.6s
                     setTimeout(() => {
-                        cardElement.style.transition = 'all 0.5s ease-out';
-                        cardElement.style.transform = 'scale(0) rotate(180deg)';
+                        cardElement.style.transition = 'all 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045)';
+                        cardElement.style.transform = 'scale(0) rotate(720deg)';
                         cardElement.style.opacity = '0';
+                        cardElement.style.filter = 'blur(5px) brightness(2)';
+                    }, 100);
+                    
+                    console.log('💨 Phase 5: Fumée');
+                    // Phase 5 : Effet de fumée - 0.4s
+                    setTimeout(() => {
+                        this.createSmokeEffect(centerX, centerY);
                     }, 400);
-                    setTimeout(() => resolve(), 1000);
+                    
+                    // Cleanup
+                    setTimeout(() => {
+                        console.log('🗑️ Cleanup - suppression de la carte');
+                        cardElement.remove();
+                        resolve();
+                    }, 1200);
                 });
+            },
+            
+            // Créer des particules de destruction
+            createDestructionParticles: function(x, y) {
+                const colors = ['#EF4444', '#DC2626', '#F97316', '#FBBF24', '#FFFFFF'];
+                const particleCount = 30;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        const angle = (Math.PI * 2 * i) / particleCount;
+                        const velocity = 100 + Math.random() * 150;
+                        const size = 4 + Math.random() * 8;
+                        const color = colors[Math.floor(Math.random() * colors.length)];
+                        
+                        particle.style.cssText = `
+                            position: fixed;
+                            left: ${x}px;
+                            top: ${y}px;
+                            width: ${size}px;
+                            height: ${size}px;
+                            background: ${color};
+                            border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+                            pointer-events: none;
+                            z-index: 9999;
+                            box-shadow: 0 0 10px ${color};
+                        `;
+                        
+                        document.body.appendChild(particle);
+                        
+                        // Animation de la particule
+                        setTimeout(() => {
+                            const targetX = x + Math.cos(angle) * velocity;
+                            const targetY = y + Math.sin(angle) * velocity + (Math.random() * 50);
+                            
+                            particle.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                            particle.style.left = targetX + 'px';
+                            particle.style.top = targetY + 'px';
+                            particle.style.opacity = '0';
+                            particle.style.transform = `scale(${Math.random() * 0.5})`;
+                        }, 50);
+                        
+                        setTimeout(() => particle.remove(), 700);
+                    }, i * 10);
+                }
+            },
+            
+            // Créer un effet de fumée
+            createSmokeEffect: function(x, y) {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const smoke = document.createElement('div');
+                        const offsetX = (Math.random() - 0.5) * 40;
+                        const offsetY = (Math.random() - 0.5) * 40;
+                        const size = 40 + Math.random() * 40;
+                        
+                        smoke.style.cssText = `
+                            position: fixed;
+                            left: ${x + offsetX}px;
+                            top: ${y + offsetY}px;
+                            width: ${size}px;
+                            height: ${size}px;
+                            background: radial-gradient(circle, rgba(100, 100, 100, 0.4) 0%, rgba(50, 50, 50, 0) 70%);
+                            border-radius: 50%;
+                            pointer-events: none;
+                            z-index: 9998;
+                        `;
+                        
+                        document.body.appendChild(smoke);
+                        
+                        setTimeout(() => {
+                            smoke.style.transition = 'all 0.8s ease-out';
+                            smoke.style.top = (y + offsetY - 80) + 'px';
+                            smoke.style.transform = `scale(2)`;
+                            smoke.style.opacity = '0';
+                        }, 50);
+                        
+                        setTimeout(() => smoke.remove(), 900);
+                    }, i * 80);
+                }
             },
             
             drawCardAnimation: async function(startPos, endPos) {
@@ -1292,6 +1419,7 @@
             div.className = 'battle-card';
             div.dataset.index = index;
             div.dataset.owner = owner;
+            div.dataset.name = card.name; // Ajout pour faciliter la recherche
             
             if (card.faction) {
                 div.style.setProperty('--color1', card.faction.color_primary || '#333');
@@ -1526,17 +1654,27 @@
 
                 // Vérifier si la carte cible est morte
                 const opponentCard = gameState.opponent.field[targetIndex];
-                if (opponentCard && opponentCard.current_hp <= 0) {
+                const cardWasDestroyed = opponentCard && opponentCard.current_hp <= 0;
+                
+                if (cardWasDestroyed) {
+                    console.log('🔥 Carte détruite, lancement animation...', targetCard);
                     await animations.destroyCardAnimation(targetCard);
+                    console.log('✅ Animation terminée');
                 }
 
                 // Vérifier fin de partie
                 if (data.battle_ended) {
                     endGame(data.winner === 'player');
+                    return; // Ne pas continuer si fin de partie
                 }
 
-                cancelSelection();
-                renderAll();
+                // Skip render si carte détruite (l'animation l'a déjà supprimée)
+                cancelSelection(cardWasDestroyed);
+                
+                // Render seulement si carte pas détruite
+                if (!cardWasDestroyed) {
+                    renderAll();
+                }
             } catch (error) {
                 console.error('Attack failed:', error);
                 cancelSelection();
@@ -1544,12 +1682,14 @@
         }
 
         // Annuler la sélection
-        function cancelSelection() {
+        function cancelSelection(skipRender = false) {
             selectedAttacker = null;
             selectedAttack = null;
             phase = 'idle';
             document.getElementById('actionPanel').classList.remove('visible');
-            renderAll();
+            if (!skipRender) {
+                renderAll();
+            }
         }
 
         // Fin du tour
@@ -1564,8 +1704,8 @@
                 
                 addLogEntry('⏭️ Fin de votre tour', 'turn');
                 
-                // Rendu avant les animations IA pour voir l'état initial
-                renderAll();
+                // ✅ NE PAS RENDER ICI ! Les cartes sont déjà dans le DOM
+                // Les animations vont travailler sur le DOM existant
                 
                 // Animer les actions IA
                 if (data.ai_actions) {
@@ -1585,6 +1725,7 @@
                     endGame(data.winner === 'player');
                 }
 
+                // ✅ Render UNE SEULE FOIS à la fin (après toutes les animations)
                 renderAll();
             } catch (error) {
                 console.error('End turn failed:', error);
@@ -1711,24 +1852,64 @@
 
         // Animation : IA attaque
         async function animateAIAttack(actionText) {
+            console.log('🤖 Animation attaque IA:', actionText);
+            
             // Extraire les infos de l'attaque (attaquant, cible, dégâts)
-            const damageMatch = actionText.match(/(\d+)\s*(?:dégâts|points)/i);
+            const damageMatch = actionText.match(/(\d+)\s*(?:dégâts|PV)/i);
             const damage = damageMatch ? parseInt(damageMatch[1]) : 50;
+            
+            // Extraire le nom de la cible attaquée depuis le texte
+            // Format : "XXX attaque YYY (-123 PV)"
+            const targetNameMatch = actionText.match(/attaque\s+(.+?)\s+\(/i);
+            const targetName = targetNameMatch ? targetNameMatch[1].trim() : null;
+            
+            console.log('🎯 Cible:', targetName, 'Dégâts:', damage);
             
             // Trouver les cartes sur le terrain
             const opponentCards = document.querySelectorAll('.battle-card[data-owner="opponent"]');
             const playerCards = document.querySelectorAll('.battle-card[data-owner="player"]');
             
+            console.log('🃏 Cartes IA:', opponentCards.length);
+            console.log('🎴 Cartes Joueur:', playerCards.length);
+            
             if (opponentCards.length === 0 || playerCards.length === 0) {
-                // Pas de cartes à animer
+                console.log('⚠️ Pas de cartes à animer');
                 return;
             }
             
             // Prendre la première carte IA comme attaquant
             const attackerCard = opponentCards[0];
             
-            // Prendre une carte joueur aléatoire comme cible
-            const targetCard = playerCards[Math.floor(Math.random() * playerCards.length)];
+            // Trouver la vraie carte ciblée par son nom
+            let targetCard = null;
+            if (targetName) {
+                // Méthode 1 : Recherche par dataset.name (plus fiable)
+                for (const card of playerCards) {
+                    if (card.dataset.name === targetName) {
+                        targetCard = card;
+                        console.log('✅ Carte trouvée par dataset:', targetName);
+                        break;
+                    }
+                }
+                
+                // Méthode 2 : Recherche par texte si pas trouvé
+                if (!targetCard) {
+                    for (const card of playerCards) {
+                        const cardNameElement = card.querySelector('.battle-card-name');
+                        if (cardNameElement && cardNameElement.textContent.trim() === targetName) {
+                            targetCard = card;
+                            console.log('✅ Carte trouvée par texte:', targetName);
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Fallback : prendre une carte aléatoire si pas trouvée
+            if (!targetCard) {
+                targetCard = playerCards[Math.floor(Math.random() * playerCards.length)];
+                console.log('⚠️ Carte non trouvée par nom, utilisation aléatoire');
+            }
             
             // Animation d'attaque
             await animations.attackAnimation(attackerCard, targetCard, {
@@ -1742,16 +1923,38 @@
             // Shake de la cible
             animations.shakeElement(targetCard, 12);
             
-            // Mettre à jour l'affichage
-            renderAll();
-            
-            // Vérifier si une carte est détruite
+            // Vérifier si une carte est détruite AVANT de render
             await sleep(200);
-            const targetIndex = parseInt(targetCard.dataset.index);
+            
+            // ✅ Chercher la carte par NOM au lieu d'index (plus fiable)
+            const targetCardName = targetCard.dataset.name;
+            console.log('🔍 Vérification destruction - Nom:', targetCardName);
+            
             const playerState = gameState.player;
-            if (playerState.field[targetIndex] && playerState.field[targetIndex].current_hp <= 0) {
+            
+            // Trouver la carte dans le field par son nom
+            let cardData = null;
+            for (const card of playerState.field) {
+                if (card.name === targetCardName) {
+                    cardData = card;
+                    break;
+                }
+            }
+            
+            console.log('📊 Données carte:', cardData);
+            
+            const cardWillBeDestroyed = cardData && cardData.current_hp <= 0;
+            console.log('💀 Carte sera détruite ?', cardWillBeDestroyed);
+            
+            if (cardWillBeDestroyed) {
+                // Carte va mourir - faire l'animation AVANT renderAll
+                console.log('🔥 IA détruit une carte du joueur - animation...', targetCard);
                 await animations.destroyCardAnimation(targetCard);
-                await sleep(300);
+                console.log('✅ Animation IA terminée');
+                // Pas de renderAll ici - l'animation a géré la suppression
+            } else {
+                // Carte survit - on peut render normalement
+                console.log('💚 Carte survit - render normal');
                 renderAll();
             }
         }
