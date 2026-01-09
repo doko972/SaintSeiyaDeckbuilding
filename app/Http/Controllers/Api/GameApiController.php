@@ -157,7 +157,7 @@ class GameApiController extends Controller
         }
 
         // Déterminer l'attaque
-        $attack = match($attackType) {
+        $attack = match ($attackType) {
             'main' => $attacker['main_attack'] ?? null,
             'secondary1' => $attacker['secondary_attack_1'] ?? null,
             'secondary2' => $attacker['secondary_attack_2'] ?? null,
@@ -186,20 +186,24 @@ class GameApiController extends Controller
         // Calculer les dégâts
         $damage = max(0, $attack['damage'] + ($attacker['power'] ?? 0) - ($target['defense'] ?? 0));
 
+        // ✅ SAUVEGARDER les infos de la cible AVANT modification
+        $targetName = $target['name'];
+        $targetWillDie = ($target['current_hp'] - $damage) <= 0;
+
         // Appliquer les dégâts
         $target['current_hp'] -= $damage;
         $attacker['current_endurance'] -= $attack['endurance_cost'];
         $state['player']['cosmos'] -= $attack['cosmos_cost'];
         $attacker['has_attacked'] = true;
 
-        $message = "{$attacker['name']} utilise {$attack['name']} sur {$target['name']} (-{$damage} PV)";
+        $message = "{$attacker['name']} utilise {$attack['name']} sur {$targetName} (-{$damage} PV)";
         $battleEnded = false;
         $winner = null;
 
         // Vérifier si la cible est morte
-        if ($target['current_hp'] <= 0) {
+        if ($targetWillDie) {
             array_splice($state['opponent']['field'], $targetIndex, 1);
-            $message .= " - {$target['name']} est vaincu !";
+            $message .= " - {$targetName} est vaincu !";
 
             // Vérifier victoire
             if (empty($state['opponent']['field']) && empty($state['opponent']['hand']) && empty($state['opponent']['deck'])) {
@@ -211,6 +215,8 @@ class GameApiController extends Controller
         return response()->json([
             'success' => true,
             'damage' => $damage,
+            'target_destroyed' => $targetWillDie,
+            'target_name' => $targetName,
             'message' => $message,
             'battle_ended' => $battleEnded,
             'winner' => $winner,
@@ -218,77 +224,80 @@ class GameApiController extends Controller
         ]);
     }
 
-    /**
-     * Fin du tour
-     */
-    public function endTurn(Request $request): JsonResponse
-    {
-        $request->validate([
-            'battle_state' => 'required|array',
-        ]);
+/**
+ * Fin du tour
+ */
+public function endTurn(Request $request): JsonResponse
+{
+    $request->validate([
+        'battle_state' => 'required|array',
+    ]);
 
-        $state = $request->battle_state;
-        $aiActions = [];
+    $state = $request->battle_state;
+    $aiActions = [];
+    $destroyedCards = []; // ✅ NOUVEAU
 
-        // Tour de l'IA
-        // 1. L'IA pioche
-        if (!empty($state['opponent']['deck'])) {
-            $drawnCard = array_shift($state['opponent']['deck']);
-            $state['opponent']['hand'][] = $drawnCard;
-            $aiActions[] = "L'adversaire pioche une carte";
-        }
-
-        // 2. L'IA gagne du cosmos
-        $state['opponent']['max_cosmos'] = min(10, $state['opponent']['max_cosmos'] + 1);
-        $state['opponent']['cosmos'] = $state['opponent']['max_cosmos'];
-
-        // 3. L'IA joue des cartes
-        $state = $this->aiPlayCards($state);
-        if (count($state['opponent']['field']) > 0) {
-            $aiActions[] = "L'adversaire déploie ses forces";
-        }
-
-        // 4. L'IA attaque
-        $attackResults = $this->aiAttack($state);
-        $state = $attackResults['state'];
-        $aiActions = array_merge($aiActions, $attackResults['actions']);
-
-        // Vérifier défaite du joueur
-        $battleEnded = false;
-        $winner = null;
-        
-        if (empty($state['player']['field']) && empty($state['player']['hand']) && empty($state['player']['deck'])) {
-            $battleEnded = true;
-            $winner = 'opponent';
-        }
-
-        // Nouveau tour du joueur
-        $state['turn']++;
-        
-        // Joueur pioche
-        if (!empty($state['player']['deck'])) {
-            $drawnCard = array_shift($state['player']['deck']);
-            $state['player']['hand'][] = $drawnCard;
-        }
-
-        // Joueur gagne du cosmos
-        $state['player']['max_cosmos'] = min(10, $state['player']['max_cosmos'] + 1);
-        $state['player']['cosmos'] = $state['player']['max_cosmos'];
-
-        // Reset attaques et endurance des cartes du joueur
-        foreach ($state['player']['field'] as &$card) {
-            $card['has_attacked'] = false;
-            $card['current_endurance'] = min($card['endurance'], $card['current_endurance'] + 30);
-        }
-
-        return response()->json([
-            'success' => true,
-            'ai_actions' => $aiActions,
-            'battle_ended' => $battleEnded,
-            'winner' => $winner,
-            'battle_state' => $state,
-        ]);
+    // Tour de l'IA
+    // 1. L'IA pioche
+    if (!empty($state['opponent']['deck'])) {
+        $drawnCard = array_shift($state['opponent']['deck']);
+        $state['opponent']['hand'][] = $drawnCard;
+        $aiActions[] = "L'adversaire pioche une carte";
     }
+
+    // 2. L'IA gagne du cosmos
+    $state['opponent']['max_cosmos'] = min(10, $state['opponent']['max_cosmos'] + 1);
+    $state['opponent']['cosmos'] = $state['opponent']['max_cosmos'];
+
+    // 3. L'IA joue des cartes
+    $state = $this->aiPlayCards($state);
+    if (count($state['opponent']['field']) > 0) {
+        $aiActions[] = "L'adversaire déploie ses forces";
+    }
+
+    // 4. L'IA attaque
+    $attackResults = $this->aiAttack($state);
+    $state = $attackResults['state'];
+    $aiActions = array_merge($aiActions, $attackResults['actions']);
+    $destroyedCards = $attackResults['destroyed_cards'] ?? []; // ✅ NOUVEAU
+
+    // Vérifier défaite du joueur
+    $battleEnded = false;
+    $winner = null;
+    
+    if (empty($state['player']['field']) && empty($state['player']['hand']) && empty($state['player']['deck'])) {
+        $battleEnded = true;
+        $winner = 'opponent';
+    }
+
+    // Nouveau tour du joueur
+    $state['turn']++;
+    
+    // Joueur pioche
+    if (!empty($state['player']['deck'])) {
+        $drawnCard = array_shift($state['player']['deck']);
+        $state['player']['hand'][] = $drawnCard;
+    }
+
+    // Joueur gagne du cosmos
+    $state['player']['max_cosmos'] = min(10, $state['player']['max_cosmos'] + 1);
+    $state['player']['cosmos'] = $state['player']['max_cosmos'];
+
+    // Reset attaques et endurance des cartes du joueur
+    foreach ($state['player']['field'] as &$card) {
+        $card['has_attacked'] = false;
+        $card['current_endurance'] = min($card['endurance'], $card['current_endurance'] + 30);
+    }
+
+    return response()->json([
+        'success' => true,
+        'ai_actions' => $aiActions,
+        'destroyed_cards' => $destroyedCards, // ✅ NOUVEAU
+        'battle_ended' => $battleEnded,
+        'winner' => $winner,
+        'battle_state' => $state,
+    ]);
+}
 
     /**
      * Réclamer la récompense
@@ -303,13 +312,13 @@ class GameApiController extends Controller
         $reward = $request->victory ? 100 : 25;
 
         $user->coins += $reward;
-        
+
         if ($request->victory) {
             $user->wins++;
         } else {
             $user->losses++;
         }
-        
+
         $user->save();
 
         return response()->json([
@@ -325,10 +334,10 @@ class GameApiController extends Controller
     private function prepareDeck($cards): array
     {
         $deck = [];
-        
+
         foreach ($cards as $card) {
             $quantity = $card->pivot->quantity ?? 1;
-            
+
             for ($i = 0; $i < $quantity; $i++) {
                 $deck[] = [
                     'id' => $card->id,
@@ -393,7 +402,8 @@ class GameApiController extends Controller
                 }
             }
 
-            if ($playableIndex === null) break;
+            if ($playableIndex === null)
+                break;
 
             $card = $state['opponent']['hand'][$playableIndex];
             $card['current_hp'] = $card['max_hp'];
@@ -408,75 +418,88 @@ class GameApiController extends Controller
         return $state;
     }
 
-    /**
-     * IA attaque
-     * 🔧 CORRIGÉ : L'IA doit maintenant payer le cosmos pour attaquer !
-     */
-    private function aiAttack(array $state): array
-    {
-        $actions = [];
+/**
+ * IA attaque
+ */
+private function aiAttack(array $state): array
+{
+    $actions = [];
+    $destroyedCards = []; // ✅ NOUVEAU : tracker les cartes détruites
 
-        if (empty($state['player']['field'])) {
-            return ['state' => $state, 'actions' => $actions];
+    if (empty($state['player']['field'])) {
+        return ['state' => $state, 'actions' => $actions, 'destroyed_cards' => $destroyedCards];
+    }
+
+    foreach ($state['opponent']['field'] as &$attacker) {
+        if ($attacker['has_attacked']) continue;
+        if (empty($state['player']['field'])) break;
+
+        // Choisir une cible (la plus faible)
+        $targetIndex = 0;
+        $lowestHp = $state['player']['field'][0]['current_hp'];
+        
+        foreach ($state['player']['field'] as $i => $target) {
+            if ($target['current_hp'] < $lowestHp) {
+                $lowestHp = $target['current_hp'];
+                $targetIndex = $i;
+            }
         }
 
-        foreach ($state['opponent']['field'] as &$attacker) {
-            if ($attacker['has_attacked']) continue;
-            if (empty($state['player']['field'])) break;
+        $target = &$state['player']['field'][$targetIndex];
+        
+        // ✅ SAUVEGARDER le nom de la cible AVANT modification
+        $targetName = $target['name'];
+        
+        // Choisir l'attaque (main ou attaque basique)
+        $attack = $attacker['main_attack'] ?? [
+            'name' => 'Attaque', 
+            'damage' => 50, 
+            'endurance_cost' => 20, 
+            'cosmos_cost' => 0
+        ];
+        
+        // Vérifier l'endurance
+        if ($attacker['current_endurance'] < $attack['endurance_cost']) {
+            continue;
+        }
 
-            // Choisir une cible (la plus faible)
-            $targetIndex = 0;
-            $lowestHp = $state['player']['field'][0]['current_hp'];
-            
-            foreach ($state['player']['field'] as $i => $target) {
-                if ($target['current_hp'] < $lowestHp) {
-                    $lowestHp = $target['current_hp'];
-                    $targetIndex = $i;
-                }
-            }
+        // Vérifier le cosmos
+        if ($state['opponent']['cosmos'] < $attack['cosmos_cost']) {
+            continue;
+        }
 
-            $target = &$state['player']['field'][$targetIndex];
-            
-            // Choisir l'attaque (main ou attaque basique)
-            $attack = $attacker['main_attack'] ?? [
-                'name' => 'Attaque', 
-                'damage' => 50, 
-                'endurance_cost' => 20, 
-                'cosmos_cost' => 0
+        $damage = max(0, $attack['damage'] + ($attacker['power'] ?? 0) - ($target['defense'] ?? 0));
+        
+        // ✅ Vérifier si la cible va mourir AVANT d'appliquer les dégâts
+        $targetWillDie = ($target['current_hp'] - $damage) <= 0;
+        
+        $target['current_hp'] -= $damage;
+        $attacker['current_endurance'] -= $attack['endurance_cost'];
+        $state['opponent']['cosmos'] -= $attack['cosmos_cost'];
+        $attacker['has_attacked'] = true;
+
+        $actions[] = "{$attacker['name']} attaque {$targetName} (-{$damage} PV)";
+
+        // Vérifier si cible morte
+        if ($targetWillDie) {
+            // ✅ NOUVEAU : Ajouter aux cartes détruites AVANT de retirer du tableau
+            $destroyedCards[] = [
+                'name' => $targetName,
+                'index' => $targetIndex,
+                'owner' => 'player'
             ];
             
-            // ✅ Vérifier l'endurance
-            if ($attacker['current_endurance'] < $attack['endurance_cost']) {
-                continue;
-            }
-
-            // ✅ FIX DU BUG : Vérifier le cosmos !
-            if ($state['opponent']['cosmos'] < $attack['cosmos_cost']) {
-                continue; // Pas assez de cosmos, skip cette attaque
-            }
-
-            $damage = max(0, $attack['damage'] + ($attacker['power'] ?? 0) - ($target['defense'] ?? 0));
-            
-            $target['current_hp'] -= $damage;
-            $attacker['current_endurance'] -= $attack['endurance_cost'];
-            $state['opponent']['cosmos'] -= $attack['cosmos_cost']; // ✅ L'IA PAYE maintenant !
-            $attacker['has_attacked'] = true;
-
-            $actions[] = "{$attacker['name']} attaque {$target['name']} (-{$damage} PV)";
-
-            // Vérifier si cible morte
-            if ($target['current_hp'] <= 0) {
-                array_splice($state['player']['field'], $targetIndex, 1);
-                $actions[] = "{$target['name']} est vaincu !";
-            }
+            array_splice($state['player']['field'], $targetIndex, 1);
+            $actions[] = "{$targetName} est vaincu !";
         }
-
-        // Reset pour prochain tour
-        foreach ($state['opponent']['field'] as &$card) {
-            $card['has_attacked'] = false;
-            $card['current_endurance'] = min($card['endurance'], $card['current_endurance'] + 30);
-        }
-
-        return ['state' => $state, 'actions' => $actions];
     }
+
+    // Reset pour prochain tour
+    foreach ($state['opponent']['field'] as &$card) {
+        $card['has_attacked'] = false;
+        $card['current_endurance'] = min($card['endurance'], $card['current_endurance'] + 30);
+    }
+
+    return ['state' => $state, 'actions' => $actions, 'destroyed_cards' => $destroyedCards];
+}
 }

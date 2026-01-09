@@ -127,6 +127,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            text-decoration: none;
         }
 
         .quit-btn:hover {
@@ -557,6 +558,7 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            color: white;
         }
 
         .attack-btn:hover:not(:disabled) {
@@ -920,8 +922,8 @@
                         (🌟 <span id="playerCosmosAlt">0</span>/<span id="playerMaxCosmosAlt">0</span>)
                     </span>
                 </span>
-                <div class="cosmos-display" style="display: flex !important; visibility: visible !important; opacity: 1 !important;">
-                    🌟 <span id="playerCosmos" style="color: #E9D5FF; font-weight: 800;">0</span> / <span id="playerMaxCosmos" style="color: #E9D5FF; font-weight: 800;">0</span>
+                <div class="cosmos-display">
+                    🌟 <span id="playerCosmos">0</span> / <span id="playerMaxCosmos">0</span>
                 </div>
             </div>
             <div class="player-hand" id="playerHand">
@@ -967,7 +969,9 @@
     </div>
 
     <script>
-        // Configuration
+        // ========================================
+        // CONFIGURATION
+        // ========================================
         const deckId = {{ $deck->id }};
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
         
@@ -977,8 +981,11 @@
         let selectedAttack = null;
         let phase = 'idle'; // idle, selectingAttacker, selectingAttack, selectingTarget
 
-        // Instance des animations (temporaire inline)
+        // ========================================
+        // SYSTÈME D'ANIMATIONS
+        // ========================================
         const animations = {
+            // Animation de jeu d'une carte
             playCardAnimation: async function(cardElement, targetPos) {
                 return new Promise((resolve) => {
                     const clone = cardElement.cloneNode(true);
@@ -990,6 +997,7 @@
                     clone.style.width = startRect.width + 'px';
                     document.body.appendChild(clone);
                     cardElement.style.opacity = '0';
+                    
                     setTimeout(() => {
                         clone.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
                         clone.style.left = targetPos.x + 'px';
@@ -997,6 +1005,7 @@
                         clone.style.transform = 'scale(1.1) rotateY(360deg)';
                         clone.style.boxShadow = '0 0 30px rgba(16, 185, 129, 0.8)';
                     }, 50);
+                    
                     setTimeout(() => {
                         clone.remove();
                         cardElement.style.opacity = '1';
@@ -1005,6 +1014,7 @@
                 });
             },
             
+            // Animation d'attaque
             attackAnimation: async function(attackerCard, targetCard, attackData) {
                 return new Promise(async (resolve) => {
                     const clone = attackerCard.cloneNode(true);
@@ -1043,6 +1053,7 @@
                 });
             },
             
+            // Afficher les dégâts
             showDamage: function(targetElement, damage, type = 'damage') {
                 const rect = targetElement.getBoundingClientRect();
                 const x = rect.left + rect.width / 2;
@@ -1062,15 +1073,18 @@
                     transform: translate(-50%, -50%);
                 `;
                 document.body.appendChild(damageText);
+                
                 setTimeout(() => {
                     damageText.style.transition = 'all 1s ease-out';
                     damageText.style.top = (y - 100) + 'px';
                     damageText.style.opacity = '0';
                     damageText.style.transform = 'translate(-50%, -50%) scale(1.5)';
                 }, 50);
+                
                 setTimeout(() => damageText.remove(), 1100);
             },
             
+            // Secouer un élément
             shakeElement: function(element) {
                 const keyframes = [
                     { transform: 'translateX(0)' },
@@ -1083,6 +1097,7 @@
                 element.animate(keyframes, { duration: 400, easing: 'ease-in-out' });
             },
             
+            // Flash sur un élément
             flashElement: function(element, color = '#FFFFFF') {
                 const overlay = document.createElement('div');
                 overlay.style.cssText = `
@@ -1096,13 +1111,16 @@
                 `;
                 element.style.position = 'relative';
                 element.appendChild(overlay);
+                
                 setTimeout(() => {
                     overlay.style.transition = 'opacity 0.3s';
                     overlay.style.opacity = '0';
                 }, 50);
+                
                 setTimeout(() => overlay.remove(), 400);
             },
             
+            // ✅ ANIMATION DE DESTRUCTION SPECTACULAIRE
             destroyCardAnimation: async function(cardElement) {
                 console.log('💥 destroyCardAnimation appelée', cardElement);
                 
@@ -1131,7 +1149,7 @@
                     console.log('💥 Phase 2: Impact');
                     // Phase 2 : Impact violent - 0.3s
                     this.flashElement(cardElement, '#FFFFFF');
-                    this.shakeElement(cardElement, 20);
+                    this.shakeElement(cardElement);
                     
                     await new Promise(r => setTimeout(r, 200));
                     
@@ -1154,9 +1172,9 @@
                         this.createSmokeEffect(centerX, centerY);
                     }, 400);
                     
-                    // Cleanup
+                    // Cleanup après animation complète
                     setTimeout(() => {
-                        console.log('🗑️ Cleanup - suppression de la carte');
+                        console.log('🗑️ Cleanup - suppression de la carte du DOM');
                         cardElement.remove();
                         resolve();
                     }, 1200);
@@ -1191,7 +1209,6 @@
                         
                         document.body.appendChild(particle);
                         
-                        // Animation de la particule
                         setTimeout(() => {
                             const targetX = x + Math.cos(angle) * velocity;
                             const targetY = y + Math.sin(angle) * velocity + (Math.random() * 50);
@@ -1243,6 +1260,7 @@
                 }
             },
             
+            // Animation de pioche
             drawCardAnimation: async function(startPos, endPos) {
                 return new Promise((resolve) => {
                     const cardBack = document.createElement('div');
@@ -1274,6 +1292,7 @@
                 });
             },
             
+            // Créer des étincelles
             createSparkles: function(x, y, color = '#FFD700') {
                 for (let i = 0; i < 12; i++) {
                     setTimeout(() => {
@@ -1311,12 +1330,16 @@
             }
         };
 
-        // Initialisation
+        // ========================================
+        // INITIALISATION
+        // ========================================
         document.addEventListener('DOMContentLoaded', () => {
             initBattle();
         });
 
-        // API calls
+        // ========================================
+        // API CALLS
+        // ========================================
         async function apiCall(endpoint, method = 'POST', body = {}) {
             showLoading();
             try {
@@ -1347,7 +1370,9 @@
             }
         }
 
-        // Initialiser le combat
+        // ========================================
+        // INITIALISER LE COMBAT
+        // ========================================
         async function initBattle() {
             try {
                 const data = await apiCall('init-battle', 'POST', { deck_id: deckId });
@@ -1359,7 +1384,9 @@
             }
         }
 
-        // Rendu complet
+        // ========================================
+        // RENDU COMPLET
+        // ========================================
         function renderAll() {
             renderOpponentField();
             renderPlayerField();
@@ -1413,13 +1440,15 @@
             });
         }
 
-        // Créer une carte de combat
+        // ========================================
+        // CRÉATION DES CARTES
+        // ========================================
         function createBattleCard(card, index, owner) {
             const div = document.createElement('div');
             div.className = 'battle-card';
             div.dataset.index = index;
             div.dataset.owner = owner;
-            div.dataset.name = card.name; // Ajout pour faciliter la recherche
+            div.dataset.name = card.name;
             
             if (card.faction) {
                 div.style.setProperty('--color1', card.faction.color_primary || '#333');
@@ -1459,7 +1488,6 @@
             return div;
         }
 
-        // Créer une carte de main
         function createHandCard(card, index) {
             const div = document.createElement('div');
             div.className = 'hand-card';
@@ -1492,9 +1520,10 @@
             return div;
         }
 
-        // Jouer une carte avec animation
+        // ========================================
+        // JOUER UNE CARTE
+        // ========================================
         async function playCard(index, cardElement) {
-            // Position cible (centre du terrain joueur)
             const fieldZone = document.getElementById('playerField');
             const fieldRect = fieldZone.getBoundingClientRect();
             const targetPos = {
@@ -1502,7 +1531,6 @@
                 y: fieldRect.top + (fieldRect.height / 2) - 90
             };
 
-            // Animation de la carte
             await animations.playCardAnimation(cardElement, targetPos);
 
             try {
@@ -1520,7 +1548,9 @@
             }
         }
 
-        // Sélectionner un attaquant
+        // ========================================
+        // SÉLECTION D'ATTAQUANT
+        // ========================================
         function selectAttacker(index) {
             const card = gameState.player.field[index];
             if (!card || card.has_attacked) {
@@ -1534,13 +1564,11 @@
             renderAll();
         }
 
-        // Afficher le panneau d'attaque
         function showAttackPanel(card) {
             const panel = document.getElementById('actionPanel');
             const list = document.getElementById('attackList');
             list.innerHTML = '';
             
-            // Attaque principale (toujours disponible)
             const mainAttack = card.main_attack || {
                 name: 'Attaque de base',
                 damage: 40 + (card.power || 0),
@@ -1558,7 +1586,6 @@
                 }
             ];
 
-            // Attaques secondaires si disponibles
             if (card.secondary_attack_1) {
                 attacks.push({ 
                     key: 'secondary1', 
@@ -1605,7 +1632,6 @@
             panel.classList.add('visible');
         }
 
-        // Sélectionner une attaque
         function selectAttack(attackKey) {
             selectedAttack = attackKey;
             phase = 'selectingTarget';
@@ -1614,9 +1640,11 @@
             renderAll();
         }
 
-        // Sélectionner une cible avec animation
+        // ========================================
+        // ✅ SÉLECTION DE CIBLE - CORRIGÉE
+        // ========================================
         async function selectTarget(targetIndex) {
-            // Récupérer les éléments
+            // Récupérer les éléments AVANT l'appel API
             const attackerCard = document.querySelector(`.battle-card[data-owner="player"][data-index="${selectedAttacker}"]`);
             const targetCard = document.querySelector(`.battle-card[data-owner="opponent"][data-index="${targetIndex}"]`);
 
@@ -1629,7 +1657,7 @@
             // Animation d'attaque
             const card = gameState.player.field[selectedAttacker];
             const attackData = {
-                element: 'fire', // TODO: récupérer l'élément réel
+                element: 'fire',
                 damage: card.main_attack?.damage || 50
             };
 
@@ -1649,31 +1677,38 @@
                     animations.showDamage(targetCard, data.damage, 'damage');
                 }
 
-                gameState = data.battle_state;
                 addLogEntry(`⚔️ ${data.message}`, 'damage');
 
-                // Vérifier si la carte cible est morte
-                const opponentCard = gameState.opponent.field[targetIndex];
-                const cardWasDestroyed = opponentCard && opponentCard.current_hp <= 0;
+                // ✅ VÉRIFIER LA DESTRUCTION AVEC LE FLAG DE L'API
+                const cardWasDestroyed = data.target_destroyed === true;
                 
-                if (cardWasDestroyed) {
-                    console.log('🔥 Carte détruite, lancement animation...', targetCard);
+                console.log('💀 Carte détruite ?', cardWasDestroyed, 'target_destroyed:', data.target_destroyed);
+
+                if (cardWasDestroyed && targetCard) {
+                    console.log('🔥 Carte détruite, lancement animation...');
+                    // ✅ ATTENDRE que l'animation soit COMPLÈTE avant de mettre à jour gameState
                     await animations.destroyCardAnimation(targetCard);
                     console.log('✅ Animation terminée');
                 }
 
+                // ✅ METTRE À JOUR gameState APRÈS l'animation
+                gameState = data.battle_state;
+
                 // Vérifier fin de partie
                 if (data.battle_ended) {
                     endGame(data.winner === 'player');
-                    return; // Ne pas continuer si fin de partie
+                    return;
                 }
 
-                // Skip render si carte détruite (l'animation l'a déjà supprimée)
+                // Reset sélection et render
                 cancelSelection(cardWasDestroyed);
                 
-                // Render seulement si carte pas détruite
+                // Render seulement si carte pas détruite (l'animation l'a déjà supprimée)
                 if (!cardWasDestroyed) {
                     renderAll();
+                } else {
+                    // Render après un petit délai pour que le DOM soit stable
+                    setTimeout(() => renderAll(), 100);
                 }
             } catch (error) {
                 console.error('Attack failed:', error);
@@ -1681,7 +1716,9 @@
             }
         }
 
-        // Annuler la sélection
+        // ========================================
+        // ANNULER LA SÉLECTION
+        // ========================================
         function cancelSelection(skipRender = false) {
             selectedAttacker = null;
             selectedAttack = null;
@@ -1692,103 +1729,112 @@
             }
         }
 
-        // Fin du tour
-        async function endTurn() {
-            try {
-                const data = await apiCall('end-turn', 'POST', {
-                    deck_id: deckId,
-                    battle_state: gameState
-                });
+ // ========================================
+// FIN DU TOUR
+// ========================================
+async function endTurn() {
+    try {
+        // ✅ SAUVEGARDER les références des cartes du joueur AVANT l'appel API
+        const playerCardElements = {};
+        document.querySelectorAll('.battle-card[data-owner="player"]').forEach(card => {
+            playerCardElements[card.dataset.name] = card;
+        });
+        
+        const data = await apiCall('end-turn', 'POST', {
+            deck_id: deckId,
+            battle_state: gameState
+        });
 
-                gameState = data.battle_state;
-                
-                addLogEntry('⏭️ Fin de votre tour', 'turn');
-                
-                // ✅ NE PAS RENDER ICI ! Les cartes sont déjà dans le DOM
-                // Les animations vont travailler sur le DOM existant
-                
-                // Animer les actions IA
-                if (data.ai_actions) {
-                    addLogEntry('🤖 Tour de l\'IA...', 'turn');
-                    await sleep(800);
-                    
-                    for (const action of data.ai_actions) {
-                        await animateAIAction(action);
-                        await sleep(600);
-                    }
-                }
-
-                addLogEntry(`🔄 Tour ${gameState.turn} - Votre tour !`, 'turn');
-
-                // Vérifier fin de partie
-                if (data.battle_ended) {
-                    endGame(data.winner === 'player');
-                }
-
-                // ✅ Render UNE SEULE FOIS à la fin (après toutes les animations)
-                renderAll();
-            } catch (error) {
-                console.error('End turn failed:', error);
-            }
-        }
-
-        // Animer une action de l'IA
-        async function animateAIAction(actionText) {
-            console.log('AI Action:', actionText);
+        // ✅ NE PAS mettre à jour gameState tout de suite !
+        // On garde l'ancien state pour les animations
+        
+        addLogEntry('⏭️ Fin de votre tour', 'turn');
+        
+        // Animer les actions IA
+        if (data.ai_actions && data.ai_actions.length > 0) {
+            addLogEntry('🤖 Tour de l\'IA...', 'turn');
+            await sleep(800);
             
-            // Parser l'action pour identifier le type
-            if (actionText.includes('pioche') || actionText.includes('tire')) {
-                // Animation de pioche
-                await animateAIDraw();
-                addLogEntry(`🤖 ${actionText}`, 'info');
-            }
-            else if (actionText.includes('joue') || actionText.includes('invoque')) {
-                // Animation de jeu de carte
-                const cardName = extractCardName(actionText);
-                await animateAIPlayCard(cardName);
-                addLogEntry(`🤖 ${actionText}`, 'info');
-            }
-            else if (actionText.includes('attaque') || actionText.includes('inflige')) {
-                // Animation d'attaque
-                await animateAIAttack(actionText);
-                addLogEntry(`🤖 ${actionText}`, 'damage');
-            }
-            else if (actionText.includes('déploie')) {
-                // Juste afficher dans le log
-                addLogEntry(`🤖 ${actionText}`, 'info');
-                renderAll();
-                await sleep(400);
-            }
-            else {
-                // Action générique
-                addLogEntry(`🤖 ${actionText}`, 'info');
+            for (const action of data.ai_actions) {
+                // ✅ Vérifier si cette action correspond à une destruction
+                const destroyedCard = data.destroyed_cards?.find(dc => 
+                    action.includes(dc.name) && action.includes('vaincu')
+                );
+                
+                await animateAIAction(action, playerCardElements, destroyedCard);
+                await sleep(600);
             }
         }
 
-        // Extraire le nom de la carte du texte d'action
+        // ✅ MAINTENANT on met à jour gameState après toutes les animations
+        gameState = data.battle_state;
+
+        addLogEntry(`🔄 Tour ${gameState.turn} - Votre tour !`, 'turn');
+
+        // Vérifier fin de partie
+        if (data.battle_ended) {
+            endGame(data.winner === 'player');
+            return;
+        }
+
+        // Render à la fin
+        renderAll();
+    } catch (error) {
+        console.error('End turn failed:', error);
+    }
+}
+
+// ========================================
+// ANIMATIONS IA
+// ========================================
+async function animateAIAction(actionText, playerCardElements = {}, destroyedCard = null) {
+    console.log('AI Action:', actionText, 'Destroyed:', destroyedCard);
+    
+    if (actionText.includes('pioche') || actionText.includes('tire')) {
+        await animateAIDraw();
+        addLogEntry(`🤖 ${actionText}`, 'info');
+    }
+    else if (actionText.includes('joue') || actionText.includes('invoque')) {
+        const cardName = extractCardName(actionText);
+        await animateAIPlayCard(cardName);
+        addLogEntry(`🤖 ${actionText}`, 'info');
+    }
+    else if (actionText.includes('attaque') || actionText.includes('inflige')) {
+        await animateAIAttack(actionText, playerCardElements);
+        addLogEntry(`🤖 ${actionText}`, 'damage');
+    }
+    else if (actionText.includes('vaincu') && destroyedCard) {
+        // ✅ Animation de destruction pour la carte vaincue
+        const targetCard = playerCardElements[destroyedCard.name];
+        if (targetCard && targetCard.parentNode) {
+            console.log('🔥 Carte vaincue, animation de destruction:', destroyedCard.name);
+            await animations.destroyCardAnimation(targetCard);
+        }
+        addLogEntry(`🤖 ${actionText}`, 'damage');
+    }
+    else if (actionText.includes('déploie')) {
+        addLogEntry(`🤖 ${actionText}`, 'info');
+        await sleep(400);
+    }
+    else {
+        addLogEntry(`🤖 ${actionText}`, 'info');
+    }
+}
+
         function extractCardName(text) {
-            // Chercher le texte entre guillemets ou après "joue"
             const match = text.match(/joue (.+)/i) || text.match(/"(.+)"/) || text.match(/invoque (.+)/i);
             return match ? match[1].trim() : 'une carte';
         }
 
-        // Animation : IA pioche une carte
         async function animateAIDraw() {
             const opponentField = document.getElementById('opponentField');
             const rect = opponentField.getBoundingClientRect();
-            
-            // Position de départ (deck IA - en haut à gauche)
             const startPos = { x: 100, y: 100 };
-            
-            // Position d'arrivée (zone main IA - invisible)
             const endPos = { x: rect.left + 50, y: rect.top - 100 };
-            
             await animations.drawCardAnimation(startPos, endPos);
         }
 
-        // Animation : IA joue une carte
         async function animateAIPlayCard(cardName) {
-            // Créer une carte temporaire pour l'animation
             const tempCard = document.createElement('div');
             tempCard.className = 'battle-card';
             tempCard.style.position = 'fixed';
@@ -1811,14 +1857,12 @@
             const opponentField = document.getElementById('opponentField');
             const fieldRect = opponentField.getBoundingClientRect();
             
-            // Position de départ (main IA - en haut)
             tempCard.style.left = (fieldRect.left - 100) + 'px';
             tempCard.style.top = '50px';
             tempCard.style.opacity = '0';
             
             document.body.appendChild(tempCard);
             
-            // Animation d'apparition et descente
             setTimeout(() => {
                 tempCard.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
                 tempCard.style.left = (fieldRect.left + fieldRect.width / 2 - 70) + 'px';
@@ -1829,7 +1873,6 @@
             
             await sleep(500);
             
-            // Sparkles
             animations.createSparkles(
                 fieldRect.left + fieldRect.width / 2, 
                 fieldRect.top + fieldRect.height / 2, 
@@ -1838,128 +1881,75 @@
             
             await sleep(300);
             
-            // Transition vers la vraie carte
             tempCard.style.transition = 'all 0.3s ease-out';
             tempCard.style.transform = 'scale(1)';
             
             await sleep(300);
             
             tempCard.remove();
-            
-            // Afficher la vraie carte
             renderAll();
         }
 
-        // Animation : IA attaque
-        async function animateAIAttack(actionText) {
-            console.log('🤖 Animation attaque IA:', actionText);
-            
-            // Extraire les infos de l'attaque (attaquant, cible, dégâts)
-            const damageMatch = actionText.match(/(\d+)\s*(?:dégâts|PV)/i);
-            const damage = damageMatch ? parseInt(damageMatch[1]) : 50;
-            
-            // Extraire le nom de la cible attaquée depuis le texte
-            // Format : "XXX attaque YYY (-123 PV)"
-            const targetNameMatch = actionText.match(/attaque\s+(.+?)\s+\(/i);
-            const targetName = targetNameMatch ? targetNameMatch[1].trim() : null;
-            
-            console.log('🎯 Cible:', targetName, 'Dégâts:', damage);
-            
-            // Trouver les cartes sur le terrain
-            const opponentCards = document.querySelectorAll('.battle-card[data-owner="opponent"]');
-            const playerCards = document.querySelectorAll('.battle-card[data-owner="player"]');
-            
-            console.log('🃏 Cartes IA:', opponentCards.length);
-            console.log('🎴 Cartes Joueur:', playerCards.length);
-            
-            if (opponentCards.length === 0 || playerCards.length === 0) {
-                console.log('⚠️ Pas de cartes à animer');
-                return;
-            }
-            
-            // Prendre la première carte IA comme attaquant
-            const attackerCard = opponentCards[0];
-            
-            // Trouver la vraie carte ciblée par son nom
-            let targetCard = null;
-            if (targetName) {
-                // Méthode 1 : Recherche par dataset.name (plus fiable)
-                for (const card of playerCards) {
-                    if (card.dataset.name === targetName) {
-                        targetCard = card;
-                        console.log('✅ Carte trouvée par dataset:', targetName);
-                        break;
-                    }
-                }
-                
-                // Méthode 2 : Recherche par texte si pas trouvé
-                if (!targetCard) {
-                    for (const card of playerCards) {
-                        const cardNameElement = card.querySelector('.battle-card-name');
-                        if (cardNameElement && cardNameElement.textContent.trim() === targetName) {
-                            targetCard = card;
-                            console.log('✅ Carte trouvée par texte:', targetName);
-                            break;
-                        }
-                    }
-                }
-            }
-            
-            // Fallback : prendre une carte aléatoire si pas trouvée
-            if (!targetCard) {
-                targetCard = playerCards[Math.floor(Math.random() * playerCards.length)];
-                console.log('⚠️ Carte non trouvée par nom, utilisation aléatoire');
-            }
-            
-            // Animation d'attaque
-            await animations.attackAnimation(attackerCard, targetCard, {
-                element: 'fire',
-                damage: damage
-            });
-            
-            // Afficher les dégâts
-            animations.showDamage(targetCard, damage, 'damage');
-            
-            // Shake de la cible
-            animations.shakeElement(targetCard, 12);
-            
-            // Vérifier si une carte est détruite AVANT de render
-            await sleep(200);
-            
-            // ✅ Chercher la carte par NOM au lieu d'index (plus fiable)
-            const targetCardName = targetCard.dataset.name;
-            console.log('🔍 Vérification destruction - Nom:', targetCardName);
-            
-            const playerState = gameState.player;
-            
-            // Trouver la carte dans le field par son nom
-            let cardData = null;
-            for (const card of playerState.field) {
-                if (card.name === targetCardName) {
-                    cardData = card;
+        async function animateAIAttack(actionText, playerCardElements = {}) {
+    console.log('🤖 Animation attaque IA:', actionText);
+    
+    const damageMatch = actionText.match(/(\d+)\s*(?:dégâts|PV)/i);
+    const damage = damageMatch ? parseInt(damageMatch[1]) : 50;
+    
+    const targetNameMatch = actionText.match(/attaque\s+(.+?)\s+\(/i);
+    const targetName = targetNameMatch ? targetNameMatch[1].trim() : null;
+    
+    console.log('🎯 Cible:', targetName, 'Dégâts:', damage);
+    
+    const opponentCards = document.querySelectorAll('.battle-card[data-owner="opponent"]');
+    
+    if (opponentCards.length === 0) {
+        console.log('⚠️ Pas de cartes IA à animer');
+        return;
+    }
+    
+    const attackerCard = opponentCards[0];
+    
+    // ✅ Utiliser les références sauvegardées
+    let targetCard = null;
+    if (targetName && playerCardElements[targetName]) {
+        targetCard = playerCardElements[targetName];
+        console.log('✅ Carte trouvée dans les références sauvegardées:', targetName);
+    }
+    
+    // Fallback : chercher dans le DOM actuel
+    if (!targetCard) {
+        const playerCards = document.querySelectorAll('.battle-card[data-owner="player"]');
+        if (playerCards.length > 0) {
+            for (const card of playerCards) {
+                if (card.dataset.name === targetName) {
+                    targetCard = card;
                     break;
                 }
             }
-            
-            console.log('📊 Données carte:', cardData);
-            
-            const cardWillBeDestroyed = cardData && cardData.current_hp <= 0;
-            console.log('💀 Carte sera détruite ?', cardWillBeDestroyed);
-            
-            if (cardWillBeDestroyed) {
-                // Carte va mourir - faire l'animation AVANT renderAll
-                console.log('🔥 IA détruit une carte du joueur - animation...', targetCard);
-                await animations.destroyCardAnimation(targetCard);
-                console.log('✅ Animation IA terminée');
-                // Pas de renderAll ici - l'animation a géré la suppression
-            } else {
-                // Carte survit - on peut render normalement
-                console.log('💚 Carte survit - render normal');
-                renderAll();
+            if (!targetCard) {
+                targetCard = playerCards[0];
             }
         }
-
-        // Fin de partie
+    }
+    
+    if (!targetCard || !targetCard.parentNode) {
+        console.log('⚠️ Pas de carte cible valide');
+        return;
+    }
+    
+    // Animation d'attaque
+    await animations.attackAnimation(attackerCard, targetCard, {
+        element: 'fire',
+        damage: damage
+    });
+    
+    animations.showDamage(targetCard, damage, 'damage');
+    animations.shakeElement(targetCard);
+}
+        // ========================================
+        // FIN DE PARTIE
+        // ========================================
         function endGame(victory) {
             const modal = document.getElementById('gameOverModal');
             const title = document.getElementById('gameOverTitle');
@@ -1978,7 +1968,6 @@
                 reward.textContent = '25';
             }
 
-            // Claim reward
             apiCall('claim-reward', 'POST', {
                 deck_id: deckId,
                 victory: victory,
@@ -1988,13 +1977,11 @@
             modal.classList.add('visible');
         }
 
-        // Mettre à jour les stats
+        // ========================================
+        // MISE À JOUR DES STATS
+        // ========================================
         function updateStats() {
             if (!gameState) return;
-
-            console.log('=== UPDATE STATS ===');
-            console.log('Player cosmos:', gameState.player.cosmos);
-            console.log('Player max_cosmos:', gameState.player.max_cosmos);
 
             const playerCosmos = gameState.player.cosmos || 0;
             const playerMaxCosmos = gameState.player.max_cosmos || 0;
@@ -2002,7 +1989,6 @@
             document.getElementById('playerDeckCount').textContent = gameState.player.deck?.length || 0;
             document.getElementById('playerHandCount').textContent = gameState.player.hand?.length || 0;
             
-            // Mettre à jour les 2 affichages du cosmos
             document.getElementById('playerCosmos').textContent = playerCosmos;
             document.getElementById('playerMaxCosmos').textContent = playerMaxCosmos;
             document.getElementById('playerCosmosAlt').textContent = playerCosmos;
@@ -2013,14 +1999,15 @@
             document.getElementById('opponentCosmos').textContent = `${gameState.opponent.cosmos || 0}/${gameState.opponent.max_cosmos || 0}`;
         }
 
-        // Mettre à jour l'indicateur de tour
         function updateTurnIndicator() {
             if (!gameState) return;
             const badge = document.getElementById('turnBadge');
             badge.textContent = `Tour ${gameState.turn} - Votre tour`;
         }
 
-        // Ajouter une entrée au log
+        // ========================================
+        // LOG DE COMBAT
+        // ========================================
         function addLogEntry(message, type = 'info') {
             const log = document.getElementById('battleLog');
             const entry = document.createElement('div');
@@ -2030,7 +2017,9 @@
             log.scrollTop = log.scrollHeight;
         }
 
-        // Helpers
+        // ========================================
+        // HELPERS
+        // ========================================
         function showLoading() {
             document.getElementById('loadingOverlay').classList.add('visible');
         }
