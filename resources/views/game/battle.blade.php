@@ -803,6 +803,25 @@
             font-size: 2rem;
         }
 
+
+/* Overlay pour fermer le panneau */
+.action-panel-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.action-panel-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
         /* ========================================
            RESPONSIVE
         ======================================== */
@@ -932,14 +951,18 @@
         </div>
     </div>
 
-    <!-- Panneau d'actions -->
-    <div class="action-panel" id="actionPanel">
-        <div class="action-panel-title">⚔️ Choisir une attaque</div>
-        <div class="attack-list" id="attackList">
-            <!-- Attaques disponibles -->
-        </div>
-        <button class="cancel-btn" onclick="cancelSelection()">Annuler</button>
+<!-- Overlay pour fermer en cliquant à côté -->
+<div class="action-panel-overlay" id="actionPanelOverlay" onclick="cancelSelection()"></div>
+
+<!-- Panneau d'actions -->
+<div class="action-panel" id="actionPanel">
+    <div class="action-panel-title">⚔️ Choisir une attaque</div>
+    <div class="attack-list" id="attackList">
+        <!-- Attaques disponibles -->
     </div>
+    <button class="cancel-btn" onclick="cancelSelection()">Annuler</button>
+    <div class="cosmos-display">🌟 {{ $battleState['player']['cosmos'] ?? 0 }} / {{ $battleState['player']['max_cosmos'] ?? 3 }}</div>
+</div>
 
     <!-- Boutons de contrôle -->
     <div class="control-buttons">
@@ -1445,6 +1468,8 @@
         // ========================================
         function createBattleCard(card, index, owner) {
             const div = document.createElement('div');
+
+
             div.className = 'battle-card';
             div.dataset.index = index;
             div.dataset.owner = owner;
@@ -1484,6 +1509,20 @@
             if (owner === 'player' && selectedAttacker === index) {
                 div.classList.add('selected');
             }
+
+
+    // Events selon le contexte
+    if (owner === 'player') {
+        console.log('Création carte joueur, phase:', phase, 'index:', index);
+        
+        if (phase === 'idle') {
+            div.onclick = () => {
+                console.log('Clic sur carte, phase actuelle:', phase);
+                selectAttacker(index);
+            };
+            div.style.cursor = 'pointer';  // ✅ Ajouter pour voir si c'est cliquable
+        }
+    }
 
             return div;
         }
@@ -1565,81 +1604,102 @@
         }
 
         function showAttackPanel(card) {
-            const panel = document.getElementById('actionPanel');
-            const list = document.getElementById('attackList');
-            list.innerHTML = '';
-            
-            const mainAttack = card.main_attack || {
-                name: 'Attaque de base',
-                damage: 40 + (card.power || 0),
-                endurance_cost: 20,
-                cosmos_cost: 0
-            };
-
-            const attacks = [
-                { 
-                    key: 'main', 
-                    name: mainAttack.name, 
-                    damage: mainAttack.damage, 
-                    endCost: mainAttack.endurance_cost || 20, 
-                    cosCost: mainAttack.cosmos_cost || 0 
-                }
-            ];
-
-            if (card.secondary_attack_1) {
-                attacks.push({ 
-                    key: 'secondary1', 
-                    name: card.secondary_attack_1.name, 
-                    damage: card.secondary_attack_1.damage, 
-                    endCost: card.secondary_attack_1.endurance_cost, 
-                    cosCost: card.secondary_attack_1.cosmos_cost 
-                });
-            }
-
-            if (card.secondary_attack_2) {
-                attacks.push({ 
-                    key: 'secondary2', 
-                    name: card.secondary_attack_2.name, 
-                    damage: card.secondary_attack_2.damage, 
-                    endCost: card.secondary_attack_2.endurance_cost, 
-                    cosCost: card.secondary_attack_2.cosmos_cost 
-                });
-            }
-
-            attacks.forEach(atk => {
-                const canUse = (card.current_endurance || 100) >= atk.endCost && gameState.player.cosmos >= atk.cosCost;
-                
-                const btn = document.createElement('button');
-                btn.className = 'attack-btn';
-                btn.disabled = !canUse;
-                btn.innerHTML = `
-                    <div>
-                        <div style="font-weight: 600;">${atk.name}</div>
-                        <div style="font-size: 0.7rem; color: #9CA3AF;">
-                            ⚡ ${atk.endCost} END | 🌟 ${atk.cosCost} COS
-                        </div>
-                    </div>
-                    <div style="font-size: 1.2rem; color: #EF4444; font-weight: bold;">
-                        ${atk.damage} 💥
-                    </div>
-                `;
-                btn.onclick = () => {
-                    if (canUse) selectAttack(atk.key);
-                };
-                list.appendChild(btn);
-            });
-
-            panel.classList.add('visible');
+    const panel = document.getElementById('actionPanel');
+    const overlay = document.getElementById('actionPanelOverlay');
+    const list = document.getElementById('attackList');
+    list.innerHTML = '';
+    
+    const mainAttack = card.main_attack || {
+        name: 'Attaque de base',
+        damage: 40 + (card.power || 0),
+        endurance_cost: 20,
+        cosmos_cost: 0
+    };
+    const attacks = [
+        { 
+            key: 'main', 
+            name: mainAttack.name, 
+            damage: mainAttack.damage, 
+            endCost: mainAttack.endurance_cost || 20, 
+            cosCost: mainAttack.cosmos_cost || 0 
         }
+    ];
+    if (card.secondary_attack_1) {
+        attacks.push({ 
+            key: 'secondary1', 
+            name: card.secondary_attack_1.name, 
+            damage: card.secondary_attack_1.damage, 
+            endCost: card.secondary_attack_1.endurance_cost, 
+            cosCost: card.secondary_attack_1.cosmos_cost 
+        });
+    }
+    if (card.secondary_attack_2) {
+        attacks.push({ 
+            key: 'secondary2', 
+            name: card.secondary_attack_2.name, 
+            damage: card.secondary_attack_2.damage, 
+            endCost: card.secondary_attack_2.endurance_cost, 
+            cosCost: card.secondary_attack_2.cosmos_cost 
+        });
+    }
+    attacks.forEach(atk => {
+        const canUse = (card.current_endurance || 100) >= atk.endCost && gameState.player.cosmos >= atk.cosCost;
+        
+        const btn = document.createElement('button');
+        btn.className = 'attack-btn';
+        btn.disabled = !canUse;
+        btn.innerHTML = `
+            <div>
+                <div style="font-weight: 600;">${atk.name}</div>
+                <div style="font-size: 0.7rem; color: #9CA3AF;">
+                    ⚡ ${atk.endCost} END | 🌟 ${atk.cosCost} COS
+                </div>
+            </div>
+            <div style="font-size: 1.2rem; color: #EF4444; font-weight: bold;">
+                ${atk.damage} 💥
+            </div>
+        `;
+        btn.onclick = () => {
+            if (canUse) selectAttack(atk.key);
+        };
+        list.appendChild(btn);
+    });
+    
+    // ✅ Afficher l'overlay ET le panneau
+    overlay.classList.add('visible');
+    panel.classList.add('visible');
+}
 
-        function selectAttack(attackKey) {
-            selectedAttack = attackKey;
-            phase = 'selectingTarget';
-            document.getElementById('actionPanel').classList.remove('visible');
-            addLogEntry('🎯 Sélectionnez une cible adverse', 'info');
-            renderAll();
-        }
-
+function selectAttack(attackKey) {
+    selectedAttack = attackKey;
+    phase = 'selectingTarget';
+    
+    // ✅ Cacher l'overlay ET le panneau
+    document.getElementById('actionPanelOverlay').classList.remove('visible');
+    document.getElementById('actionPanel').classList.remove('visible');
+    
+    addLogEntry('🎯 Sélectionnez une cible adverse', 'info');
+    renderAll();
+}
+function cancelSelection(skipRender = false) {
+    console.log('cancelSelection appelé, phase avant:', phase);
+    
+    selectedAttacker = null;
+    selectedAttack = null;
+    phase = 'idle';  // ✅ Doit être AVANT renderAll
+    
+    // Cacher l'overlay ET le panneau
+    document.getElementById('actionPanelOverlay').classList.remove('visible');
+    document.getElementById('actionPanel').classList.remove('visible');
+    
+    console.log('phase après:', phase);
+    
+    if (!skipRender) {
+        renderAll();
+    }
+    
+    console.log('phase finale:', phase);
+}
         // ========================================
         // ✅ SÉLECTION DE CIBLE - CORRIGÉE
         // ========================================
@@ -1719,15 +1779,15 @@
         // ========================================
         // ANNULER LA SÉLECTION
         // ========================================
-        function cancelSelection(skipRender = false) {
-            selectedAttacker = null;
-            selectedAttack = null;
-            phase = 'idle';
-            document.getElementById('actionPanel').classList.remove('visible');
-            if (!skipRender) {
-                renderAll();
-            }
-        }
+        // function cancelSelection(skipRender = false) {
+        //     selectedAttacker = null;
+        //     selectedAttack = null;
+        //     phase = 'idle';
+        //     document.getElementById('actionPanel').classList.remove('visible');
+        //     if (!skipRender) {
+        //         renderAll();
+        //     }
+        // }
 
  // ========================================
 // FIN DU TOUR
