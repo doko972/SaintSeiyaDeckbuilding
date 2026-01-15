@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Combat - Saint Seiya Deckbuilding</title>
-    
+
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
-    
+
     <style>
         * {
             margin: 0;
@@ -34,7 +35,7 @@
             width: 100%;
             height: 100%;
             z-index: 0;
-            background: 
+            background:
                 radial-gradient(ellipse at 20% 80%, rgba(120, 0, 255, 0.15) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 20%, rgba(255, 0, 100, 0.1) 0%, transparent 50%),
                 radial-gradient(ellipse at 50% 50%, rgba(0, 100, 255, 0.1) 0%, transparent 70%),
@@ -45,19 +46,26 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background-image: 
+            background-image:
                 radial-gradient(2px 2px at 20px 30px, #eee, transparent),
-                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.8), transparent),
                 radial-gradient(1px 1px at 90px 40px, #fff, transparent),
-                radial-gradient(2px 2px at 160px 120px, rgba(255,255,255,0.9), transparent),
+                radial-gradient(2px 2px at 160px 120px, rgba(255, 255, 255, 0.9), transparent),
                 radial-gradient(1px 1px at 230px 80px, #fff, transparent);
             background-size: 350px 200px;
             animation: twinkle 5s ease-in-out infinite;
         }
 
         @keyframes twinkle {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
         }
 
         /* ========================================
@@ -114,8 +122,15 @@
         }
 
         @keyframes pulse-turn {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-            50% { box-shadow: 0 0 20px 5px rgba(16, 185, 129, 0.3); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 20px 5px rgba(16, 185, 129, 0.3);
+            }
         }
 
         .quit-btn {
@@ -235,14 +250,33 @@
             border-bottom: none;
         }
 
-        .log-entry.damage { color: #EF4444; }
-        .log-entry.heal { color: #10B981; }
-        .log-entry.info { color: #60A5FA; }
-        .log-entry.turn { color: #FBBF24; font-weight: 600; }
+        .log-entry.damage {
+            color: #EF4444;
+        }
+
+        .log-entry.heal {
+            color: #10B981;
+        }
+
+        .log-entry.info {
+            color: #60A5FA;
+        }
+
+        .log-entry.turn {
+            color: #FBBF24;
+            font-weight: 600;
+        }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Zone joueur */
@@ -310,8 +344,15 @@
         }
 
         @keyframes pulse-target {
-            0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
-            50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.6); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
+            }
         }
 
         .battle-card.disabled {
@@ -333,7 +374,7 @@
             left: 0;
             right: 0;
             height: 30px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
         }
 
         .battle-card-info {
@@ -372,8 +413,15 @@
         }
 
         @keyframes pulse-hp {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
         }
 
         .battle-card-stats {
@@ -529,8 +577,15 @@
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .action-panel-title {
@@ -785,7 +840,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* ========================================
@@ -804,33 +861,36 @@
         }
 
 
-/* Overlay pour fermer le panneau */
-.action-panel-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 99;
-    cursor: pointer;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
+        /* Overlay pour fermer le panneau */
+        .action-panel-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
 
-.action-panel-overlay.visible {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-}
+        .action-panel-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
 
         /* ========================================
            RESPONSIVE
         ======================================== */
         @media (max-width: 1024px) {
-            .battle-card, .hand-card {
+
+            .battle-card,
+            .hand-card {
                 width: 110px;
             }
 
-            .battle-card-image, .hand-card-image {
+            .battle-card-image,
+            .hand-card-image {
                 height: 70px;
             }
 
@@ -845,7 +905,9 @@
         }
 
         @media (max-width: 768px) {
-            .opponent-info, .player-info {
+
+            .opponent-info,
+            .player-info {
                 display: none;
             }
 
@@ -863,6 +925,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="cosmos-bg">
         <div class="stars"></div>
@@ -936,7 +999,7 @@
         <div class="player-hand-zone">
             <div class="hand-header">
                 <span class="hand-title">
-                    🎴 Votre main 
+                    🎴 Votre main
                     <span style="color: #A78BFA; margin-left: 1rem; font-weight: 800; font-size: 1rem;">
                         (🌟 <span id="playerCosmosAlt">0</span>/<span id="playerMaxCosmosAlt">0</span>)
                     </span>
@@ -951,18 +1014,19 @@
         </div>
     </div>
 
-<!-- Overlay pour fermer en cliquant à côté -->
-<div class="action-panel-overlay" id="actionPanelOverlay" onclick="cancelSelection()"></div>
+    <!-- Overlay pour fermer en cliquant à côté -->
+    <div class="action-panel-overlay" id="actionPanelOverlay" onclick="cancelSelection()"></div>
 
-<!-- Panneau d'actions -->
-<div class="action-panel" id="actionPanel">
-    <div class="action-panel-title">⚔️ Choisir une attaque</div>
-    <div class="attack-list" id="attackList">
-        <!-- Attaques disponibles -->
+    <!-- Panneau d'actions -->
+    <div class="action-panel" id="actionPanel">
+        <div class="action-panel-title">⚔️ Choisir une attaque</div>
+        <div class="attack-list" id="attackList">
+            <!-- Attaques disponibles -->
+        </div>
+        <button class="cancel-btn" onclick="cancelSelection()">Annuler</button>
+        <div class="cosmos-display">🌟 {{ $battleState['player']['cosmos'] ?? 0 }} /
+            {{ $battleState['player']['max_cosmos'] ?? 3 }}</div>
     </div>
-    <button class="cancel-btn" onclick="cancelSelection()">Annuler</button>
-    <div class="cosmos-display">🌟 {{ $battleState['player']['cosmos'] ?? 0 }} / {{ $battleState['player']['max_cosmos'] ?? 3 }}</div>
-</div>
 
     <!-- Boutons de contrôle -->
     <div class="control-buttons">
@@ -997,7 +1061,7 @@
         // ========================================
         const deckId = {{ $deck->id }};
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-        
+
         // État du jeu
         let gameState = null;
         let selectedAttacker = null;
@@ -1020,7 +1084,7 @@
                     clone.style.width = startRect.width + 'px';
                     document.body.appendChild(clone);
                     cardElement.style.opacity = '0';
-                    
+
                     setTimeout(() => {
                         clone.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
                         clone.style.left = targetPos.x + 'px';
@@ -1028,7 +1092,7 @@
                         clone.style.transform = 'scale(1.1) rotateY(360deg)';
                         clone.style.boxShadow = '0 0 30px rgba(16, 185, 129, 0.8)';
                     }, 50);
-                    
+
                     setTimeout(() => {
                         clone.remove();
                         cardElement.style.opacity = '1';
@@ -1036,7 +1100,7 @@
                     }, 800);
                 });
             },
-            
+
             // Animation d'attaque
             attackAnimation: async function(attackerCard, targetCard, attackData) {
                 return new Promise(async (resolve) => {
@@ -1049,33 +1113,33 @@
                     clone.style.top = startRect.top + 'px';
                     clone.style.width = startRect.width + 'px';
                     document.body.appendChild(clone);
-                    
+
                     setTimeout(() => {
                         clone.style.transition = 'all 0.3s ease-in';
                         clone.style.left = (targetRect.left - 20) + 'px';
                         clone.style.top = (targetRect.top - 20) + 'px';
                         clone.style.transform = 'scale(1.2)';
                     }, 50);
-                    
+
                     setTimeout(() => {
                         this.shakeElement(targetCard);
                         this.flashElement(targetCard, '#EF4444');
                     }, 350);
-                    
+
                     setTimeout(() => {
                         clone.style.transition = 'all 0.2s ease-out';
                         clone.style.left = startRect.left + 'px';
                         clone.style.top = startRect.top + 'px';
                         clone.style.transform = 'scale(1)';
                     }, 450);
-                    
+
                     setTimeout(() => {
                         clone.remove();
                         resolve();
                     }, 700);
                 });
             },
-            
+
             // Afficher les dégâts
             showDamage: function(targetElement, damage, type = 'damage') {
                 const rect = targetElement.getBoundingClientRect();
@@ -1096,30 +1160,44 @@
                     transform: translate(-50%, -50%);
                 `;
                 document.body.appendChild(damageText);
-                
+
                 setTimeout(() => {
                     damageText.style.transition = 'all 1s ease-out';
                     damageText.style.top = (y - 100) + 'px';
                     damageText.style.opacity = '0';
                     damageText.style.transform = 'translate(-50%, -50%) scale(1.5)';
                 }, 50);
-                
+
                 setTimeout(() => damageText.remove(), 1100);
             },
-            
+
             // Secouer un élément
             shakeElement: function(element) {
-                const keyframes = [
-                    { transform: 'translateX(0)' },
-                    { transform: 'translateX(-10px) rotate(-2deg)' },
-                    { transform: 'translateX(10px) rotate(2deg)' },
-                    { transform: 'translateX(-10px) rotate(-1deg)' },
-                    { transform: 'translateX(10px) rotate(1deg)' },
-                    { transform: 'translateX(0) rotate(0deg)' },
+                const keyframes = [{
+                        transform: 'translateX(0)'
+                    },
+                    {
+                        transform: 'translateX(-10px) rotate(-2deg)'
+                    },
+                    {
+                        transform: 'translateX(10px) rotate(2deg)'
+                    },
+                    {
+                        transform: 'translateX(-10px) rotate(-1deg)'
+                    },
+                    {
+                        transform: 'translateX(10px) rotate(1deg)'
+                    },
+                    {
+                        transform: 'translateX(0) rotate(0deg)'
+                    },
                 ];
-                element.animate(keyframes, { duration: 400, easing: 'ease-in-out' });
+                element.animate(keyframes, {
+                    duration: 400,
+                    easing: 'ease-in-out'
+                });
             },
-            
+
             // Flash sur un élément
             flashElement: function(element, color = '#FFFFFF') {
                 const overlay = document.createElement('div');
@@ -1134,29 +1212,29 @@
                 `;
                 element.style.position = 'relative';
                 element.appendChild(overlay);
-                
+
                 setTimeout(() => {
                     overlay.style.transition = 'opacity 0.3s';
                     overlay.style.opacity = '0';
                 }, 50);
-                
+
                 setTimeout(() => overlay.remove(), 400);
             },
-            
+
             // ✅ ANIMATION DE DESTRUCTION SPECTACULAIRE
             destroyCardAnimation: async function(cardElement) {
                 console.log('💥 destroyCardAnimation appelée', cardElement);
-                
+
                 if (!cardElement) {
                     console.error('❌ Pas d\'élément à détruire !');
                     return;
                 }
-                
+
                 return new Promise(async (resolve) => {
                     const rect = cardElement.getBoundingClientRect();
                     const centerX = rect.left + rect.width / 2;
                     const centerY = rect.top + rect.height / 2;
-                    
+
                     console.log('⚠️ Phase 1: Warning');
                     // Phase 1 : Warning (clignote en rouge) - 0.4s
                     cardElement.style.transition = 'all 0.1s ease-in-out';
@@ -1168,33 +1246,34 @@
                         cardElement.style.boxShadow = '';
                         cardElement.style.filter = '';
                     }
-                    
+
                     console.log('💥 Phase 2: Impact');
                     // Phase 2 : Impact violent - 0.3s
                     this.flashElement(cardElement, '#FFFFFF');
                     this.shakeElement(cardElement);
-                    
+
                     await new Promise(r => setTimeout(r, 200));
-                    
+
                     console.log('🎆 Phase 3: Particules');
                     // Phase 3 : Explosion de particules - 0.6s
                     this.createDestructionParticles(centerX, centerY);
-                    
+
                     console.log('🌀 Phase 4: Rotation');
                     // Phase 4 : Brisure et rotation - 0.6s
                     setTimeout(() => {
-                        cardElement.style.transition = 'all 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045)';
+                        cardElement.style.transition =
+                            'all 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045)';
                         cardElement.style.transform = 'scale(0) rotate(720deg)';
                         cardElement.style.opacity = '0';
                         cardElement.style.filter = 'blur(5px) brightness(2)';
                     }, 100);
-                    
+
                     console.log('💨 Phase 5: Fumée');
                     // Phase 5 : Effet de fumée - 0.4s
                     setTimeout(() => {
                         this.createSmokeEffect(centerX, centerY);
                     }, 400);
-                    
+
                     // Cleanup après animation complète
                     setTimeout(() => {
                         console.log('🗑️ Cleanup - suppression de la carte du DOM');
@@ -1203,12 +1282,12 @@
                     }, 1200);
                 });
             },
-            
+
             // Créer des particules de destruction
             createDestructionParticles: function(x, y) {
                 const colors = ['#EF4444', '#DC2626', '#F97316', '#FBBF24', '#FFFFFF'];
                 const particleCount = 30;
-                
+
                 for (let i = 0; i < particleCount; i++) {
                     setTimeout(() => {
                         const particle = document.createElement('div');
@@ -1216,7 +1295,7 @@
                         const velocity = 100 + Math.random() * 150;
                         const size = 4 + Math.random() * 8;
                         const color = colors[Math.floor(Math.random() * colors.length)];
-                        
+
                         particle.style.cssText = `
                             position: fixed;
                             left: ${x}px;
@@ -1229,25 +1308,26 @@
                             z-index: 9999;
                             box-shadow: 0 0 10px ${color};
                         `;
-                        
+
                         document.body.appendChild(particle);
-                        
+
                         setTimeout(() => {
                             const targetX = x + Math.cos(angle) * velocity;
                             const targetY = y + Math.sin(angle) * velocity + (Math.random() * 50);
-                            
-                            particle.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+
+                            particle.style.transition =
+                                'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
                             particle.style.left = targetX + 'px';
                             particle.style.top = targetY + 'px';
                             particle.style.opacity = '0';
                             particle.style.transform = `scale(${Math.random() * 0.5})`;
                         }, 50);
-                        
+
                         setTimeout(() => particle.remove(), 700);
                     }, i * 10);
                 }
             },
-            
+
             // Créer un effet de fumée
             createSmokeEffect: function(x, y) {
                 for (let i = 0; i < 5; i++) {
@@ -1256,7 +1336,7 @@
                         const offsetX = (Math.random() - 0.5) * 40;
                         const offsetY = (Math.random() - 0.5) * 40;
                         const size = 40 + Math.random() * 40;
-                        
+
                         smoke.style.cssText = `
                             position: fixed;
                             left: ${x + offsetX}px;
@@ -1268,21 +1348,21 @@
                             pointer-events: none;
                             z-index: 9998;
                         `;
-                        
+
                         document.body.appendChild(smoke);
-                        
+
                         setTimeout(() => {
                             smoke.style.transition = 'all 0.8s ease-out';
                             smoke.style.top = (y + offsetY - 80) + 'px';
                             smoke.style.transform = `scale(2)`;
                             smoke.style.opacity = '0';
                         }, 50);
-                        
+
                         setTimeout(() => smoke.remove(), 900);
                     }, i * 80);
                 }
             },
-            
+
             // Animation de pioche
             drawCardAnimation: async function(startPos, endPos) {
                 return new Promise((resolve) => {
@@ -1300,21 +1380,21 @@
                         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
                     `;
                     document.body.appendChild(cardBack);
-                    
+
                     setTimeout(() => {
                         cardBack.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
                         cardBack.style.left = endPos.x + 'px';
                         cardBack.style.top = endPos.y + 'px';
                         cardBack.style.transform = 'rotateY(180deg)';
                     }, 50);
-                    
+
                     setTimeout(() => {
                         cardBack.remove();
                         resolve();
                     }, 700);
                 });
             },
-            
+
             // Créer des étincelles
             createSparkles: function(x, y, color = '#FFD700') {
                 for (let i = 0; i < 12; i++) {
@@ -1357,6 +1437,10 @@
         // INITIALISATION
         // ========================================
         document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('actionPanelOverlay').addEventListener('click', function(e) {
+                e.stopPropagation();
+                cancelSelection();
+            });
             initBattle();
         });
 
@@ -1376,14 +1460,14 @@
                     body: method !== 'GET' ? JSON.stringify(body) : undefined,
                     credentials: 'same-origin'
                 });
-                
+
                 const data = await response.json();
                 hideLoading();
-                
+
                 if (!response.ok) {
                     throw new Error(data.message || 'Erreur API');
                 }
-                
+
                 return data;
             } catch (error) {
                 hideLoading();
@@ -1398,7 +1482,9 @@
         // ========================================
         async function initBattle() {
             try {
-                const data = await apiCall('init-battle', 'POST', { deck_id: deckId });
+                const data = await apiCall('init-battle', 'POST', {
+                    deck_id: deckId
+                });
                 gameState = data.battle_state;
                 renderAll();
                 addLogEntry('🎮 Combat initialisé ! C\'est votre tour.', 'turn');
@@ -1422,7 +1508,7 @@
         function renderOpponentField() {
             const container = document.getElementById('opponentField');
             container.innerHTML = '';
-            
+
             if (!gameState || !gameState.opponent.field.length) {
                 container.innerHTML = '<div class="empty-slot">👻</div>';
                 return;
@@ -1437,7 +1523,7 @@
         function renderPlayerField() {
             const container = document.getElementById('playerField');
             container.innerHTML = '';
-            
+
             if (!gameState || !gameState.player.field.length) {
                 container.innerHTML = '<div class="empty-slot">🎴</div>';
                 return;
@@ -1452,7 +1538,7 @@
         function renderPlayerHand() {
             const container = document.getElementById('playerHand');
             container.innerHTML = '';
-            
+
             if (!gameState || !gameState.player.hand.length) {
                 container.innerHTML = '<div style="color: rgba(255,255,255,0.5);">Aucune carte en main</div>';
                 return;
@@ -1474,7 +1560,7 @@
             div.dataset.index = index;
             div.dataset.owner = owner;
             div.dataset.name = card.name;
-            
+
             if (card.faction) {
                 div.style.setProperty('--color1', card.faction.color_primary || '#333');
                 div.style.setProperty('--color2', card.faction.color_secondary || '#555');
@@ -1499,30 +1585,30 @@
             `;
 
             // Events selon le contexte
-            if (owner === 'player' && phase === 'idle') {
-                div.onclick = () => selectAttacker(index);
-            } else if (owner === 'opponent' && phase === 'selectingTarget') {
-                div.classList.add('targetable');
-                div.onclick = () => selectTarget(index);
+            // if (owner === 'player' && phase === 'idle') {
+            //     div.onclick = () => selectAttacker(index);
+            // } else if (owner === 'opponent' && phase === 'selectingTarget') {
+            //     div.classList.add('targetable');
+            //     div.onclick = () => selectTarget(index);
+            // }
+
+            // if (owner === 'player' && selectedAttacker === index) {
+            //     div.classList.add('selected');
+            // }
+
+
+            // Events selon le contexte
+            if (owner === 'player') {
+                console.log('Création carte joueur, phase:', phase, 'index:', index);
+
+                if (phase === 'idle') {
+                    div.onclick = () => {
+                        console.log('Clic sur carte, phase actuelle:', phase);
+                        selectAttacker(index);
+                    };
+                    div.style.cursor = 'pointer'; // cliquable ?
+                }
             }
-
-            if (owner === 'player' && selectedAttacker === index) {
-                div.classList.add('selected');
-            }
-
-
-    // Events selon le contexte
-    if (owner === 'player') {
-        console.log('Création carte joueur, phase:', phase, 'index:', index);
-        
-        if (phase === 'idle') {
-            div.onclick = () => {
-                console.log('Clic sur carte, phase actuelle:', phase);
-                selectAttacker(index);
-            };
-            div.style.cursor = 'pointer';  // ✅ Ajouter pour voir si c'est cliquable
-        }
-    }
 
             return div;
         }
@@ -1531,7 +1617,7 @@
             const div = document.createElement('div');
             div.className = 'hand-card';
             div.dataset.index = index;
-            
+
             const canPlay = gameState.player.cosmos >= card.cost && gameState.player.field.length < 3;
             div.classList.add(canPlay ? 'playable' : 'unplayable');
 
@@ -1578,7 +1664,7 @@
                     card_index: index,
                     battle_state: gameState
                 });
-                
+
                 gameState = data.battle_state;
                 addLogEntry(`🎴 Vous jouez ${data.card_played}`, 'info');
                 renderAll();
@@ -1604,51 +1690,50 @@
         }
 
         function showAttackPanel(card) {
-    const panel = document.getElementById('actionPanel');
-    const overlay = document.getElementById('actionPanelOverlay');
-    const list = document.getElementById('attackList');
-    list.innerHTML = '';
-    
-    const mainAttack = card.main_attack || {
-        name: 'Attaque de base',
-        damage: 40 + (card.power || 0),
-        endurance_cost: 20,
-        cosmos_cost: 0
-    };
-    const attacks = [
-        { 
-            key: 'main', 
-            name: mainAttack.name, 
-            damage: mainAttack.damage, 
-            endCost: mainAttack.endurance_cost || 20, 
-            cosCost: mainAttack.cosmos_cost || 0 
-        }
-    ];
-    if (card.secondary_attack_1) {
-        attacks.push({ 
-            key: 'secondary1', 
-            name: card.secondary_attack_1.name, 
-            damage: card.secondary_attack_1.damage, 
-            endCost: card.secondary_attack_1.endurance_cost, 
-            cosCost: card.secondary_attack_1.cosmos_cost 
-        });
-    }
-    if (card.secondary_attack_2) {
-        attacks.push({ 
-            key: 'secondary2', 
-            name: card.secondary_attack_2.name, 
-            damage: card.secondary_attack_2.damage, 
-            endCost: card.secondary_attack_2.endurance_cost, 
-            cosCost: card.secondary_attack_2.cosmos_cost 
-        });
-    }
-    attacks.forEach(atk => {
-        const canUse = (card.current_endurance || 100) >= atk.endCost && gameState.player.cosmos >= atk.cosCost;
-        
-        const btn = document.createElement('button');
-        btn.className = 'attack-btn';
-        btn.disabled = !canUse;
-        btn.innerHTML = `
+            const panel = document.getElementById('actionPanel');
+            const overlay = document.getElementById('actionPanelOverlay');
+            const list = document.getElementById('attackList');
+            list.innerHTML = '';
+
+            const mainAttack = card.main_attack || {
+                name: 'Attaque de base',
+                damage: 40 + (card.power || 0),
+                endurance_cost: 20,
+                cosmos_cost: 0
+            };
+            const attacks = [{
+                key: 'main',
+                name: mainAttack.name,
+                damage: mainAttack.damage,
+                endCost: mainAttack.endurance_cost || 20,
+                cosCost: mainAttack.cosmos_cost || 0
+            }];
+            if (card.secondary_attack_1) {
+                attacks.push({
+                    key: 'secondary1',
+                    name: card.secondary_attack_1.name,
+                    damage: card.secondary_attack_1.damage,
+                    endCost: card.secondary_attack_1.endurance_cost,
+                    cosCost: card.secondary_attack_1.cosmos_cost
+                });
+            }
+            if (card.secondary_attack_2) {
+                attacks.push({
+                    key: 'secondary2',
+                    name: card.secondary_attack_2.name,
+                    damage: card.secondary_attack_2.damage,
+                    endCost: card.secondary_attack_2.endurance_cost,
+                    cosCost: card.secondary_attack_2.cosmos_cost
+                });
+            }
+            attacks.forEach(atk => {
+                const canUse = (card.current_endurance || 100) >= atk.endCost && gameState.player.cosmos >= atk
+                    .cosCost;
+
+                const btn = document.createElement('button');
+                btn.className = 'attack-btn';
+                btn.disabled = !canUse;
+                btn.innerHTML = `
             <div>
                 <div style="font-weight: 600;">${atk.name}</div>
                 <div style="font-size: 0.7rem; color: #9CA3AF;">
@@ -1659,54 +1744,57 @@
                 ${atk.damage} 💥
             </div>
         `;
-        btn.onclick = () => {
-            if (canUse) selectAttack(atk.key);
-        };
-        list.appendChild(btn);
-    });
-    
-    // ✅ Afficher l'overlay ET le panneau
-    overlay.classList.add('visible');
-    panel.classList.add('visible');
-}
+                btn.onclick = () => {
+                    if (canUse) selectAttack(atk.key);
+                };
+                list.appendChild(btn);
+            });
 
-function selectAttack(attackKey) {
-    selectedAttack = attackKey;
-    phase = 'selectingTarget';
-    
-    // ✅ Cacher l'overlay ET le panneau
-    document.getElementById('actionPanelOverlay').classList.remove('visible');
-    document.getElementById('actionPanel').classList.remove('visible');
-    
-    addLogEntry('🎯 Sélectionnez une cible adverse', 'info');
-    renderAll();
-}
-function cancelSelection(skipRender = false) {
-    console.log('cancelSelection appelé, phase avant:', phase);
-    
-    selectedAttacker = null;
-    selectedAttack = null;
-    phase = 'idle';  // ✅ Doit être AVANT renderAll
-    
-    // Cacher l'overlay ET le panneau
-    document.getElementById('actionPanelOverlay').classList.remove('visible');
-    document.getElementById('actionPanel').classList.remove('visible');
-    
-    console.log('phase après:', phase);
-    
-    if (!skipRender) {
-        renderAll();
-    }
-    
-    console.log('phase finale:', phase);
-}
+            // ✅ Afficher l'overlay ET le panneau
+            overlay.classList.add('visible');
+            panel.classList.add('visible');
+        }
+
+        function selectAttack(attackKey) {
+            selectedAttack = attackKey;
+            phase = 'selectingTarget';
+
+            // ✅ Cacher l'overlay ET le panneau
+            document.getElementById('actionPanelOverlay').classList.remove('visible');
+            document.getElementById('actionPanel').classList.remove('visible');
+
+            addLogEntry('🎯 Sélectionnez une cible adverse', 'info');
+            renderAll();
+        }
+
+        function cancelSelection(skipRender = false) {
+            console.log('cancelSelection appelé, phase avant:', phase);
+
+            selectedAttacker = null;
+            selectedAttack = null;
+            phase = 'idle'; // ✅ Doit être AVANT renderAll
+
+            // Cacher l'overlay ET le panneau
+            document.getElementById('actionPanelOverlay').classList.remove('visible');
+            document.getElementById('actionPanel').classList.remove('visible');
+
+            console.log('phase après:', phase);
+
+            if (!skipRender) {
+                renderAll();
+            }
+
+            console.log('phase finale:', phase);
+        }
         // ========================================
         // ✅ SÉLECTION DE CIBLE - CORRIGÉE
         // ========================================
         async function selectTarget(targetIndex) {
             // Récupérer les éléments AVANT l'appel API
-            const attackerCard = document.querySelector(`.battle-card[data-owner="player"][data-index="${selectedAttacker}"]`);
-            const targetCard = document.querySelector(`.battle-card[data-owner="opponent"][data-index="${targetIndex}"]`);
+            const attackerCard = document.querySelector(
+                `.battle-card[data-owner="player"][data-index="${selectedAttacker}"]`);
+            const targetCard = document.querySelector(
+                `.battle-card[data-owner="opponent"][data-index="${targetIndex}"]`);
 
             if (!attackerCard || !targetCard) {
                 console.error('Elements not found');
@@ -1741,7 +1829,7 @@ function cancelSelection(skipRender = false) {
 
                 // ✅ VÉRIFIER LA DESTRUCTION AVEC LE FLAG DE L'API
                 const cardWasDestroyed = data.target_destroyed === true;
-                
+
                 console.log('💀 Carte détruite ?', cardWasDestroyed, 'target_destroyed:', data.target_destroyed);
 
                 if (cardWasDestroyed && targetCard) {
@@ -1762,7 +1850,7 @@ function cancelSelection(skipRender = false) {
 
                 // Reset sélection et render
                 cancelSelection(cardWasDestroyed);
-                
+
                 // Render seulement si carte pas détruite (l'animation l'a déjà supprimée)
                 if (!cardWasDestroyed) {
                     renderAll();
@@ -1789,97 +1877,92 @@ function cancelSelection(skipRender = false) {
         //     }
         // }
 
- // ========================================
-// FIN DU TOUR
-// ========================================
-async function endTurn() {
-    try {
-        // ✅ SAUVEGARDER les références des cartes du joueur AVANT l'appel API
-        const playerCardElements = {};
-        document.querySelectorAll('.battle-card[data-owner="player"]').forEach(card => {
-            playerCardElements[card.dataset.name] = card;
-        });
-        
-        const data = await apiCall('end-turn', 'POST', {
-            deck_id: deckId,
-            battle_state: gameState
-        });
+        // ========================================
+        // FIN DU TOUR
+        // ========================================
+        async function endTurn() {
+            try {
+                // ✅ SAUVEGARDER les références des cartes du joueur AVANT l'appel API
+                const playerCardElements = {};
+                document.querySelectorAll('.battle-card[data-owner="player"]').forEach(card => {
+                    playerCardElements[card.dataset.name] = card;
+                });
 
-        // ✅ NE PAS mettre à jour gameState tout de suite !
-        // On garde l'ancien state pour les animations
-        
-        addLogEntry('⏭️ Fin de votre tour', 'turn');
-        
-        // Animer les actions IA
-        if (data.ai_actions && data.ai_actions.length > 0) {
-            addLogEntry('🤖 Tour de l\'IA...', 'turn');
-            await sleep(800);
-            
-            for (const action of data.ai_actions) {
-                // ✅ Vérifier si cette action correspond à une destruction
-                const destroyedCard = data.destroyed_cards?.find(dc => 
-                    action.includes(dc.name) && action.includes('vaincu')
-                );
-                
-                await animateAIAction(action, playerCardElements, destroyedCard);
-                await sleep(600);
+                const data = await apiCall('end-turn', 'POST', {
+                    deck_id: deckId,
+                    battle_state: gameState
+                });
+
+                // ✅ NE PAS mettre à jour gameState tout de suite !
+                // On garde l'ancien state pour les animations
+
+                addLogEntry('⏭️ Fin de votre tour', 'turn');
+
+                // Animer les actions IA
+                if (data.ai_actions && data.ai_actions.length > 0) {
+                    addLogEntry('🤖 Tour de l\'IA...', 'turn');
+                    await sleep(800);
+
+                    for (const action of data.ai_actions) {
+                        // ✅ Vérifier si cette action correspond à une destruction
+                        const destroyedCard = data.destroyed_cards?.find(dc =>
+                            action.includes(dc.name) && action.includes('vaincu')
+                        );
+
+                        await animateAIAction(action, playerCardElements, destroyedCard);
+                        await sleep(600);
+                    }
+                }
+
+                // ✅ MAINTENANT on met à jour gameState après toutes les animations
+                gameState = data.battle_state;
+
+                addLogEntry(`🔄 Tour ${gameState.turn} - Votre tour !`, 'turn');
+
+                // Vérifier fin de partie
+                if (data.battle_ended) {
+                    endGame(data.winner === 'player');
+                    return;
+                }
+
+                // Render à la fin
+                renderAll();
+            } catch (error) {
+                console.error('End turn failed:', error);
             }
         }
 
-        // ✅ MAINTENANT on met à jour gameState après toutes les animations
-        gameState = data.battle_state;
+        // ========================================
+        // ANIMATIONS IA
+        // ========================================
+        async function animateAIAction(actionText, playerCardElements = {}, destroyedCard = null) {
+            console.log('AI Action:', actionText, 'Destroyed:', destroyedCard);
 
-        addLogEntry(`🔄 Tour ${gameState.turn} - Votre tour !`, 'turn');
-
-        // Vérifier fin de partie
-        if (data.battle_ended) {
-            endGame(data.winner === 'player');
-            return;
+            if (actionText.includes('pioche') || actionText.includes('tire')) {
+                await animateAIDraw();
+                addLogEntry(`🤖 ${actionText}`, 'info');
+            } else if (actionText.includes('joue') || actionText.includes('invoque')) {
+                const cardName = extractCardName(actionText);
+                await animateAIPlayCard(cardName);
+                addLogEntry(`🤖 ${actionText}`, 'info');
+            } else if (actionText.includes('attaque') || actionText.includes('inflige')) {
+                await animateAIAttack(actionText, playerCardElements);
+                addLogEntry(`🤖 ${actionText}`, 'damage');
+            } else if (actionText.includes('vaincu') && destroyedCard) {
+                // ✅ Animation de destruction pour la carte vaincue
+                const targetCard = playerCardElements[destroyedCard.name];
+                if (targetCard && targetCard.parentNode) {
+                    console.log('🔥 Carte vaincue, animation de destruction:', destroyedCard.name);
+                    await animations.destroyCardAnimation(targetCard);
+                }
+                addLogEntry(`🤖 ${actionText}`, 'damage');
+            } else if (actionText.includes('déploie')) {
+                addLogEntry(`🤖 ${actionText}`, 'info');
+                await sleep(400);
+            } else {
+                addLogEntry(`🤖 ${actionText}`, 'info');
+            }
         }
-
-        // Render à la fin
-        renderAll();
-    } catch (error) {
-        console.error('End turn failed:', error);
-    }
-}
-
-// ========================================
-// ANIMATIONS IA
-// ========================================
-async function animateAIAction(actionText, playerCardElements = {}, destroyedCard = null) {
-    console.log('AI Action:', actionText, 'Destroyed:', destroyedCard);
-    
-    if (actionText.includes('pioche') || actionText.includes('tire')) {
-        await animateAIDraw();
-        addLogEntry(`🤖 ${actionText}`, 'info');
-    }
-    else if (actionText.includes('joue') || actionText.includes('invoque')) {
-        const cardName = extractCardName(actionText);
-        await animateAIPlayCard(cardName);
-        addLogEntry(`🤖 ${actionText}`, 'info');
-    }
-    else if (actionText.includes('attaque') || actionText.includes('inflige')) {
-        await animateAIAttack(actionText, playerCardElements);
-        addLogEntry(`🤖 ${actionText}`, 'damage');
-    }
-    else if (actionText.includes('vaincu') && destroyedCard) {
-        // ✅ Animation de destruction pour la carte vaincue
-        const targetCard = playerCardElements[destroyedCard.name];
-        if (targetCard && targetCard.parentNode) {
-            console.log('🔥 Carte vaincue, animation de destruction:', destroyedCard.name);
-            await animations.destroyCardAnimation(targetCard);
-        }
-        addLogEntry(`🤖 ${actionText}`, 'damage');
-    }
-    else if (actionText.includes('déploie')) {
-        addLogEntry(`🤖 ${actionText}`, 'info');
-        await sleep(400);
-    }
-    else {
-        addLogEntry(`🤖 ${actionText}`, 'info');
-    }
-}
 
         function extractCardName(text) {
             const match = text.match(/joue (.+)/i) || text.match(/"(.+)"/) || text.match(/invoque (.+)/i);
@@ -1889,8 +1972,14 @@ async function animateAIAction(actionText, playerCardElements = {}, destroyedCar
         async function animateAIDraw() {
             const opponentField = document.getElementById('opponentField');
             const rect = opponentField.getBoundingClientRect();
-            const startPos = { x: 100, y: 100 };
-            const endPos = { x: rect.left + 50, y: rect.top - 100 };
+            const startPos = {
+                x: 100,
+                y: 100
+            };
+            const endPos = {
+                x: rect.left + 50,
+                y: rect.top - 100
+            };
             await animations.drawCardAnimation(startPos, endPos);
         }
 
@@ -1913,16 +2002,16 @@ async function animateAIAction(actionText, playerCardElements = {}, destroyedCar
             tempCard.style.padding = '1rem';
             tempCard.style.zIndex = '1000';
             tempCard.textContent = cardName;
-            
+
             const opponentField = document.getElementById('opponentField');
             const fieldRect = opponentField.getBoundingClientRect();
-            
+
             tempCard.style.left = (fieldRect.left - 100) + 'px';
             tempCard.style.top = '50px';
             tempCard.style.opacity = '0';
-            
+
             document.body.appendChild(tempCard);
-            
+
             setTimeout(() => {
                 tempCard.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
                 tempCard.style.left = (fieldRect.left + fieldRect.width / 2 - 70) + 'px';
@@ -1930,83 +2019,83 @@ async function animateAIAction(actionText, playerCardElements = {}, destroyedCar
                 tempCard.style.opacity = '1';
                 tempCard.style.transform = 'rotateY(360deg) scale(1.1)';
             }, 50);
-            
+
             await sleep(500);
-            
+
             animations.createSparkles(
-                fieldRect.left + fieldRect.width / 2, 
-                fieldRect.top + fieldRect.height / 2, 
+                fieldRect.left + fieldRect.width / 2,
+                fieldRect.top + fieldRect.height / 2,
                 '#EF4444'
             );
-            
+
             await sleep(300);
-            
+
             tempCard.style.transition = 'all 0.3s ease-out';
             tempCard.style.transform = 'scale(1)';
-            
+
             await sleep(300);
-            
+
             tempCard.remove();
             renderAll();
         }
 
         async function animateAIAttack(actionText, playerCardElements = {}) {
-    console.log('🤖 Animation attaque IA:', actionText);
-    
-    const damageMatch = actionText.match(/(\d+)\s*(?:dégâts|PV)/i);
-    const damage = damageMatch ? parseInt(damageMatch[1]) : 50;
-    
-    const targetNameMatch = actionText.match(/attaque\s+(.+?)\s+\(/i);
-    const targetName = targetNameMatch ? targetNameMatch[1].trim() : null;
-    
-    console.log('🎯 Cible:', targetName, 'Dégâts:', damage);
-    
-    const opponentCards = document.querySelectorAll('.battle-card[data-owner="opponent"]');
-    
-    if (opponentCards.length === 0) {
-        console.log('⚠️ Pas de cartes IA à animer');
-        return;
-    }
-    
-    const attackerCard = opponentCards[0];
-    
-    // ✅ Utiliser les références sauvegardées
-    let targetCard = null;
-    if (targetName && playerCardElements[targetName]) {
-        targetCard = playerCardElements[targetName];
-        console.log('✅ Carte trouvée dans les références sauvegardées:', targetName);
-    }
-    
-    // Fallback : chercher dans le DOM actuel
-    if (!targetCard) {
-        const playerCards = document.querySelectorAll('.battle-card[data-owner="player"]');
-        if (playerCards.length > 0) {
-            for (const card of playerCards) {
-                if (card.dataset.name === targetName) {
-                    targetCard = card;
-                    break;
+            console.log('🤖 Animation attaque IA:', actionText);
+
+            const damageMatch = actionText.match(/(\d+)\s*(?:dégâts|PV)/i);
+            const damage = damageMatch ? parseInt(damageMatch[1]) : 50;
+
+            const targetNameMatch = actionText.match(/attaque\s+(.+?)\s+\(/i);
+            const targetName = targetNameMatch ? targetNameMatch[1].trim() : null;
+
+            console.log('🎯 Cible:', targetName, 'Dégâts:', damage);
+
+            const opponentCards = document.querySelectorAll('.battle-card[data-owner="opponent"]');
+
+            if (opponentCards.length === 0) {
+                console.log('⚠️ Pas de cartes IA à animer');
+                return;
+            }
+
+            const attackerCard = opponentCards[0];
+
+            // ✅ Utiliser les références sauvegardées
+            let targetCard = null;
+            if (targetName && playerCardElements[targetName]) {
+                targetCard = playerCardElements[targetName];
+                console.log('✅ Carte trouvée dans les références sauvegardées:', targetName);
+            }
+
+            // Fallback : chercher dans le DOM actuel
+            if (!targetCard) {
+                const playerCards = document.querySelectorAll('.battle-card[data-owner="player"]');
+                if (playerCards.length > 0) {
+                    for (const card of playerCards) {
+                        if (card.dataset.name === targetName) {
+                            targetCard = card;
+                            break;
+                        }
+                    }
+                    if (!targetCard) {
+                        targetCard = playerCards[0];
+                    }
                 }
             }
-            if (!targetCard) {
-                targetCard = playerCards[0];
+
+            if (!targetCard || !targetCard.parentNode) {
+                console.log('⚠️ Pas de carte cible valide');
+                return;
             }
+
+            // Animation d'attaque
+            await animations.attackAnimation(attackerCard, targetCard, {
+                element: 'fire',
+                damage: damage
+            });
+
+            animations.showDamage(targetCard, damage, 'damage');
+            animations.shakeElement(targetCard);
         }
-    }
-    
-    if (!targetCard || !targetCard.parentNode) {
-        console.log('⚠️ Pas de carte cible valide');
-        return;
-    }
-    
-    // Animation d'attaque
-    await animations.attackAnimation(attackerCard, targetCard, {
-        element: 'fire',
-        damage: damage
-    });
-    
-    animations.showDamage(targetCard, damage, 'damage');
-    animations.shakeElement(targetCard);
-}
         // ========================================
         // FIN DE PARTIE
         // ========================================
@@ -2048,7 +2137,7 @@ async function animateAIAction(actionText, playerCardElements = {}, destroyedCar
 
             document.getElementById('playerDeckCount').textContent = gameState.player.deck?.length || 0;
             document.getElementById('playerHandCount').textContent = gameState.player.hand?.length || 0;
-            
+
             document.getElementById('playerCosmos').textContent = playerCosmos;
             document.getElementById('playerMaxCosmos').textContent = playerMaxCosmos;
             document.getElementById('playerCosmosAlt').textContent = playerCosmos;
@@ -2056,7 +2145,8 @@ async function animateAIAction(actionText, playerCardElements = {}, destroyedCar
 
             document.getElementById('opponentDeckCount').textContent = gameState.opponent.deck?.length || 0;
             document.getElementById('opponentHandCount').textContent = gameState.opponent.hand?.length || 0;
-            document.getElementById('opponentCosmos').textContent = `${gameState.opponent.cosmos || 0}/${gameState.opponent.max_cosmos || 0}`;
+            document.getElementById('opponentCosmos').textContent =
+                `${gameState.opponent.cosmos || 0}/${gameState.opponent.max_cosmos || 0}`;
         }
 
         function updateTurnIndicator() {
@@ -2093,4 +2183,5 @@ async function animateAIAction(actionText, playerCardElements = {}, destroyedCar
         }
     </script>
 </body>
+
 </html>

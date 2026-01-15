@@ -152,6 +152,7 @@
         .card-mini-image {
             position: relative;
             height: 180px;
+            width: 100%;
             overflow: hidden;
         }
 
@@ -441,7 +442,7 @@
                 </div>
             @else
                 <!-- Grille des cartes -->
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 rounded-3xl">
                     @foreach($collection as $card)
                         <a href="{{ route('collection.show', $card) }}" class="block">
                             <div class="holo-card-mini rarity-{{ $card->rarity }}"

@@ -1,19 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Attaques') }}
-            </h2>
-            @if(auth()->user()->isAdmin())
-                <a href="{{ route('admin.attacks.create') }}" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
-                    ➕ Nouvelle Attaque
-                </a>
-            @endif
-        </div>
     </x-slot>
 
     <div class="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                        <div class="flex justify-end items-center mb-3">
+                <a href="{{ route('admin.attacks.create') }}"
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 font-bold rounded-xl hover:from-yellow-400 hover:to-amber-400 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-yellow-500/30">
+                    ➕ Nouvelle Attaque
+                </a>
+            </div>
 
             <!-- Intro -->
             <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-6 mb-8 text-center">

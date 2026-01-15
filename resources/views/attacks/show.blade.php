@@ -1,18 +1,21 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ $attack->name }}
-            </h2>
-            <a href="{{ route('attacks.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                ← Retour
-            </a>
-        </div>
     </x-slot>
 
     <div class="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-
+            <!-- Header de page -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-white flex items-center gap-3">
+                        {{ $attack->name }}
+                    </h1>
+                </div>
+                <a href="{{ route('attacks.index') }}"
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 font-bold rounded-xl hover:from-yellow-400 hover:to-amber-400 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-yellow-500/30">
+                    ← Retour
+                </a>
+            </div>
             <!-- Header de l'attaque -->
             <div class="bg-gradient-to-r from-red-600 to-orange-600 rounded-2xl p-8 mb-8 relative overflow-hidden">
                 <div class="absolute inset-0 bg-black/20"></div>

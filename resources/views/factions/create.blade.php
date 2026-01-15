@@ -1,18 +1,19 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Nouvelle Faction') }}
-            </h2>
-            <a href="{{ route('factions.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                ← Retour
-            </a>
-        </div>
     </x-slot>
 
     <div class="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-
+            <div class="flex justify-end items-center mb-3">
+                <a href="{{ route('factions.index') }}"
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 font-bold rounded-xl hover:from-yellow-400 hover:to-amber-400 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-yellow-500/30">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Retour
+                </a>
+            </div>
             <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden">
                 <div class="p-6 bg-gradient-to-r from-purple-600 to-indigo-600">
                     <h3 class="text-xl font-bold text-white">🏛️ Créer une nouvelle faction</h3>

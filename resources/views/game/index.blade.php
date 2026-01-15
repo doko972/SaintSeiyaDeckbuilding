@@ -343,7 +343,7 @@
         ======================================== */
         .vs-badge {
             position: absolute;
-            top: 30px;
+            top: 15px;
             right: 15px;
             background: linear-gradient(135deg, #FBBF24, #F59E0B);
             color: #1a1a2e;

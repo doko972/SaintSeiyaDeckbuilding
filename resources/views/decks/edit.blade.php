@@ -1,18 +1,19 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Modifier') }} : {{ $deck->name }}
-            </h2>
-            <a href="{{ route('decks.show', $deck) }}" class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                ← Retour
-            </a>
-        </div>
     </x-slot>
 
     <div class="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black py-12">
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-
+            <div class="flex justify-end items-center mb-3">
+                <a href="{{ route('decks.show', $deck) }}"
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 font-bold rounded-xl hover:from-yellow-400 hover:to-amber-400 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-yellow-500/30">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Retour
+                </a>
+            </div>
             <form method="POST" action="{{ route('decks.update', $deck) }}" id="deckForm">
                 @csrf
                 @method('PUT')
@@ -21,7 +22,8 @@
 
                     <!-- Colonne gauche : Infos du deck -->
                     <div class="lg:col-span-1">
-                        <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden sticky top-8">
+                        <div
+                            class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden sticky top-8">
                             <div class="p-6" style="background: linear-gradient(135deg, #8B5CF6, #6366F1);">
                                 <h3 class="text-xl font-bold text-white">✏️ Modifier le deck</h3>
                             </div>
@@ -29,9 +31,11 @@
                             <div class="p-6 space-y-6">
                                 <!-- Nom -->
                                 <div>
-                                    <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Nom du deck *</label>
-                                    <input type="text" name="name" id="name" value="{{ old('name', $deck->name) }}" required
-                                           class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-purple-500">
+                                    <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Nom du
+                                        deck *</label>
+                                    <input type="text" name="name" id="name"
+                                        value="{{ old('name', $deck->name) }}" required
+                                        class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-purple-500">
                                     @error('name')
                                         <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                                     @enderror
@@ -39,15 +43,17 @@
 
                                 <!-- Description -->
                                 <div>
-                                    <label for="description" class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                                    <label for="description"
+                                        class="block text-sm font-medium text-gray-300 mb-2">Description</label>
                                     <textarea name="description" id="description" rows="3"
-                                              class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-purple-500">{{ old('description', $deck->description) }}</textarea>
+                                        class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-purple-500">{{ old('description', $deck->description) }}</textarea>
                                 </div>
 
                                 <!-- Deck actif -->
                                 <div class="flex items-center gap-3">
-                                    <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', $deck->is_active) ? 'checked' : '' }}
-                                           class="w-5 h-5 bg-white/10 border-white/30 rounded text-purple-600 focus:ring-purple-500">
+                                    <input type="checkbox" name="is_active" id="is_active" value="1"
+                                        {{ old('is_active', $deck->is_active) ? 'checked' : '' }}
+                                        class="w-5 h-5 bg-white/10 border-white/30 rounded text-purple-600 focus:ring-purple-500">
                                     <label for="is_active" class="text-gray-300">Définir comme deck actif</label>
                                 </div>
 
@@ -57,21 +63,25 @@
                                     <div class="space-y-2 text-sm">
                                         <div class="flex justify-between">
                                             <span class="text-gray-400">Cartes sélectionnées</span>
-                                            <span class="text-white font-bold" id="totalCards">{{ $deck->cards->sum('pivot.quantity') }}</span>
+                                            <span class="text-white font-bold"
+                                                id="totalCards">{{ $deck->cards->sum('pivot.quantity') }}</span>
                                         </div>
                                         <div class="flex justify-between">
                                             <span class="text-gray-400">Coût total</span>
-                                            <span class="text-purple-400 font-bold" id="totalCost">{{ $deck->cards->sum(fn($c) => $c->cost * $c->pivot->quantity) }}</span>
+                                            <span class="text-purple-400 font-bold"
+                                                id="totalCost">{{ $deck->cards->sum(fn($c) => $c->cost * $c->pivot->quantity) }}</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Boutons -->
-                                <button type="submit" class="w-full py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold text-lg rounded-lg hover:from-yellow-400 hover:to-orange-400 transition transform hover:scale-[1.02]">
+                                <button type="submit"
+                                    class="w-full py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold text-lg rounded-lg hover:from-yellow-400 hover:to-orange-400 transition transform hover:scale-[1.02]">
                                     ✅ Enregistrer
                                 </button>
 
-                                <a href="{{ route('decks.show', $deck) }}" class="block w-full text-center py-3 bg-gray-600 text-white font-bold rounded-lg hover:bg-gray-500 transition">
+                                <a href="{{ route('decks.show', $deck) }}"
+                                    class="block w-full text-center py-3 bg-gray-600 text-white font-bold rounded-lg hover:bg-gray-500 transition">
                                     Annuler
                                 </a>
                             </div>
@@ -87,7 +97,7 @@
                             </div>
 
                             <div class="p-6">
-                                @if($collection->isEmpty())
+                                @if ($collection->isEmpty())
                                     <div class="text-center py-12">
                                         <div class="text-6xl mb-4">📭</div>
                                         <h3 class="text-xl font-semibold text-white mb-2">Collection vide</h3>
@@ -95,29 +105,37 @@
                                     </div>
                                 @else
                                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                        @foreach($collection as $card)
+                                        @foreach ($collection as $card)
                                             @php
                                                 $inDeck = $deck->cards->firstWhere('id', $card->id);
                                                 $currentQty = $inDeck ? $inDeck->pivot->quantity : 0;
                                             @endphp
-                                            <div class="card-selector group" data-card-id="{{ $card->id }}" data-cost="{{ $card->cost }}" data-max="{{ $card->pivot->quantity }}" data-current="{{ $currentQty }}">
+                                            <div class="card-selector group" data-card-id="{{ $card->id }}"
+                                                data-cost="{{ $card->cost }}"
+                                                data-max="{{ $card->pivot->quantity }}"
+                                                data-current="{{ $currentQty }}">
                                                 <div class="relative bg-white/5 rounded-xl border-2 overflow-hidden transition-all duration-300 cursor-pointer
                                                             {{ $currentQty > 0 ? 'border-purple-500 ring-2 ring-purple-500' : 'border-white/10 hover:border-purple-500/50' }}"
-                                                     style="--color1: {{ $card->faction->color_primary }}; --color2: {{ $card->faction->color_secondary }};">
-                                                    
+                                                    style="--color1: {{ $card->faction->color_primary }}; --color2: {{ $card->faction->color_secondary }};">
+
                                                     <!-- Image -->
                                                     <div class="aspect-[4/5] overflow-hidden"
-                                                         style="background: linear-gradient(135deg, var(--color1), var(--color2));">
-                                                        @if($card->image_primary)
-                                                            <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}" class="w-full h-full object-cover object-top">
+                                                        style="background: linear-gradient(135deg, var(--color1), var(--color2));">
+                                                        @if ($card->image_primary)
+                                                            <img src="{{ Storage::url($card->image_primary) }}"
+                                                                alt="{{ $card->name }}"
+                                                                class="w-full h-full object-cover object-top">
                                                         @else
-                                                            <div class="w-full h-full flex items-center justify-center text-4xl">🃏</div>
+                                                            <div
+                                                                class="w-full h-full flex items-center justify-center text-4xl">
+                                                                🃏</div>
                                                         @endif
                                                     </div>
 
                                                     <!-- Badge quantité possédée -->
                                                     <div class="absolute top-2 right-2">
-                                                        <span class="px-2 py-1 text-xs font-bold rounded
+                                                        <span
+                                                            class="px-2 py-1 text-xs font-bold rounded
                                                             @switch($card->rarity)
                                                                 @case('common') bg-gray-600 @break
                                                                 @case('rare') bg-blue-600 @break
@@ -130,25 +148,33 @@
 
                                                     <!-- Overlay de sélection -->
                                                     <div class="absolute inset-0 bg-purple-600/50 transition-opacity flex items-center justify-center selected-overlay"
-                                                         style="opacity: {{ $currentQty > 0 ? '1' : '0' }};">
+                                                        style="opacity: {{ $currentQty > 0 ? '1' : '0' }};">
                                                         <span class="text-4xl">✓</span>
                                                     </div>
 
                                                     <!-- Infos -->
                                                     <div class="p-3 bg-black/50">
-                                                        <h4 class="text-sm font-bold text-white truncate">{{ $card->name }}</h4>
+                                                        <h4 class="text-sm font-bold text-white truncate">
+                                                            {{ $card->name }}</h4>
                                                         <div class="flex justify-between items-center mt-1">
-                                                            <span class="text-xs text-gray-400">{{ $card->faction->name }}</span>
-                                                            <span class="text-xs text-purple-400 font-bold">💎 {{ $card->cost }}</span>
+                                                            <span
+                                                                class="text-xs text-gray-400">{{ $card->faction->name }}</span>
+                                                            <span class="text-xs text-purple-400 font-bold">💎
+                                                                {{ $card->cost }}</span>
                                                         </div>
                                                     </div>
 
                                                     <!-- Contrôles de quantité -->
-                                                    <div class="quantity-controls absolute bottom-16 left-0 right-0 bg-black/80 p-2 flex items-center justify-center gap-3 {{ $currentQty > 0 ? '' : 'hidden' }}">
-                                                        <button type="button" class="qty-btn qty-minus w-8 h-8 rounded-full bg-red-600 text-white font-bold hover:bg-red-500">-</button>
-                                                        <span class="qty-display text-white font-bold text-lg w-8 text-center">{{ $currentQty }}</span>
-                                                        <button type="button" class="qty-btn qty-plus w-8 h-8 rounded-full bg-green-600 text-white font-bold hover:bg-green-500">+</button>
-                                                        <input type="hidden" name="cards[{{ $card->id }}]" value="{{ $currentQty }}" class="qty-input">
+                                                    <div
+                                                        class="quantity-controls absolute bottom-16 left-0 right-0 bg-black/80 p-2 flex items-center justify-center gap-3 {{ $currentQty > 0 ? '' : 'hidden' }}">
+                                                        <button type="button"
+                                                            class="qty-btn qty-minus w-8 h-8 rounded-full bg-red-600 text-white font-bold hover:bg-red-500">-</button>
+                                                        <span
+                                                            class="qty-display text-white font-bold text-lg w-8 text-center">{{ $currentQty }}</span>
+                                                        <button type="button"
+                                                            class="qty-btn qty-plus w-8 h-8 rounded-full bg-green-600 text-white font-bold hover:bg-green-500">+</button>
+                                                        <input type="hidden" name="cards[{{ $card->id }}]"
+                                                            value="{{ $currentQty }}" class="qty-input">
                                                     </div>
                                                 </div>
                                             </div>
@@ -184,8 +210,9 @@
 
                 // Clic sur la carte
                 container.addEventListener('click', function(e) {
-                    if (e.target.classList.contains('qty-btn') || e.target.closest('.qty-btn')) return;
-                    
+                    if (e.target.classList.contains('qty-btn') || e.target.closest('.qty-btn'))
+                        return;
+
                     if (quantity === 0 && maxQty > 0) {
                         quantity = 1;
                         updateDisplay();
@@ -251,6 +278,7 @@
         .card-selector:hover .quantity-controls {
             display: flex !important;
         }
+
         .card-selector .selected-overlay {
             pointer-events: none;
         }

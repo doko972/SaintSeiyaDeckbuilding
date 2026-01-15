@@ -10,7 +10,7 @@
             width: 100%;
             height: 100%;
             z-index: 0;
-            background: 
+            background:
                 radial-gradient(ellipse at 20% 80%, rgba(120, 0, 255, 0.15) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 20%, rgba(255, 0, 100, 0.1) 0%, transparent 50%),
                 radial-gradient(ellipse at 50% 50%, rgba(0, 100, 255, 0.1) 0%, transparent 70%),
@@ -21,19 +21,26 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background-image: 
+            background-image:
                 radial-gradient(2px 2px at 20px 30px, #eee, transparent),
-                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.8), transparent),
                 radial-gradient(1px 1px at 90px 40px, #fff, transparent),
-                radial-gradient(2px 2px at 160px 120px, rgba(255,255,255,0.9), transparent),
+                radial-gradient(2px 2px at 160px 120px, rgba(255, 255, 255, 0.9), transparent),
                 radial-gradient(1px 1px at 230px 80px, #fff, transparent);
             background-size: 350px 200px;
             animation: twinkle 5s ease-in-out infinite;
         }
 
         @keyframes twinkle {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
         }
 
         /* ========================================
@@ -136,6 +143,7 @@
             background: rgba(251, 191, 36, 0.2);
             color: #FBBF24;
             border-color: rgba(251, 191, 36, 0.3);
+            padding: 8px 48px;
         }
 
         .action-btn.edit:hover {
@@ -148,6 +156,7 @@
             background: rgba(239, 68, 68, 0.2);
             color: #EF4444;
             border-color: rgba(239, 68, 68, 0.3);
+            padding: 8px 48px;
         }
 
         .action-btn.delete:hover {
@@ -173,29 +182,42 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
-        .holo-card-mini.rarity-common { border-color: rgba(156, 163, 175, 0.3); }
-        .holo-card-mini.rarity-rare { 
-            border-color: rgba(59, 130, 246, 0.5); 
+        .holo-card-mini.rarity-common {
+            border-color: rgba(156, 163, 175, 0.3);
+        }
+
+        .holo-card-mini.rarity-rare {
+            border-color: rgba(59, 130, 246, 0.5);
             box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
         }
-        .holo-card-mini.rarity-epic { 
-            border-color: rgba(168, 85, 247, 0.5); 
+
+        .holo-card-mini.rarity-epic {
+            border-color: rgba(168, 85, 247, 0.5);
             box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
         }
-        .holo-card-mini.rarity-legendary { 
-            border-color: rgba(255, 215, 0, 0.6); 
+
+        .holo-card-mini.rarity-legendary {
+            border-color: rgba(255, 215, 0, 0.6);
             box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
             animation: legendaryPulse 2s ease-in-out infinite;
         }
 
         @keyframes legendaryPulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
-            50% { box-shadow: 0 0 35px rgba(255, 215, 0, 0.6); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 35px rgba(255, 215, 0, 0.6);
+            }
         }
 
         .card-mini-image {
             position: relative;
             height: 180px;
+            width: 100%;
             overflow: hidden;
         }
 
@@ -217,7 +239,7 @@
             align-items: center;
             justify-content: center;
             font-size: 4rem;
-            background: linear-gradient(135deg, rgba(0,0,0,0.3), rgba(0,0,0,0.5));
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5));
         }
 
         .card-mini-quantity {
@@ -277,14 +299,12 @@
         .card-mini-holo {
             position: absolute;
             inset: 0;
-            background: linear-gradient(
-                135deg,
-                transparent 0%,
-                rgba(255, 255, 255, 0.1) 45%,
-                rgba(255, 255, 255, 0.3) 50%,
-                rgba(255, 255, 255, 0.1) 55%,
-                transparent 100%
-            );
+            background: linear-gradient(135deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.1) 45%,
+                    rgba(255, 255, 255, 0.3) 50%,
+                    rgba(255, 255, 255, 0.1) 55%,
+                    transparent 100%);
             opacity: 0;
             transition: opacity 0.3s ease;
             pointer-events: none;
@@ -296,8 +316,13 @@
         }
 
         @keyframes holoShine {
-            0% { transform: translateX(-100%) rotate(25deg); }
-            100% { transform: translateX(100%) rotate(25deg); }
+            0% {
+                transform: translateX(-100%) rotate(25deg);
+            }
+
+            100% {
+                transform: translateX(100%) rotate(25deg);
+            }
         }
 
         .card-mini-info {
@@ -357,10 +382,21 @@
             text-transform: uppercase;
         }
 
-        .stat-hp .mini-stat-value { color: #EF4444; }
-        .stat-def .mini-stat-value { color: #3B82F6; }
-        .stat-pwr .mini-stat-value { color: #F59E0B; }
-        .stat-cost .mini-stat-value { color: #A78BFA; }
+        .stat-hp .mini-stat-value {
+            color: #EF4444;
+        }
+
+        .stat-def .mini-stat-value {
+            color: #3B82F6;
+        }
+
+        .stat-pwr .mini-stat-value {
+            color: #F59E0B;
+        }
+
+        .stat-cost .mini-stat-value {
+            color: #A78BFA;
+        }
 
         /* ========================================
            SECTION TITLE
@@ -390,16 +426,18 @@
 
         <!-- Contenu -->
         <div class="relative z-10 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-            
+
             <!-- Header de page -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                 <div>
                     <div class="flex items-center gap-3 mb-1">
                         <h1 class="text-3xl font-bold text-white">{{ $deck->name }}</h1>
-                        @if($deck->is_active)
+                        @if ($deck->is_active)
                             <span class="deck-badge-active">
                                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clip-rule="evenodd" />
                                 </svg>
                                 Actif
                             </span>
@@ -407,9 +445,11 @@
                     </div>
                     <p class="text-gray-400">Détails et composition du deck</p>
                 </div>
-                <a href="{{ route('decks.index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-purple-500/30">
+                <a href="{{ route('decks.index') }}"
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-purple-500/30">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                     Retour aux decks
                 </a>
@@ -423,7 +463,7 @@
                             <span class="text-3xl">🎴</span>
                             {{ $deck->name }}
                         </h2>
-                        @if($deck->description)
+                        @if ($deck->description)
                             <p class="text-gray-400 max-w-2xl">{{ $deck->description }}</p>
                         @else
                             <p class="text-gray-500 italic">Aucune description</p>
@@ -432,17 +472,19 @@
                     <div class="flex gap-3">
                         <a href="{{ route('decks.edit', $deck) }}" class="action-btn edit">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                             Modifier
                         </a>
                         <form action="{{ route('decks.destroy', $deck) }}" method="POST"
-                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce deck ?');">
+                            onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce deck ?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="action-btn delete">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
                                 Supprimer
                             </button>
@@ -462,17 +504,19 @@
                     <div class="text-sm text-gray-400 mt-1">Cartes uniques</div>
                 </div>
                 <div class="stat-card" style="--accent-color: #FBBF24;">
-                    <div class="text-3xl font-bold text-yellow-400">{{ $deck->cards->sum(fn($c) => $c->cost * $c->pivot->quantity) }}</div>
+                    <div class="text-3xl font-bold text-yellow-400">
+                        {{ $deck->cards->sum(fn($c) => $c->cost * $c->pivot->quantity) }}</div>
                     <div class="text-sm text-gray-400 mt-1">Coût total</div>
                 </div>
                 <div class="stat-card" style="--accent-color: #34D399;">
-                    <div class="text-3xl font-bold text-green-400">{{ $deck->cards->count() > 0 ? round($deck->cards->avg('power')) : 0 }}</div>
+                    <div class="text-3xl font-bold text-green-400">
+                        {{ $deck->cards->count() > 0 ? round($deck->cards->avg('power')) : 0 }}</div>
                     <div class="text-sm text-gray-400 mt-1">Puissance moy.</div>
                 </div>
             </div>
 
             <!-- Cartes du deck -->
-            @if($deck->cards->isEmpty())
+            @if ($deck->cards->isEmpty())
                 <!-- État vide -->
                 <div class="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-12 text-center">
                     <div class="text-7xl mb-6">🃏</div>
@@ -480,10 +524,11 @@
                     <p class="text-gray-400 mb-8 max-w-md mx-auto">
                         Ajoutez des cartes à ce deck pour pouvoir affronter vos adversaires !
                     </p>
-                    <a href="{{ route('decks.edit', $deck) }}" 
-                       class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-purple-500/30">
+                    <a href="{{ route('decks.edit', $deck) }}"
+                        class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-purple-500/30">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                         Modifier le deck
                     </a>
@@ -492,21 +537,22 @@
                 <!-- Titre section -->
                 <h3 class="section-title">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
                     Cartes du deck
                 </h3>
 
                 <!-- Grille des cartes -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-                    @foreach($deck->cards as $card)
+                    @foreach ($deck->cards as $card)
                         <a href="{{ route('cards.show', $card) }}" class="block">
                             <div class="holo-card-mini rarity-{{ $card->rarity }}"
-                                 style="--color1: {{ $card->faction->color_primary ?? '#6366f1' }}; --color2: {{ $card->faction->color_secondary ?? '#8b5cf6' }};">
-                                
+                                style="--color1: {{ $card->faction->color_primary ?? '#6366f1' }}; --color2: {{ $card->faction->color_secondary ?? '#8b5cf6' }};">
+
                                 <!-- Image -->
                                 <div class="card-mini-image">
-                                    @if($card->image_primary)
+                                    @if ($card->image_primary)
                                         <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}">
                                     @else
                                         <div class="card-mini-placeholder">
@@ -520,10 +566,21 @@
                                     <!-- Badge Rareté -->
                                     <div class="card-mini-rarity">
                                         @switch($card->rarity)
-                                            @case('common') <span class="rarity-common">Commune</span> @break
-                                            @case('rare') <span class="rarity-rare">Rare</span> @break
-                                            @case('epic') <span class="rarity-epic">Épique</span> @break
-                                            @case('legendary') <span class="rarity-legendary">Légendaire</span> @break
+                                            @case('common')
+                                                <span class="rarity-common">Commune</span>
+                                            @break
+
+                                            @case('rare')
+                                                <span class="rarity-rare">Rare</span>
+                                            @break
+
+                                            @case('epic')
+                                                <span class="rarity-epic">Épique</span>
+                                            @break
+
+                                            @case('legendary')
+                                                <span class="rarity-legendary">Légendaire</span>
+                                            @break
                                         @endswitch
                                     </div>
 
@@ -535,7 +592,8 @@
                                 <div class="card-mini-info">
                                     <h3 class="card-mini-name">{{ $card->name }}</h3>
                                     <p class="card-mini-faction">
-                                        <span class="faction-dot" style="background: {{ $card->faction->color_primary ?? '#6366f1' }};"></span>
+                                        <span class="faction-dot"
+                                            style="background: {{ $card->faction->color_primary ?? '#6366f1' }};"></span>
                                         {{ $card->faction->name ?? 'Sans faction' }}
                                     </p>
 

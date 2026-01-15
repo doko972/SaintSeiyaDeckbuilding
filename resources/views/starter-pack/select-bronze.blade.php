@@ -1,8 +1,5 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Choisissez votre Chevalier de Bronze') }}
-        </h2>
     </x-slot>
 
     <div class="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black py-12 relative overflow-hidden">
@@ -38,7 +35,7 @@
             <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8 mb-8">
                 <div class="text-center mb-6">
                     <h3 class="text-4xl font-bold text-white mb-3">
-                        🎁 Bienvenue dans Saint Seiya Deckbuilding !
+                        Bienvenue dans Saint Seiya Deckbuilding !
                     </h3>
                     <p class="text-xl text-gray-300">
                         Commencez votre aventure en choisissant votre héros

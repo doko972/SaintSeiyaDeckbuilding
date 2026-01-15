@@ -10,7 +10,7 @@
             width: 100%;
             height: 100%;
             z-index: 0;
-            background: 
+            background:
                 radial-gradient(ellipse at 20% 80%, rgba(120, 0, 255, 0.15) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 20%, rgba(255, 0, 100, 0.1) 0%, transparent 50%),
                 radial-gradient(ellipse at 50% 50%, rgba(0, 100, 255, 0.1) 0%, transparent 70%),
@@ -21,19 +21,26 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background-image: 
+            background-image:
                 radial-gradient(2px 2px at 20px 30px, #eee, transparent),
-                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.8), transparent),
                 radial-gradient(1px 1px at 90px 40px, #fff, transparent),
-                radial-gradient(2px 2px at 160px 120px, rgba(255,255,255,0.9), transparent),
+                radial-gradient(2px 2px at 160px 120px, rgba(255, 255, 255, 0.9), transparent),
                 radial-gradient(1px 1px at 230px 80px, #fff, transparent);
             background-size: 350px 200px;
             animation: twinkle 5s ease-in-out infinite;
         }
 
         @keyframes twinkle {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
         }
 
         /* ========================================
@@ -53,7 +60,7 @@
             transform: translateY(-10px);
             border-color: var(--faction-color);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
-                        0 0 40px var(--faction-glow);
+                0 0 40px var(--faction-glow);
         }
 
         /* Header de la faction */
@@ -88,12 +95,10 @@
         .faction-shine {
             position: absolute;
             inset: 0;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.2),
+                    transparent);
             transform: translateX(-100%);
             transition: transform 0.8s ease;
         }
@@ -267,8 +272,15 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
         .intro-title {
@@ -297,7 +309,7 @@
 
         <!-- Contenu -->
         <div class="relative z-10 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-            
+
             <!-- Header de page -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                 <div>
@@ -307,11 +319,11 @@
                     </h1>
                     <p class="text-gray-400 mt-1">Les armées légendaires du Sanctuaire</p>
                 </div>
-                @if(auth()->user()->isAdmin())
-                    <a href="{{ route('admin.factions.create') }}" 
-                       class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-purple-500/30">
+                @if (auth()->user()->isAdmin())
+                    <a href="{{ route('admin.factions.create') }}"
+                        class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-purple-500/30">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
                         Nouvelle Faction
                     </a>
@@ -323,24 +335,25 @@
                 <div class="intro-icon">⚔️</div>
                 <h2 class="intro-title">Les Factions du Sanctuaire</h2>
                 <p class="intro-text">
-                    Découvrez les différentes factions qui s'affrontent pour la domination. 
+                    Découvrez les différentes factions qui s'affrontent pour la domination.
                     Chaque faction possède ses propres chevaliers et pouvoirs uniques.
                 </p>
             </div>
 
             <!-- Grille des factions -->
-            @if($factions->isEmpty())
+            @if ($factions->isEmpty())
                 <div class="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-12 text-center">
                     <div class="text-7xl mb-6">🏛️</div>
                     <h3 class="text-2xl font-bold text-white mb-3">Aucune faction</h3>
                     <p class="text-gray-400 mb-8 max-w-md mx-auto">
                         Les factions n'ont pas encore été créées.
                     </p>
-                    @if(auth()->user()->isAdmin())
-                        <a href="{{ route('admin.factions.create') }}" 
-                           class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-purple-500/30">
+                    @if (auth()->user()->isAdmin())
+                        <a href="{{ route('admin.factions.create') }}"
+                            class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-purple-500/30">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
                             </svg>
                             Créer la première faction
                         </a>
@@ -348,19 +361,18 @@
                 </div>
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($factions as $faction)
-                        <div class="faction-card" 
-                             style="--faction-color: {{ $faction->color_primary }}; --faction-glow: {{ $faction->color_primary }}40; --color1: {{ $faction->color_primary }}; --color2: {{ $faction->color_secondary }};">
-                            
+                    @foreach ($factions as $faction)
+                        <div class="faction-card"
+                            style="--faction-color: {{ $faction->color_primary }}; --faction-glow: {{ $faction->color_primary }}40; --color1: {{ $faction->color_primary }}; --color2: {{ $faction->color_secondary }};">
+
                             <a href="{{ route('factions.show', $faction) }}" class="block">
                                 <!-- Header -->
                                 <div class="faction-header">
                                     <div class="faction-header-bg"></div>
-                                    
-                                    @if($faction->image)
-                                        <img src="{{ Storage::url($faction->image) }}" 
-                                             alt="{{ $faction->name }}"
-                                             class="faction-header-image">
+
+                                    @if ($faction->image)
+                                        <img src="{{ Storage::url($faction->image) }}" alt="{{ $faction->name }}"
+                                            class="faction-header-image">
                                     @endif
 
                                     <div class="faction-shine"></div>
@@ -368,8 +380,10 @@
                                     <!-- Badge nombre de cartes -->
                                     <div class="faction-badge">
                                         <span class="faction-badge-text">
-                                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                             </svg>
                                             {{ $faction->cards->count() }} cartes
                                         </span>
@@ -379,11 +393,12 @@
                                 <!-- Contenu -->
                                 <div class="faction-content">
                                     <h3 class="faction-name">
-                                        <span class="faction-dot" style="background: {{ $faction->color_primary }};"></span>
+                                        <span class="faction-dot"
+                                            style="background: {{ $faction->color_primary }};"></span>
                                         {{ $faction->name }}
                                     </h3>
-                                    
-                                    @if($faction->description)
+
+                                    @if ($faction->description)
                                         <p class="faction-description">{{ $faction->description }}</p>
                                     @else
                                         <p class="faction-description text-gray-500 italic">Aucune description</p>
@@ -393,12 +408,14 @@
                                     <div class="faction-cards-preview">
                                         @forelse($faction->cards->take(5) as $card)
                                             <div class="faction-card-avatar"
-                                                 style="background: linear-gradient(135deg, {{ $faction->color_primary }}, {{ $faction->color_secondary }});"
-                                                 title="{{ $card->name }}">
-                                                @if($card->image_primary)
-                                                    <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}">
+                                                style="background: linear-gradient(135deg, {{ $faction->color_primary }}, {{ $faction->color_secondary }});"
+                                                title="{{ $card->name }}">
+                                                @if ($card->image_primary)
+                                                    <img src="{{ Storage::url($card->image_primary) }}"
+                                                        alt="{{ $card->name }}">
                                                 @else
-                                                    <span class="flex items-center justify-center w-full h-full text-white text-xs font-bold">
+                                                    <span
+                                                        class="flex items-center justify-center w-full h-full text-white text-xs font-bold">
                                                         {{ strtoupper(substr($card->name, 0, 2)) }}
                                                     </span>
                                                 @endif
@@ -406,10 +423,10 @@
                                         @empty
                                             <span class="text-gray-500 text-sm italic">Aucune carte</span>
                                         @endforelse
-                                        
-                                        @if($faction->cards->count() > 5)
+
+                                        @if ($faction->cards->count() > 5)
                                             <div class="faction-card-avatar faction-card-avatar-more"
-                                                 style="background: rgba(255, 255, 255, 0.1);">
+                                                style="background: rgba(255, 255, 255, 0.1);">
                                                 +{{ $faction->cards->count() - 5 }}
                                             </div>
                                         @endif
@@ -418,23 +435,26 @@
                             </a>
 
                             <!-- Actions Admin -->
-                            @if(auth()->user()->isAdmin())
+                            @if (auth()->user()->isAdmin())
                                 <div class="faction-admin-actions">
-                                    <a href="{{ route('admin.factions.edit', $faction) }}" 
-                                       class="faction-admin-btn edit"
-                                       onclick="event.stopPropagation();">
+                                    <a href="{{ route('admin.factions.edit', $faction) }}"
+                                        class="faction-admin-btn edit" onclick="event.stopPropagation();">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                         </svg>
                                         Modifier
                                     </a>
-                                    <form action="{{ route('admin.factions.destroy', $faction) }}" method="POST" class="flex-1"
-                                          onsubmit="event.stopPropagation(); return confirm('Êtes-vous sûr de vouloir supprimer cette faction ?');">
+                                    <form action="{{ route('admin.factions.destroy', $faction) }}" method="POST"
+                                        class="flex-1"
+                                        onsubmit="event.stopPropagation(); return confirm('Êtes-vous sûr de vouloir supprimer cette faction ?');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="faction-admin-btn delete w-full">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                             </svg>
                                             Supprimer
                                         </button>

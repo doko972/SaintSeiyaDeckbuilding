@@ -27,9 +27,6 @@
                     @else
                         <span class="text-2xl">⚔️</span>
                     @endif
-                    <span class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200">
-                        Saint Seiya
-                    </span>
                 </a>
 
                 <!-- Auth Links -->
@@ -105,13 +102,6 @@
                         Se connecter
                     </a>
                 @endauth
-            </div>
-
-            <!-- Scroll indicator -->
-            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
-                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                </svg>
             </div>
         </div>
     </section>

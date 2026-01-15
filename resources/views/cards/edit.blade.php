@@ -1,37 +1,46 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Modifier') }} : {{ $card->name }}
-            </h2>
-            <a href="{{ route('cards.show', $card) }}" class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                ← Retour
-            </a>
-        </div>
     </x-slot>
 
     <div class="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black py-12">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
-
+            <div class="flex justify-end items-center mb-3">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    {{ __('Modifier') }} : {{ $card->name }}
+                </h2>
+                <a href="{{ route('cards.show', $card) }}"
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 font-bold rounded-xl hover:from-yellow-400 hover:to-amber-400 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-yellow-500/30">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Retour
+                </a>
+            </div>
             <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden">
-                <div class="p-6" style="background: linear-gradient(135deg, {{ $card->faction->color_primary }}, {{ $card->faction->color_secondary }});">
+                <div class="p-6"
+                    style="background: linear-gradient(135deg, {{ $card->faction->color_primary }}, {{ $card->faction->color_secondary }});">
                     <h3 class="text-xl font-bold text-white">✏️ Modifier la carte</h3>
                 </div>
 
-                <form method="POST" action="{{ route('admin.cards.update', $card) }}" enctype="multipart/form-data" class="p-6 space-y-8">
+                <form method="POST" action="{{ route('admin.cards.update', $card) }}" enctype="multipart/form-data"
+                    class="p-6 space-y-8">
                     @csrf
                     @method('PUT')
 
                     <!-- SECTION 1: Informations de base -->
                     <div class="space-y-6">
-                        <h4 class="text-lg font-bold text-white border-b border-white/20 pb-2">📋 Informations de base</h4>
-                        
+                        <h4 class="text-lg font-bold text-white border-b border-white/20 pb-2">📋 Informations de base
+                        </h4>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Nom -->
                             <div>
-                                <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Nom de la carte *</label>
-                                <input type="text" name="name" id="name" value="{{ old('name', $card->name) }}" required
-                                       class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-purple-500">
+                                <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Nom de la
+                                    carte *</label>
+                                <input type="text" name="name" id="name"
+                                    value="{{ old('name', $card->name) }}" required
+                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-purple-500">
                                 @error('name')
                                     <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                                 @enderror
@@ -39,9 +48,11 @@
 
                             <!-- Grade -->
                             <div>
-                                <label for="grade" class="block text-sm font-medium text-gray-300 mb-2">Grade (1-10) *</label>
-                                <input type="number" name="grade" id="grade" value="{{ old('grade', $card->grade) }}" min="1" max="10" required
-                                       class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:ring-purple-500">
+                                <label for="grade" class="block text-sm font-medium text-gray-300 mb-2">Grade (1-10)
+                                    *</label>
+                                <input type="number" name="grade" id="grade"
+                                    value="{{ old('grade', $card->grade) }}" min="1" max="10" required
+                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:ring-purple-500">
                                 @error('grade')
                                     <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                                 @enderror
@@ -49,11 +60,13 @@
 
                             <!-- Faction -->
                             <div>
-                                <label for="faction_id" class="block text-sm font-medium text-gray-300 mb-2">Faction *</label>
+                                <label for="faction_id" class="block text-sm font-medium text-gray-300 mb-2">Faction
+                                    *</label>
                                 <select name="faction_id" id="faction_id" required
-                                        class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:ring-purple-500">
-                                    @foreach($factions as $faction)
-                                        <option value="{{ $faction->id }}" {{ old('faction_id', $card->faction_id) == $faction->id ? 'selected' : '' }}>
+                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:ring-purple-500">
+                                    @foreach ($factions as $faction)
+                                        <option value="{{ $faction->id }}"
+                                            {{ old('faction_id', $card->faction_id) == $faction->id ? 'selected' : '' }}>
                                             {{ $faction->name }}
                                         </option>
                                     @endforeach
@@ -65,9 +78,11 @@
 
                             <!-- Coût -->
                             <div>
-                                <label for="cost" class="block text-sm font-medium text-gray-300 mb-2">💎 Coût d'invocation *</label>
-                                <input type="number" name="cost" id="cost" value="{{ old('cost', $card->cost) }}" min="1" max="15" required
-                                       class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:ring-purple-500">
+                                <label for="cost" class="block text-sm font-medium text-gray-300 mb-2">💎 Coût
+                                    d'invocation *</label>
+                                <input type="number" name="cost" id="cost"
+                                    value="{{ old('cost', $card->cost) }}" min="1" max="15" required
+                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:ring-purple-500">
                                 @error('cost')
                                     <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                                 @enderror
@@ -77,37 +92,66 @@
                         <!-- Type d'armure, Élément, Rareté -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <label for="armor_type" class="block text-sm font-medium text-gray-300 mb-2">🛡️ Type d'armure *</label>
+                                <label for="armor_type" class="block text-sm font-medium text-gray-300 mb-2">🛡️ Type
+                                    d'armure *</label>
                                 <select name="armor_type" id="armor_type" required
-                                        class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:ring-purple-500">
-                                    <option value="bronze" {{ old('armor_type', $card->armor_type) == 'bronze' ? 'selected' : '' }}>🥉 Bronze</option>
-                                    <option value="silver" {{ old('armor_type', $card->armor_type) == 'silver' ? 'selected' : '' }}>🥈 Argent</option>
-                                    <option value="gold" {{ old('armor_type', $card->armor_type) == 'gold' ? 'selected' : '' }}>🥇 Or</option>
-                                    <option value="divine" {{ old('armor_type', $card->armor_type) == 'divine' ? 'selected' : '' }}>👑 Divine</option>
+                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:ring-purple-500">
+                                    <option value="bronze"
+                                        {{ old('armor_type', $card->armor_type) == 'bronze' ? 'selected' : '' }}>🥉
+                                        Bronze</option>
+                                    <option value="silver"
+                                        {{ old('armor_type', $card->armor_type) == 'silver' ? 'selected' : '' }}>🥈
+                                        Argent</option>
+                                    <option value="gold"
+                                        {{ old('armor_type', $card->armor_type) == 'gold' ? 'selected' : '' }}>🥇 Or
+                                    </option>
+                                    <option value="divine"
+                                        {{ old('armor_type', $card->armor_type) == 'divine' ? 'selected' : '' }}>👑
+                                        Divine</option>
                                 </select>
                             </div>
 
                             <div>
-                                <label for="element" class="block text-sm font-medium text-gray-300 mb-2">✨ Élément *</label>
+                                <label for="element" class="block text-sm font-medium text-gray-300 mb-2">✨ Élément
+                                    *</label>
                                 <select name="element" id="element" required
-                                        class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:ring-purple-500">
-                                    <option value="fire" {{ old('element', $card->element) == 'fire' ? 'selected' : '' }}>🔥 Feu</option>
-                                    <option value="water" {{ old('element', $card->element) == 'water' ? 'selected' : '' }}>💧 Eau</option>
-                                    <option value="ice" {{ old('element', $card->element) == 'ice' ? 'selected' : '' }}>❄️ Glace</option>
-                                    <option value="thunder" {{ old('element', $card->element) == 'thunder' ? 'selected' : '' }}>⚡ Foudre</option>
-                                    <option value="darkness" {{ old('element', $card->element) == 'darkness' ? 'selected' : '' }}>🌑 Ténèbres</option>
-                                    <option value="light" {{ old('element', $card->element) == 'light' ? 'selected' : '' }}>✨ Lumière</option>
+                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:ring-purple-500">
+                                    <option value="fire"
+                                        {{ old('element', $card->element) == 'fire' ? 'selected' : '' }}>🔥 Feu
+                                    </option>
+                                    <option value="water"
+                                        {{ old('element', $card->element) == 'water' ? 'selected' : '' }}>💧 Eau
+                                    </option>
+                                    <option value="ice"
+                                        {{ old('element', $card->element) == 'ice' ? 'selected' : '' }}>❄️ Glace
+                                    </option>
+                                    <option value="thunder"
+                                        {{ old('element', $card->element) == 'thunder' ? 'selected' : '' }}>⚡ Foudre
+                                    </option>
+                                    <option value="darkness"
+                                        {{ old('element', $card->element) == 'darkness' ? 'selected' : '' }}>🌑
+                                        Ténèbres</option>
+                                    <option value="light"
+                                        {{ old('element', $card->element) == 'light' ? 'selected' : '' }}>✨ Lumière
+                                    </option>
                                 </select>
                             </div>
 
                             <div>
-                                <label for="rarity" class="block text-sm font-medium text-gray-300 mb-2">⭐ Rareté *</label>
+                                <label for="rarity" class="block text-sm font-medium text-gray-300 mb-2">⭐ Rareté
+                                    *</label>
                                 <select name="rarity" id="rarity" required
-                                        class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:ring-purple-500">
-                                    <option value="common" {{ old('rarity', $card->rarity) == 'common' ? 'selected' : '' }}>Commune</option>
-                                    <option value="rare" {{ old('rarity', $card->rarity) == 'rare' ? 'selected' : '' }}>Rare</option>
-                                    <option value="epic" {{ old('rarity', $card->rarity) == 'epic' ? 'selected' : '' }}>Épique</option>
-                                    <option value="legendary" {{ old('rarity', $card->rarity) == 'legendary' ? 'selected' : '' }}>Légendaire</option>
+                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:ring-purple-500">
+                                    <option value="common"
+                                        {{ old('rarity', $card->rarity) == 'common' ? 'selected' : '' }}>Commune
+                                    </option>
+                                    <option value="rare"
+                                        {{ old('rarity', $card->rarity) == 'rare' ? 'selected' : '' }}>Rare</option>
+                                    <option value="epic"
+                                        {{ old('rarity', $card->rarity) == 'epic' ? 'selected' : '' }}>Épique</option>
+                                    <option value="legendary"
+                                        {{ old('rarity', $card->rarity) == 'legendary' ? 'selected' : '' }}>Légendaire
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -116,36 +160,50 @@
                     <!-- SECTION 2: Statistiques -->
                     <div class="space-y-6">
                         <h4 class="text-lg font-bold text-white border-b border-white/20 pb-2">📊 Statistiques</h4>
-                        
+
                         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
                             <div class="bg-red-500/20 border border-red-500/30 rounded-xl p-4">
-                                <label for="health_points" class="block text-sm font-medium text-red-400 mb-2">❤️ PV *</label>
-                                <input type="number" name="health_points" id="health_points" value="{{ old('health_points', $card->health_points) }}" min="1" max="500" required
-                                       class="w-full bg-white/10 border border-red-500/30 rounded-lg px-3 py-2 text-white text-center text-xl font-bold focus:border-red-500 focus:ring-red-500">
+                                <label for="health_points" class="block text-sm font-medium text-red-400 mb-2">❤️ PV
+                                    *</label>
+                                <input type="number" name="health_points" id="health_points"
+                                    value="{{ old('health_points', $card->health_points) }}" min="1"
+                                    max="500" required
+                                    class="w-full bg-white/10 border border-red-500/30 rounded-lg px-3 py-2 text-white text-center text-xl font-bold focus:border-red-500 focus:ring-red-500">
                             </div>
 
                             <div class="bg-yellow-500/20 border border-yellow-500/30 rounded-xl p-4">
-                                <label for="endurance" class="block text-sm font-medium text-yellow-400 mb-2">⚡ END *</label>
-                                <input type="number" name="endurance" id="endurance" value="{{ old('endurance', $card->endurance) }}" min="1" max="200" required
-                                       class="w-full bg-white/10 border border-yellow-500/30 rounded-lg px-3 py-2 text-white text-center text-xl font-bold focus:border-yellow-500 focus:ring-yellow-500">
+                                <label for="endurance" class="block text-sm font-medium text-yellow-400 mb-2">⚡ END
+                                    *</label>
+                                <input type="number" name="endurance" id="endurance"
+                                    value="{{ old('endurance', $card->endurance) }}" min="1" max="200"
+                                    required
+                                    class="w-full bg-white/10 border border-yellow-500/30 rounded-lg px-3 py-2 text-white text-center text-xl font-bold focus:border-yellow-500 focus:ring-yellow-500">
                             </div>
 
                             <div class="bg-blue-500/20 border border-blue-500/30 rounded-xl p-4">
-                                <label for="defense" class="block text-sm font-medium text-blue-400 mb-2">🛡️ DEF *</label>
-                                <input type="number" name="defense" id="defense" value="{{ old('defense', $card->defense) }}" min="0" max="100" required
-                                       class="w-full bg-white/10 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-center text-xl font-bold focus:border-blue-500 focus:ring-blue-500">
+                                <label for="defense" class="block text-sm font-medium text-blue-400 mb-2">🛡️ DEF
+                                    *</label>
+                                <input type="number" name="defense" id="defense"
+                                    value="{{ old('defense', $card->defense) }}" min="0" max="100"
+                                    required
+                                    class="w-full bg-white/10 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-center text-xl font-bold focus:border-blue-500 focus:ring-blue-500">
                             </div>
 
                             <div class="bg-orange-500/20 border border-orange-500/30 rounded-xl p-4">
-                                <label for="power" class="block text-sm font-medium text-orange-400 mb-2">💪 PWR *</label>
-                                <input type="number" name="power" id="power" value="{{ old('power', $card->power) }}" min="0" max="200" required
-                                       class="w-full bg-white/10 border border-orange-500/30 rounded-lg px-3 py-2 text-white text-center text-xl font-bold focus:border-orange-500 focus:ring-orange-500">
+                                <label for="power" class="block text-sm font-medium text-orange-400 mb-2">💪 PWR
+                                    *</label>
+                                <input type="number" name="power" id="power"
+                                    value="{{ old('power', $card->power) }}" min="0" max="200" required
+                                    class="w-full bg-white/10 border border-orange-500/30 rounded-lg px-3 py-2 text-white text-center text-xl font-bold focus:border-orange-500 focus:ring-orange-500">
                             </div>
 
                             <div class="bg-purple-500/20 border border-purple-500/30 rounded-xl p-4">
-                                <label for="cosmos" class="block text-sm font-medium text-purple-400 mb-2">🌟 COS *</label>
-                                <input type="number" name="cosmos" id="cosmos" value="{{ old('cosmos', $card->cosmos) }}" min="0" max="200" required
-                                       class="w-full bg-white/10 border border-purple-500/30 rounded-lg px-3 py-2 text-white text-center text-xl font-bold focus:border-purple-500 focus:ring-purple-500">
+                                <label for="cosmos" class="block text-sm font-medium text-purple-400 mb-2">🌟 COS
+                                    *</label>
+                                <input type="number" name="cosmos" id="cosmos"
+                                    value="{{ old('cosmos', $card->cosmos) }}" min="0" max="200"
+                                    required
+                                    class="w-full bg-white/10 border border-purple-500/30 rounded-lg px-3 py-2 text-white text-center text-xl font-bold focus:border-purple-500 focus:ring-purple-500">
                             </div>
                         </div>
                     </div>
@@ -153,14 +211,16 @@
                     <!-- SECTION 3: Attaques -->
                     <div class="space-y-6">
                         <h4 class="text-lg font-bold text-white border-b border-white/20 pb-2">⚔️ Attaques</h4>
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
-                                <label for="main_attack_id" class="block text-sm font-medium text-red-400 mb-2">Attaque Principale *</label>
+                                <label for="main_attack_id"
+                                    class="block text-sm font-medium text-red-400 mb-2">Attaque Principale *</label>
                                 <select name="main_attack_id" id="main_attack_id" required
-                                        class="w-full bg-white/10 border border-red-500/30 rounded-lg px-4 py-3 text-white focus:border-red-500 focus:ring-red-500">
-                                    @foreach($attacks as $attack)
-                                        <option value="{{ $attack->id }}" {{ old('main_attack_id', $card->main_attack_id) == $attack->id ? 'selected' : '' }}>
+                                    class="w-full bg-white/10 border border-red-500/30 rounded-lg px-4 py-3 text-white focus:border-red-500 focus:ring-red-500">
+                                    @foreach ($attacks as $attack)
+                                        <option value="{{ $attack->id }}"
+                                            {{ old('main_attack_id', $card->main_attack_id) == $attack->id ? 'selected' : '' }}>
                                             {{ $attack->name }} ({{ $attack->damage }} DMG)
                                         </option>
                                     @endforeach
@@ -168,12 +228,14 @@
                             </div>
 
                             <div class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
-                                <label for="secondary_attack_1_id" class="block text-sm font-medium text-blue-400 mb-2">Attaque Secondaire 1</label>
+                                <label for="secondary_attack_1_id"
+                                    class="block text-sm font-medium text-blue-400 mb-2">Attaque Secondaire 1</label>
                                 <select name="secondary_attack_1_id" id="secondary_attack_1_id"
-                                        class="w-full bg-white/10 border border-blue-500/30 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-blue-500">
+                                    class="w-full bg-white/10 border border-blue-500/30 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-blue-500">
                                     <option value="">-- Aucune --</option>
-                                    @foreach($attacks as $attack)
-                                        <option value="{{ $attack->id }}" {{ old('secondary_attack_1_id', $card->secondary_attack_1_id) == $attack->id ? 'selected' : '' }}>
+                                    @foreach ($attacks as $attack)
+                                        <option value="{{ $attack->id }}"
+                                            {{ old('secondary_attack_1_id', $card->secondary_attack_1_id) == $attack->id ? 'selected' : '' }}>
                                             {{ $attack->name }} ({{ $attack->damage }} DMG)
                                         </option>
                                     @endforeach
@@ -181,12 +243,14 @@
                             </div>
 
                             <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
-                                <label for="secondary_attack_2_id" class="block text-sm font-medium text-green-400 mb-2">Attaque Secondaire 2</label>
+                                <label for="secondary_attack_2_id"
+                                    class="block text-sm font-medium text-green-400 mb-2">Attaque Secondaire 2</label>
                                 <select name="secondary_attack_2_id" id="secondary_attack_2_id"
-                                        class="w-full bg-white/10 border border-green-500/30 rounded-lg px-4 py-3 text-white focus:border-green-500 focus:ring-green-500">
+                                    class="w-full bg-white/10 border border-green-500/30 rounded-lg px-4 py-3 text-white focus:border-green-500 focus:ring-green-500">
                                     <option value="">-- Aucune --</option>
-                                    @foreach($attacks as $attack)
-                                        <option value="{{ $attack->id }}" {{ old('secondary_attack_2_id', $card->secondary_attack_2_id) == $attack->id ? 'selected' : '' }}>
+                                    @foreach ($attacks as $attack)
+                                        <option value="{{ $attack->id }}"
+                                            {{ old('secondary_attack_2_id', $card->secondary_attack_2_id) == $attack->id ? 'selected' : '' }}>
                                             {{ $attack->name }} ({{ $attack->damage }} DMG)
                                         </option>
                                     @endforeach
@@ -198,18 +262,23 @@
                     <!-- SECTION 4: Capacité Passive -->
                     <div class="space-y-6">
                         <h4 class="text-lg font-bold text-white border-b border-white/20 pb-2">✨ Capacité Passive</h4>
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="passive_ability_name" class="block text-sm font-medium text-gray-300 mb-2">Nom de la capacité</label>
-                                <input type="text" name="passive_ability_name" id="passive_ability_name" value="{{ old('passive_ability_name', $card->passive_ability_name) }}"
-                                       class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-yellow-500 focus:ring-yellow-500">
+                                <label for="passive_ability_name"
+                                    class="block text-sm font-medium text-gray-300 mb-2">Nom de la capacité</label>
+                                <input type="text" name="passive_ability_name" id="passive_ability_name"
+                                    value="{{ old('passive_ability_name', $card->passive_ability_name) }}"
+                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-yellow-500 focus:ring-yellow-500">
                             </div>
 
                             <div>
-                                <label for="passive_ability_description" class="block text-sm font-medium text-gray-300 mb-2">Description</label>
-                                <input type="text" name="passive_ability_description" id="passive_ability_description" value="{{ old('passive_ability_description', $card->passive_ability_description) }}"
-                                       class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-yellow-500 focus:ring-yellow-500">
+                                <label for="passive_ability_description"
+                                    class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                                <input type="text" name="passive_ability_description"
+                                    id="passive_ability_description"
+                                    value="{{ old('passive_ability_description', $card->passive_ability_description) }}"
+                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-yellow-500 focus:ring-yellow-500">
                             </div>
                         </div>
                     </div>
@@ -217,44 +286,52 @@
                     <!-- SECTION 5: Images -->
                     <div class="space-y-6">
                         <h4 class="text-lg font-bold text-white border-b border-white/20 pb-2">🖼️ Images</h4>
-                        
+
                         <!-- Images actuelles -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            @if($card->image_primary)
+                            @if ($card->image_primary)
                                 <div class="bg-white/5 rounded-xl p-4">
                                     <p class="text-sm text-gray-400 mb-2">Image principale actuelle</p>
-                                    <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}" class="w-32 h-40 object-cover rounded-lg border-2 border-white/30">
+                                    <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}"
+                                        class="w-32 h-40 object-cover rounded-lg border-2 border-white/30">
                                 </div>
                             @endif
-                            @if($card->image_secondary)
+                            @if ($card->image_secondary)
                                 <div class="bg-white/5 rounded-xl p-4">
                                     <p class="text-sm text-gray-400 mb-2">Image alternative actuelle</p>
-                                    <img src="{{ Storage::url($card->image_secondary) }}" alt="{{ $card->name }}" class="w-32 h-40 object-cover rounded-lg border-2 border-white/30">
+                                    <img src="{{ Storage::url($card->image_secondary) }}" alt="{{ $card->name }}"
+                                        class="w-32 h-40 object-cover rounded-lg border-2 border-white/30">
                                 </div>
                             @endif
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="image_primary" class="block text-sm font-medium text-gray-300 mb-2">Nouvelle image principale</label>
+                                <label for="image_primary"
+                                    class="block text-sm font-medium text-gray-300 mb-2">Nouvelle image
+                                    principale</label>
                                 <input type="file" name="image_primary" id="image_primary" accept="image/*"
-                                       class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white hover:file:bg-purple-700">
+                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white hover:file:bg-purple-700">
                             </div>
 
                             <div>
-                                <label for="image_secondary" class="block text-sm font-medium text-gray-300 mb-2">Nouvelle image alternative</label>
+                                <label for="image_secondary"
+                                    class="block text-sm font-medium text-gray-300 mb-2">Nouvelle image
+                                    alternative</label>
                                 <input type="file" name="image_secondary" id="image_secondary" accept="image/*"
-                                       class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white hover:file:bg-purple-700">
+                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white hover:file:bg-purple-700">
                             </div>
                         </div>
                     </div>
 
                     <!-- Submit -->
                     <div class="flex gap-4 pt-6 border-t border-white/20">
-                        <button type="submit" class="flex-1 py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold text-lg rounded-lg hover:from-yellow-400 hover:to-orange-400 transition transform hover:scale-[1.02]">
+                        <button type="submit"
+                            class="flex-1 py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold text-lg rounded-lg hover:from-yellow-400 hover:to-orange-400 transition transform hover:scale-[1.02]">
                             ✅ Enregistrer les modifications
                         </button>
-                        <a href="{{ route('cards.show', $card) }}" class="px-8 py-4 bg-gray-600 text-white font-bold rounded-lg hover:bg-gray-500 transition">
+                        <a href="{{ route('cards.show', $card) }}"
+                            class="px-8 py-4 bg-gray-600 text-white font-bold rounded-lg hover:bg-gray-500 transition">
                             Annuler
                         </a>
                     </div>
