@@ -117,7 +117,10 @@
                     </div>
 
                     <div class="p-6" id="waitingBattlesContainer">
-                        <!-- Contenu mis à jour dynamiquement -->
+                        <div class="text-center py-8">
+                            <div class="text-4xl mb-2 animate-pulse">⏳</div>
+                            <p class="text-gray-400">Chargement...</p>
+                        </div>
                     </div>
                 </div>
 
@@ -151,7 +154,11 @@
     <!-- Polling pour les parties en attente -->
     <script>
         const csrfToken = '{{ csrf_token() }}';
-        const decks = @json($decks->map(fn($d) => ['id' => $d->id, 'name' => $d->name, 'cards_count' => $d->cards_count, 'is_active' => $d->is_active]));
+        const decks = [
+            @foreach($decks as $deck)
+            { id: {{ $deck->id }}, name: "{{ $deck->name }}", cards_count: {{ $deck->cards_count }}, is_active: {{ $deck->is_active ? 'true' : 'false' }} },
+            @endforeach
+        ];
         const joinRouteBase = '{{ url("/pvp/join") }}';
 
         function renderWaitingBattles(battles) {
@@ -207,6 +214,7 @@
 
         async function fetchWaitingBattles() {
             const indicator = document.getElementById('refreshIndicator');
+            const container = document.getElementById('waitingBattlesContainer');
             indicator.classList.remove('hidden');
 
             try {
@@ -221,9 +229,25 @@
                 if (response.ok) {
                     const data = await response.json();
                     renderWaitingBattles(data.battles);
+                } else {
+                    console.error('Erreur API:', response.status);
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <div class="text-4xl mb-2">⚠️</div>
+                            <p class="text-gray-400">Erreur de chargement</p>
+                            <button onclick="fetchWaitingBattles()" class="mt-2 text-blue-400 hover:text-blue-300 text-sm">Réessayer</button>
+                        </div>
+                    `;
                 }
             } catch (error) {
                 console.error('Erreur polling:', error);
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="text-4xl mb-2">⚠️</div>
+                        <p class="text-gray-400">Erreur de connexion</p>
+                        <button onclick="fetchWaitingBattles()" class="mt-2 text-blue-400 hover:text-blue-300 text-sm">Réessayer</button>
+                    </div>
+                `;
             } finally {
                 indicator.classList.add('hidden');
             }

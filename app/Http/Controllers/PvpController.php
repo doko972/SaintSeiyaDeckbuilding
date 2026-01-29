@@ -35,6 +35,16 @@ class PvpController extends Controller
         // Decks du joueur
         $decks = $user->decks()->withCount('cards')->get();
 
+        // Decks formatés pour le JavaScript
+        $decksForJs = $decks->map(function($d) {
+            return [
+                'id' => $d->id,
+                'name' => $d->name,
+                'cards_count' => $d->cards_count,
+                'is_active' => $d->is_active,
+            ];
+        })->values();
+
         // Joueurs en ligne (simplification : actifs dans les dernières 5 minutes)
         $onlinePlayers = User::where('id', '!=', $user->id)
             ->where('updated_at', '>=', now()->subMinutes(5))
@@ -60,7 +70,7 @@ class PvpController extends Controller
             'total' => $pvpWins + $pvpLosses,
         ];
 
-        return view('pvp.lobby', compact('waitingBattles', 'decks', 'onlinePlayers', 'stats'));
+        return view('pvp.lobby', compact('waitingBattles', 'decks', 'decksForJs', 'onlinePlayers', 'stats'));
     }
 
     /**
