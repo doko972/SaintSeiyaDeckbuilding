@@ -41,11 +41,23 @@ class PvpController extends Controller
             ->limit(20)
             ->get();
 
-        // Statistiques PvP du joueur
+        // Statistiques PvP du joueur (basées sur les battles terminées)
+        $pvpWins = Battle::where('status', 'finished')
+            ->where('winner_id', $user->id)
+            ->count();
+
+        $pvpLosses = Battle::where('status', 'finished')
+            ->where(function($query) use ($user) {
+                $query->where('player1_id', $user->id)
+                    ->orWhere('player2_id', $user->id);
+            })
+            ->where('winner_id', '!=', $user->id)
+            ->count();
+
         $stats = [
-            'wins' => $user->wins ?? 0,
-            'losses' => $user->losses ?? 0,
-            'total' => ($user->wins ?? 0) + ($user->losses ?? 0),
+            'wins' => $pvpWins,
+            'losses' => $pvpLosses,
+            'total' => $pvpWins + $pvpLosses,
         ];
 
         return view('pvp.lobby', compact('waitingBattles', 'decks', 'onlinePlayers', 'stats'));

@@ -1,13 +1,5 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Arena PvP') }}
-            </h2>
-            <a href="{{ route('game.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                ← Retour
-            </a>
-        </div>
     </x-slot>
 
     <div class="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black py-12 relative overflow-hidden">
@@ -42,7 +34,7 @@
             </div>
 
             <!-- Stats du joueur -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-10">
                 <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-4 text-center">
                     <div class="text-3xl font-bold text-white">{{ $stats['total'] }}</div>
                     <div class="text-gray-400 text-sm">Combats</div>
@@ -114,55 +106,18 @@
 
                 <!-- Rejoindre une partie -->
                 <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden">
-                    <div class="p-6 bg-gradient-to-r from-blue-600 to-indigo-600">
-                        <h3 class="text-xl font-bold text-white">🎯 Rejoindre une partie</h3>
-                        <p class="text-white/70 text-sm">Parties en attente d'adversaire</p>
+                    <div class="p-6 bg-gradient-to-r from-blue-600 to-indigo-600 flex justify-between items-center">
+                        <div>
+                            <h3 class="text-xl font-bold text-white">🎯 Rejoindre une partie</h3>
+                            <p class="text-white/70 text-sm">Parties en attente d'adversaire</p>
+                        </div>
+                        <div id="refreshIndicator" class="text-white/50 text-xs hidden">
+                            <span class="animate-pulse">🔄</span>
+                        </div>
                     </div>
 
-                    <div class="p-6">
-                        @if($waitingBattles->isEmpty())
-                            <div class="text-center py-8">
-                                <div class="text-4xl mb-2">😴</div>
-                                <p class="text-gray-400">Aucune partie en attente</p>
-                                <p class="text-gray-500 text-sm mt-2">Créez la vôtre !</p>
-                            </div>
-                        @else
-                            <div class="space-y-4">
-                                @foreach($waitingBattles as $battle)
-                                    <div class="p-4 bg-white/5 border border-white/10 rounded-xl">
-                                        <div class="flex items-center justify-between mb-3">
-                                            <div class="flex items-center gap-3">
-                                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">
-                                                    {{ strtoupper(substr($battle->player1->name, 0, 1)) }}
-                                                </div>
-                                                <div>
-                                                    <div class="font-bold text-white">{{ $battle->player1->name }}</div>
-                                                    <div class="text-sm text-gray-400">{{ $battle->player1Deck->name }}</div>
-                                                </div>
-                                            </div>
-                                            <div class="text-gray-500 text-sm">
-                                                {{ $battle->created_at->diffForHumans() }}
-                                            </div>
-                                        </div>
-
-                                        <!-- Formulaire pour rejoindre -->
-                                        <form action="{{ route('pvp.join', $battle) }}" method="POST" class="flex gap-3">
-                                            @csrf
-                                            <select name="deck_id" required class="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm">
-                                                @foreach($decks as $deck)
-                                                    <option value="{{ $deck->id }}" {{ $deck->is_active ? 'selected' : '' }}>
-                                                        {{ $deck->name }} ({{ $deck->cards_count }} cartes)
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-500 transition">
-                                                Rejoindre
-                                            </button>
-                                        </form>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endif
+                    <div class="p-6" id="waitingBattlesContainer">
+                        <!-- Contenu mis à jour dynamiquement -->
                     </div>
                 </div>
 
@@ -193,10 +148,91 @@
         </div>
     </div>
 
-    <!-- Auto-refresh pour voir les nouvelles parties -->
+    <!-- Polling pour les parties en attente -->
     <script>
-        setTimeout(() => {
-            window.location.reload();
-        }, 30000); // Refresh toutes les 30 secondes
+        const csrfToken = '{{ csrf_token() }}';
+        const decks = @json($decks->map(fn($d) => ['id' => $d->id, 'name' => $d->name, 'cards_count' => $d->cards_count, 'is_active' => $d->is_active]));
+        const joinRouteBase = '{{ url("/pvp/join") }}';
+
+        function renderWaitingBattles(battles) {
+            const container = document.getElementById('waitingBattlesContainer');
+
+            if (battles.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="text-4xl mb-2">😴</div>
+                        <p class="text-gray-400">Aucune partie en attente</p>
+                        <p class="text-gray-500 text-sm mt-2">Créez la vôtre !</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const deckOptions = decks.map(d =>
+                `<option value="${d.id}" ${d.is_active ? 'selected' : ''}>${d.name} (${d.cards_count} cartes)</option>`
+            ).join('');
+
+            container.innerHTML = `
+                <div class="space-y-4">
+                    ${battles.map(battle => `
+                        <div class="p-4 bg-white/5 border border-white/10 rounded-xl">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">
+                                        ${battle.player1_initial}
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-white">${battle.player1_name}</div>
+                                        <div class="text-sm text-gray-400">${battle.deck_name}</div>
+                                    </div>
+                                </div>
+                                <div class="text-gray-500 text-sm">
+                                    ${battle.created_at}
+                                </div>
+                            </div>
+                            <form action="${joinRouteBase}/${battle.id}" method="POST" class="flex gap-3">
+                                <input type="hidden" name="_token" value="${csrfToken}">
+                                <select name="deck_id" required class="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm">
+                                    ${deckOptions}
+                                </select>
+                                <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-500 transition">
+                                    Rejoindre
+                                </button>
+                            </form>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function fetchWaitingBattles() {
+            const indicator = document.getElementById('refreshIndicator');
+            indicator.classList.remove('hidden');
+
+            try {
+                const response = await fetch('/api/v1/pvp/waiting-battles', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    credentials: 'same-origin'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    renderWaitingBattles(data.battles);
+                }
+            } catch (error) {
+                console.error('Erreur polling:', error);
+            } finally {
+                indicator.classList.add('hidden');
+            }
+        }
+
+        // Premier chargement
+        fetchWaitingBattles();
+
+        // Polling toutes les 3 secondes
+        setInterval(fetchWaitingBattles, 3000);
     </script>
 </x-app-layout>

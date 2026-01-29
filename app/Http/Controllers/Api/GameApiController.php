@@ -200,6 +200,10 @@ class GameApiController extends Controller
         $battleEnded = false;
         $winner = null;
 
+        // IMPORTANT: libérer les références AVANT de modifier le tableau
+        unset($attacker);
+        unset($target);
+
         // Vérifier si la cible est morte
         if ($targetWillDie) {
             array_splice($state['opponent']['field'], $targetIndex, 1);
@@ -288,6 +292,7 @@ class GameApiController extends Controller
             $card['has_attacked'] = false;
             $card['current_endurance'] = min($card['endurance'], $card['current_endurance'] + 30);
         }
+        unset($card); // IMPORTANT: libérer la référence pour éviter le bug de dédoublement
 
         return response()->json([
             'success' => true,
@@ -491,16 +496,23 @@ class GameApiController extends Controller
                     'owner' => 'player'
                 ];
 
+                // IMPORTANT: libérer la référence AVANT array_splice pour éviter la corruption
+                unset($target);
                 array_splice($state['player']['field'], $targetIndex, 1);
                 $actions[] = "{$targetName} est vaincu !";
+            } else {
+                // IMPORTANT: libérer la référence même si la carte n'est pas détruite
+                unset($target);
             }
         }
+        unset($attacker); // IMPORTANT: libérer la référence de la boucle principale
 
         // Reset pour prochain tour
         foreach ($state['opponent']['field'] as &$card) {
             $card['has_attacked'] = false;
             $card['current_endurance'] = min($card['endurance'], $card['current_endurance'] + 30);
         }
+        unset($card); // IMPORTANT: libérer la référence pour éviter le bug de dédoublement
 
         return ['state' => $state, 'actions' => $actions, 'destroyed_cards' => $destroyedCards];
     }

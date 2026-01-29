@@ -20,15 +20,38 @@
             overflow-x: hidden;
         }
 
+        /* ========================================
+           FOND COSMOS ANIMÉ
+        ======================================== */
         .cosmos-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: 0;
-            background: 
+            background:
                 radial-gradient(ellipse at 20% 80%, rgba(120, 0, 255, 0.15) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 20%, rgba(255, 0, 100, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(0, 100, 255, 0.1) 0%, transparent 70%),
                 linear-gradient(180deg, #0a0a1a 0%, #1a0a2a 50%, #0a1a2a 100%);
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+                radial-gradient(2px 2px at 160px 120px, rgba(255, 255, 255, 0.9), transparent),
+                radial-gradient(1px 1px at 230px 80px, #fff, transparent);
+            background-size: 350px 200px;
+            animation: twinkle 5s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
 
         .bg-image {
@@ -158,27 +181,151 @@
             border: 1px dashed rgba(59, 130, 246, 0.3);
         }
 
-        /* Log de combat */
-        .battle-log {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 0.75rem 1rem;
-            max-height: 100px;
-            overflow-y: auto;
+        /* Notifications Toast - Position haut centre */
+        .battle-log-zone {
+            position: fixed;
+            top: 2%;
+            right: 40%;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 0.5rem;
+            z-index: 500;
+            pointer-events: none;
+            max-width: 350px;
+            width: auto;
         }
 
         .log-entry {
-            padding: 0.25rem 0;
-            font-size: 0.85rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.75rem 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-align: center;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            pointer-events: auto;
+            position: relative;
+            overflow: hidden;
         }
 
-        .log-entry:last-child { border-bottom: none; }
-        .log-entry.damage { color: #EF4444; }
-        .log-entry.heal { color: #10B981; }
-        .log-entry.info { color: #60A5FA; }
-        .log-entry.turn { color: #FBBF24; font-weight: 600; }
+        /* Animation d'entrée */
+        .log-entry.entering {
+            animation: toastEnter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Animation de sortie */
+        .log-entry.exiting {
+            animation: toastExit 0.3s ease-in forwards;
+        }
+
+        /* Animation de descente (quand un nouveau toast arrive) */
+        .log-entry.shifting {
+            animation: toastShift 0.3s ease-out forwards;
+        }
+
+        .log-entry.damage {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(185, 28, 28, 0.9));
+            border: 1px solid rgba(252, 165, 165, 0.5);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .log-entry.heal {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.9), rgba(5, 150, 105, 0.9));
+            border: 1px solid rgba(110, 231, 183, 0.5);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .log-entry.info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.9));
+            border: 1px solid rgba(147, 197, 253, 0.5);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .log-entry.turn {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.95), rgba(245, 158, 11, 0.95));
+            border: 1px solid rgba(253, 224, 71, 0.6);
+            color: #1a1a2e;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
+            font-weight: 700;
+        }
+
+        /* Barre de progression */
+        .log-entry::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.5);
+            animation: progressBar 4s linear forwards;
+        }
+
+        .log-entry.turn::after {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes toastEnter {
+            0% {
+                opacity: 0;
+                transform: translateX(50px) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        @keyframes toastExit {
+            0% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(100px) scale(0.8);
+            }
+        }
+
+        @keyframes toastShift {
+            0% { transform: translateY(10px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes progressBar {
+            0% { width: 100%; }
+            100% { width: 0%; }
+        }
+
+        /* Effet de brillance sur les messages importants */
+        .log-entry.turn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shine 2s ease-in-out infinite;
+        }
+
+        /* Effet hover pour fermer */
+        .log-entry:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .log-entry:hover::after {
+            animation-play-state: paused;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            50%, 100% { left: 100%; }
+        }
 
         /* Cartes */
         .battle-card {
@@ -616,6 +763,148 @@
             color: white;
         }
 
+        /* Overlay pour fermer le panneau */
+        .action-panel-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .action-panel-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+        }
+
+        .loading-overlay.visible {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #8B5CF6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Game Over Modal */
+        .game-over-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .game-over-modal.visible {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .game-over-content {
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border-radius: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            max-width: 400px;
+        }
+
+        .game-over-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .game-over-title.victory {
+            background: linear-gradient(to right, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .game-over-title.defeat {
+            color: #EF4444;
+        }
+
+        .game-over-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
+        }
+
+        .game-over-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .game-over-btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .game-over-btn.primary {
+            background: linear-gradient(135deg, #8B5CF6, #6366F1);
+            color: white;
+        }
+
+        .game-over-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .game-over-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .game-over-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
         /* ========================================
            RESPONSIVE - TABLETTE
         ======================================== */
@@ -653,6 +942,17 @@
             .action-panel {
                 bottom: 280px;
                 right: 1rem;
+            }
+
+            .battle-log-zone {
+                max-width: 300px;
+                top: 2%;
+                right: 15px;
+            }
+
+            .log-entry {
+                font-size: 0.85rem;
+                padding: 0.6rem 1rem;
             }
         }
 
@@ -765,15 +1065,15 @@
             }
 
             /* Log mobile */
-            .battle-log {
-                max-height: 60px;
-                padding: 0.4rem 0.6rem;
-                font-size: 0.7rem;
+            .battle-log-zone {
+                top: 2%;
+                right: 10px;
+                max-width: 260px;
             }
 
             .log-entry {
-                font-size: 0.7rem;
-                padding: 0.15rem 0;
+                font-size: 0.75rem;
+                padding: 0.5rem 0.75rem;
             }
 
             /* Main du joueur mobile */
@@ -960,7 +1260,9 @@
     </style>
 </head>
 <body>
-    <div class="cosmos-bg"></div>
+    <div class="cosmos-bg">
+        <div class="stars"></div>
+    </div>
     <img src="{{ asset('images/baniere.webp') }}" alt="" class="bg-image">
 
     <!-- Music Player -->
@@ -1046,9 +1348,9 @@
                 <div class="empty-slot">👻</div>
             </div>
 
-            <!-- Log -->
-            <div class="battle-log" id="battleLog">
-                <div class="log-entry turn">⚔️ Le combat commence !</div>
+            <!-- Notifications Toast -->
+            <div class="battle-log-zone" id="battleLog">
+                <!-- Les notifications apparaissent ici dynamiquement -->
             </div>
 
             <!-- Terrain joueur -->
@@ -1076,6 +1378,9 @@
         </div>
     </div>
 
+    <!-- Overlay pour fermer en cliquant à côté -->
+    <div class="action-panel-overlay" id="actionPanelOverlay" onclick="cancelSelection()"></div>
+
     <!-- Panneau d'actions -->
     <div class="action-panel" id="actionPanel">
         <div style="font-weight: 700; color: #FBBF24; margin-bottom: 0.5rem;">⚔️ Choisir une attaque</div>
@@ -1099,26 +1404,363 @@
         </div>
     </div>
 
-    <!-- Script des animations -->
-    <script src="{{ asset('js/battle-animations.js') }}"></script>
+    <!-- Modal Game Over -->
+    <div class="game-over-modal" id="gameOverModal">
+        <div class="game-over-content">
+            <div class="game-over-title" id="gameOverTitle">Victoire !</div>
+            <div class="game-over-subtitle" id="gameOverSubtitle">Vous avez gagné le combat !</div>
+            <div class="game-over-buttons">
+                <a href="{{ route('pvp.lobby') }}" class="game-over-btn primary">🎮 Retour au lobby</a>
+                <a href="{{ route('dashboard') }}" class="game-over-btn secondary">🏠 Accueil</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
 
     <script>
+        // ========================================
+        // CONFIGURATION
+        // ========================================
         const battleId = {{ $battle->id }};
         const playerNumber = {{ $playerNumber }};
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-        
+
         let gameState = @json($battle->battle_state);
         let isMyTurn = {{ $isMyTurn ? 'true' : 'false' }};
         let selectedAttacker = null;
         let selectedAttack = null;
-        let phase = 'idle';
+        let phase = 'idle'; // idle, selectingAttacker, selectingAttack, selectingTarget
 
-        // Instance des animations
-        const animations = window.BattleAnimations;
+        // ========================================
+        // SYSTÈME D'ANIMATIONS
+        // ========================================
+        const animations = {
+            // Animation de jeu d'une carte
+            playCardAnimation: async function(cardElement, targetPos) {
+                return new Promise((resolve) => {
+                    const clone = cardElement.cloneNode(true);
+                    clone.style.position = 'fixed';
+                    clone.style.zIndex = '1000';
+                    const startRect = cardElement.getBoundingClientRect();
+                    clone.style.left = startRect.left + 'px';
+                    clone.style.top = startRect.top + 'px';
+                    clone.style.width = startRect.width + 'px';
+                    document.body.appendChild(clone);
+                    cardElement.style.opacity = '0';
 
-        // Initialisation
+                    setTimeout(() => {
+                        clone.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                        clone.style.left = targetPos.x + 'px';
+                        clone.style.top = targetPos.y + 'px';
+                        clone.style.transform = 'scale(1.1) rotateY(360deg)';
+                        clone.style.boxShadow = '0 0 30px rgba(16, 185, 129, 0.8)';
+                    }, 50);
+
+                    setTimeout(() => {
+                        clone.remove();
+                        cardElement.style.opacity = '1';
+                        resolve();
+                    }, 800);
+                });
+            },
+
+            // Animation d'attaque
+            attackAnimation: async function(attackerCard, targetCard, attackData) {
+                return new Promise(async (resolve) => {
+                    const clone = attackerCard.cloneNode(true);
+                    clone.style.position = 'fixed';
+                    clone.style.zIndex = '1001';
+                    const startRect = attackerCard.getBoundingClientRect();
+                    const targetRect = targetCard.getBoundingClientRect();
+                    clone.style.left = startRect.left + 'px';
+                    clone.style.top = startRect.top + 'px';
+                    clone.style.width = startRect.width + 'px';
+                    document.body.appendChild(clone);
+
+                    setTimeout(() => {
+                        clone.style.transition = 'all 0.3s ease-in';
+                        clone.style.left = (targetRect.left - 20) + 'px';
+                        clone.style.top = (targetRect.top - 20) + 'px';
+                        clone.style.transform = 'scale(1.2)';
+                    }, 50);
+
+                    setTimeout(() => {
+                        this.shakeElement(targetCard);
+                        this.flashElement(targetCard, '#EF4444');
+                    }, 350);
+
+                    setTimeout(() => {
+                        clone.style.transition = 'all 0.2s ease-out';
+                        clone.style.left = startRect.left + 'px';
+                        clone.style.top = startRect.top + 'px';
+                        clone.style.transform = 'scale(1)';
+                    }, 450);
+
+                    setTimeout(() => {
+                        clone.remove();
+                        resolve();
+                    }, 700);
+                });
+            },
+
+            // Afficher les dégâts
+            showDamage: function(targetElement, damage, type = 'damage') {
+                const rect = targetElement.getBoundingClientRect();
+                const x = rect.left + rect.width / 2;
+                const y = rect.top + rect.height / 2;
+                const damageText = document.createElement('div');
+                damageText.textContent = type === 'heal' ? `+${damage}` : `-${damage}`;
+                damageText.style.cssText = `
+                    position: fixed;
+                    left: ${x}px;
+                    top: ${y}px;
+                    font-size: 2rem;
+                    font-weight: 900;
+                    color: ${type === 'heal' ? '#10B981' : '#EF4444'};
+                    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+                    z-index: 2000;
+                    pointer-events: none;
+                    transform: translate(-50%, -50%);
+                `;
+                document.body.appendChild(damageText);
+
+                setTimeout(() => {
+                    damageText.style.transition = 'all 1s ease-out';
+                    damageText.style.top = (y - 100) + 'px';
+                    damageText.style.opacity = '0';
+                    damageText.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                }, 50);
+
+                setTimeout(() => damageText.remove(), 1100);
+            },
+
+            // Secouer un élément
+            shakeElement: function(element) {
+                const keyframes = [
+                    { transform: 'translateX(0)' },
+                    { transform: 'translateX(-10px) rotate(-2deg)' },
+                    { transform: 'translateX(10px) rotate(2deg)' },
+                    { transform: 'translateX(-10px) rotate(-1deg)' },
+                    { transform: 'translateX(10px) rotate(1deg)' },
+                    { transform: 'translateX(0) rotate(0deg)' },
+                ];
+                element.animate(keyframes, { duration: 400, easing: 'ease-in-out' });
+            },
+
+            // Flash sur un élément
+            flashElement: function(element, color = '#FFFFFF') {
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `
+                    position: absolute;
+                    top: 0; left: 0; right: 0; bottom: 0;
+                    background: ${color};
+                    opacity: 0.6;
+                    border-radius: inherit;
+                    pointer-events: none;
+                    z-index: 10;
+                `;
+                element.style.position = 'relative';
+                element.appendChild(overlay);
+
+                setTimeout(() => {
+                    overlay.style.transition = 'opacity 0.3s';
+                    overlay.style.opacity = '0';
+                }, 50);
+
+                setTimeout(() => overlay.remove(), 400);
+            },
+
+            // Animation de destruction spectaculaire
+            destroyCardAnimation: async function(cardElement) {
+                if (!cardElement) return;
+
+                return new Promise(async (resolve) => {
+                    const rect = cardElement.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+
+                    // Phase 1 : Warning (clignote en rouge)
+                    cardElement.style.transition = 'all 0.1s ease-in-out';
+                    for (let i = 0; i < 3; i++) {
+                        await new Promise(r => setTimeout(r, 100));
+                        cardElement.style.boxShadow = '0 0 30px 10px rgba(239, 68, 68, 0.9)';
+                        cardElement.style.filter = 'brightness(1.5)';
+                        await new Promise(r => setTimeout(r, 100));
+                        cardElement.style.boxShadow = '';
+                        cardElement.style.filter = '';
+                    }
+
+                    // Phase 2 : Impact violent
+                    this.flashElement(cardElement, '#FFFFFF');
+                    this.shakeElement(cardElement);
+
+                    await new Promise(r => setTimeout(r, 200));
+
+                    // Phase 3 : Explosion de particules
+                    this.createDestructionParticles(centerX, centerY);
+
+                    // Phase 4 : Brisure et rotation
+                    setTimeout(() => {
+                        cardElement.style.transition = 'all 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045)';
+                        cardElement.style.transform = 'scale(0) rotate(720deg)';
+                        cardElement.style.opacity = '0';
+                        cardElement.style.filter = 'blur(5px) brightness(2)';
+                    }, 100);
+
+                    // Phase 5 : Effet de fumée
+                    setTimeout(() => {
+                        this.createSmokeEffect(centerX, centerY);
+                    }, 400);
+
+                    // Cleanup après animation complète
+                    setTimeout(() => {
+                        cardElement.remove();
+                        resolve();
+                    }, 1200);
+                });
+            },
+
+            // Créer des particules de destruction
+            createDestructionParticles: function(x, y) {
+                const colors = ['#EF4444', '#DC2626', '#F97316', '#FBBF24', '#FFFFFF'];
+                const particleCount = 30;
+
+                for (let i = 0; i < particleCount; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        const angle = (Math.PI * 2 * i) / particleCount;
+                        const velocity = 100 + Math.random() * 150;
+                        const size = 4 + Math.random() * 8;
+                        const color = colors[Math.floor(Math.random() * colors.length)];
+
+                        particle.style.cssText = `
+                            position: fixed;
+                            left: ${x}px;
+                            top: ${y}px;
+                            width: ${size}px;
+                            height: ${size}px;
+                            background: ${color};
+                            border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+                            pointer-events: none;
+                            z-index: 9999;
+                            box-shadow: 0 0 10px ${color};
+                        `;
+
+                        document.body.appendChild(particle);
+
+                        setTimeout(() => {
+                            const targetX = x + Math.cos(angle) * velocity;
+                            const targetY = y + Math.sin(angle) * velocity + (Math.random() * 50);
+                            particle.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                            particle.style.left = targetX + 'px';
+                            particle.style.top = targetY + 'px';
+                            particle.style.opacity = '0';
+                            particle.style.transform = `scale(${Math.random() * 0.5})`;
+                        }, 50);
+
+                        setTimeout(() => particle.remove(), 700);
+                    }, i * 10);
+                }
+            },
+
+            // Créer un effet de fumée
+            createSmokeEffect: function(x, y) {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const smoke = document.createElement('div');
+                        const offsetX = (Math.random() - 0.5) * 40;
+                        const offsetY = (Math.random() - 0.5) * 40;
+                        const size = 40 + Math.random() * 40;
+
+                        smoke.style.cssText = `
+                            position: fixed;
+                            left: ${x + offsetX}px;
+                            top: ${y + offsetY}px;
+                            width: ${size}px;
+                            height: ${size}px;
+                            background: radial-gradient(circle, rgba(100, 100, 100, 0.4) 0%, rgba(50, 50, 50, 0) 70%);
+                            border-radius: 50%;
+                            pointer-events: none;
+                            z-index: 9998;
+                        `;
+
+                        document.body.appendChild(smoke);
+
+                        setTimeout(() => {
+                            smoke.style.transition = 'all 0.8s ease-out';
+                            smoke.style.top = (y + offsetY - 80) + 'px';
+                            smoke.style.transform = `scale(2)`;
+                            smoke.style.opacity = '0';
+                        }, 50);
+
+                        setTimeout(() => smoke.remove(), 900);
+                    }, i * 80);
+                }
+            },
+
+            // Créer des étincelles
+            createSparkles: function(x, y, color = '#FFD700') {
+                for (let i = 0; i < 12; i++) {
+                    setTimeout(() => {
+                        const sparkle = document.createElement('div');
+                        const angle = (Math.PI * 2 * i) / 12;
+                        const distance = 40;
+                        const targetX = x + Math.cos(angle) * distance;
+                        const targetY = y + Math.sin(angle) * distance;
+
+                        sparkle.style.cssText = `
+                            position: fixed;
+                            left: ${x}px;
+                            top: ${y}px;
+                            width: 6px;
+                            height: 6px;
+                            background: ${color};
+                            border-radius: 50%;
+                            pointer-events: none;
+                            box-shadow: 0 0 10px ${color};
+                            z-index: 1500;
+                        `;
+
+                        document.body.appendChild(sparkle);
+
+                        setTimeout(() => {
+                            sparkle.style.transition = 'all 0.5s ease-out';
+                            sparkle.style.left = targetX + 'px';
+                            sparkle.style.top = targetY + 'px';
+                            sparkle.style.opacity = '0';
+                        }, 50);
+
+                        setTimeout(() => sparkle.remove(), 600);
+                    }, i * 30);
+                }
+            }
+        };
+
+        // ========================================
+        // INITIALISATION
+        // ========================================
         document.addEventListener('DOMContentLoaded', () => {
+            // Event listener pour l'overlay
+            document.getElementById('actionPanelOverlay').addEventListener('click', function(e) {
+                e.stopPropagation();
+                cancelSelection();
+            });
+
+            // Message de démarrage
+            addLogEntry('⚔️ Le combat commence !', 'turn');
+
             renderAll();
+
+            if (isMyTurn) {
+                setTimeout(() => {
+                    addLogEntry('🎮 C\'est votre tour !', 'info');
+                }, 500);
+            }
+
             if (!isMyTurn) {
                 startPolling();
             }
@@ -1180,9 +1822,15 @@
                         stopPolling();
                     }
 
+                    // Vérifier fin de partie
                     if (data.status === 'finished') {
                         stopPolling();
-                        window.location.href = `/pvp/battle/${battleId}`;
+                        const myId = {{ auth()->id() }};
+                        const winnerId = parseInt(data.winner_id);
+                        const isWinner = winnerId === myId;
+                        console.log('Game finished - Winner ID:', winnerId, 'My ID:', myId, 'Is Winner:', isWinner);
+                        endGame(isWinner);
+                        return;
                     }
                 }
             } catch (error) {
@@ -1469,13 +2117,19 @@
                 list.appendChild(btn);
             });
 
+            // Afficher l'overlay ET le panneau
+            document.getElementById('actionPanelOverlay').classList.add('visible');
             panel.classList.add('visible');
         }
 
         function selectAttack(attackKey) {
             selectedAttack = attackKey;
             phase = 'selectingTarget';
+
+            // Cacher l'overlay ET le panneau
+            document.getElementById('actionPanelOverlay').classList.remove('visible');
             document.getElementById('actionPanel').classList.remove('visible');
+
             addLogEntry('🎯 Sélectionnez une cible', 'info');
             renderAll();
         }
@@ -1526,6 +2180,7 @@
                 }
 
                 const data = await response.json();
+                let cardWasDestroyed = false;
 
                 if (data.success) {
                     // Afficher les dégâts
@@ -1533,25 +2188,39 @@
                         animations.showDamage(targetCard, data.damage, 'damage');
                     }
 
-                    gameState = data.battle_state;
                     addLogEntry(`⚔️ ${data.message}`, 'damage');
 
-                    // Vérifier si la carte cible est morte
-                    const opponentState = getOpponentState();
-                    const targetCardData = opponentState.field[targetIndex];
-                    if (targetCardData && targetCardData.current_hp <= 0) {
+                    // Vérifier si la carte cible est morte (avant mise à jour du state)
+                    cardWasDestroyed = data.target_destroyed === true;
+
+                    if (cardWasDestroyed && targetCard) {
                         await animations.destroyCardAnimation(targetCard);
                     }
 
+                    // Mettre à jour gameState APRÈS l'animation
+                    gameState = data.battle_state;
+
+                    // Vérifier fin de partie
                     if (data.battle_ended) {
-                        window.location.reload();
+                        const myId = {{ auth()->id() }};
+                        const winnerId = parseInt(data.winner);
+                        const isWinner = winnerId === myId;
+                        console.log('Battle ended - Winner ID:', winnerId, 'My ID:', myId, 'Is Winner:', isWinner);
+                        endGame(isWinner);
+                        return;
                     }
                 } else {
                     addLogEntry(`❌ ${data.message || 'Erreur inconnue'}`, 'damage');
                 }
 
                 cancelSelection();
-                renderAll();
+
+                // Render après un petit délai si carte détruite
+                if (cardWasDestroyed) {
+                    setTimeout(() => renderAll(), 100);
+                } else {
+                    renderAll();
+                }
             } catch (error) {
                 console.error('Attack error:', error);
                 addLogEntry(`❌ ${error.message || 'Erreur de connexion'}`, 'damage');
@@ -1563,7 +2232,11 @@
             selectedAttacker = null;
             selectedAttack = null;
             phase = 'idle';
+
+            // Cacher l'overlay ET le panneau
+            document.getElementById('actionPanelOverlay').classList.remove('visible');
             document.getElementById('actionPanel').classList.remove('visible');
+
             renderAll();
         }
 
@@ -1607,13 +2280,119 @@
             }
         }
 
+        // ========================================
+        // NOTIFICATIONS TOAST DYNAMIQUES
+        // ========================================
+        const MAX_TOASTS = 3;
+        const TOAST_DURATION = 4000; // 4 secondes
+
         function addLogEntry(message, type = 'info') {
             const log = document.getElementById('battleLog');
+            const existingToasts = log.querySelectorAll('.log-entry:not(.exiting)');
+
+            // Si on a déjà 3 toasts, retirer le plus ancien
+            if (existingToasts.length >= MAX_TOASTS) {
+                const oldestToast = existingToasts[0];
+                removeToast(oldestToast);
+            }
+
+            // Créer le nouveau toast
             const entry = document.createElement('div');
-            entry.className = `log-entry ${type}`;
+            entry.className = `log-entry ${type} entering`;
             entry.textContent = message;
+            entry.style.cursor = 'pointer';
+            entry.title = 'Cliquer pour fermer';
+
+            // Clic pour fermer
+            entry.addEventListener('click', () => removeToast(entry));
+
+            // Ajouter une animation de shift aux toasts existants
+            existingToasts.forEach(toast => {
+                toast.classList.add('shifting');
+                setTimeout(() => toast.classList.remove('shifting'), 300);
+            });
+
+            // Ajouter le nouveau toast
             log.appendChild(entry);
-            log.scrollTop = log.scrollHeight;
+
+            // Retirer la classe entering après l'animation
+            setTimeout(() => {
+                entry.classList.remove('entering');
+            }, 400);
+
+            // Programmer la suppression automatique
+            setTimeout(() => {
+                if (entry.parentNode) {
+                    removeToast(entry);
+                }
+            }, TOAST_DURATION);
+        }
+
+        function removeToast(toast) {
+            if (!toast || toast.classList.contains('exiting')) return;
+
+            toast.classList.add('exiting');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 300);
+        }
+
+        // ========================================
+        // HELPERS
+        // ========================================
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('visible');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('visible');
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // ========================================
+        // FIN DE PARTIE
+        // ========================================
+        function endGame(victory) {
+            const modal = document.getElementById('gameOverModal');
+            const title = document.getElementById('gameOverTitle');
+            const subtitle = document.getElementById('gameOverSubtitle');
+
+            // Arrêter la musique de combat
+            const battleMusicEl = document.getElementById('battleMusic');
+            if (battleMusicEl) {
+                battleMusicEl.pause();
+            }
+
+            if (victory) {
+                title.textContent = '🏆 Victoire !';
+                title.className = 'game-over-title victory';
+                subtitle.textContent = 'Vous avez vaincu votre adversaire !';
+
+                // Jouer la musique de victoire
+                const victoryMusicEl = document.getElementById('victoryMusic');
+                if (victoryMusicEl) {
+                    victoryMusicEl.volume = 0.7;
+                    victoryMusicEl.play().catch(e => console.log('Victory music blocked:', e));
+                }
+            } else {
+                title.textContent = '💀 Défaite';
+                title.className = 'game-over-title defeat';
+                subtitle.textContent = 'Votre adversaire vous a vaincu...';
+
+                // Jouer la musique de défaite
+                const defeatMusicEl = document.getElementById('defeatMusic');
+                if (defeatMusicEl) {
+                    defeatMusicEl.volume = 0.7;
+                    defeatMusicEl.play().catch(e => console.log('Defeat music blocked:', e));
+                }
+            }
+
+            modal.classList.add('visible');
         }
 
         function updateHelpText() {

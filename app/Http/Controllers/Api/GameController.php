@@ -230,22 +230,32 @@ class GameController extends Controller
         $target['current_hp'] -= $finalDamage;
         $attacker['has_attacked'] = true;
 
+        // Sauvegarder les noms avant de libérer les références
+        $attackerName = $attacker['name'];
+        $targetName = $target['name'];
+        $attackName = $attack['name'];
+        $targetCurrentHp = $target['current_hp'];
+
         // Log
         $state['log'][] = [
             'turn' => $state['turn'],
-            'message' => "{$attacker['name']} utilise {$attack['name']} sur {$target['name']} et inflige {$finalDamage} dégâts !",
+            'message' => "{$attackerName} utilise {$attackName} sur {$targetName} et inflige {$finalDamage} dégâts !",
         ];
 
         // Appliquer les effets
         $state = $this->applyEffect($state, $attack, $attacker, $target, 'opponent', $targetIndex);
 
+        // IMPORTANT: libérer les références AVANT de modifier le tableau
+        unset($attacker);
+        unset($target);
+
         // Vérifier si la cible est KO
-        if ($target['current_hp'] <= 0) {
-            $state['opponent']['graveyard'][] = $target;
+        if ($targetCurrentHp <= 0) {
+            $state['opponent']['graveyard'][] = $state['opponent']['field'][$targetIndex];
             array_splice($state['opponent']['field'], $targetIndex, 1);
             $state['log'][] = [
                 'turn' => $state['turn'],
-                'message' => "{$target['name']} est KO !",
+                'message' => "{$targetName} est KO !",
             ];
         }
 
@@ -278,6 +288,7 @@ class GameController extends Controller
                 $card['current_endurance'] + 10
             );
         }
+        unset($card); // IMPORTANT: libérer la référence pour éviter le bug de dédoublement
 
         // Tour de l'IA
         $state = $this->playAITurn($state);
@@ -301,6 +312,7 @@ class GameController extends Controller
         foreach ($state['player']['field'] as &$card) {
             $card['has_attacked'] = false;
         }
+        unset($card); // IMPORTANT: libérer la référence pour éviter le bug de dédoublement
 
         $state['log'][] = [
             'turn' => $state['turn'],
@@ -577,14 +589,20 @@ class GameController extends Controller
                     // Vérifier si la cible est KO
                     if ($target['current_hp'] <= 0) {
                         $state['player']['graveyard'][] = $target;
+                        // IMPORTANT: libérer la référence AVANT array_splice
+                        $targetName = $target['name'];
+                        unset($target);
                         array_splice($state['player']['field'], $targetIndex, 1);
                         $state['log'][] = [
                             'turn' => $state['turn'],
-                            'message' => "{$target['name']} est KO !",
+                            'message' => "{$targetName} est KO !",
                         ];
+                    } else {
+                        unset($target); // Libérer la référence même si pas KO
                     }
                 }
             }
+            unset($aiCard); // IMPORTANT: libérer la référence de la boucle
         }
 
         // Réinitialiser les états d'attaque de l'IA
@@ -595,6 +613,7 @@ class GameController extends Controller
                 $card['current_endurance'] + 10
             );
         }
+        unset($card); // IMPORTANT: libérer la référence pour éviter le bug de dédoublement
 
         return $state;
     }

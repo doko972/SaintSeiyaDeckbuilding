@@ -624,7 +624,7 @@
                                 {{ $rank['icon'] }} {{ $rank['name'] }}
                             </span>
                         </div>
-                        <p class="text-purple-200 text-lg mb-4">Brûle ton cosmos et deviens une légende ! 🔥</p>
+                        <p class="text-purple-200 text-lg mb-4">Brûle ton cosmos et deviens une légende !</p>
                         
                         <!-- Barre de progression vers prochain rang -->
                         @php

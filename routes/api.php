@@ -62,6 +62,7 @@ Route::prefix('v1/game')->middleware('web')->group(function () {
 
 // Routes API PvP (authentification requise via session web)
 Route::prefix('v1/pvp')->middleware(['web', 'auth'])->group(function () {
+    Route::get('/waiting-battles', [PvpApiController::class, 'getWaitingBattles']);
     Route::get('/battle-state/{battle}', [PvpApiController::class, 'getBattleState']);
     Route::post('/play-card', [PvpApiController::class, 'playCard']);
     Route::post('/attack', [PvpApiController::class, 'attack']);

@@ -134,15 +134,16 @@
         }
 
         .quit-btn {
-            padding: 0.5rem 1rem;
+            padding: 1rem;
             background: rgba(239, 68, 68, 0.2);
             border: 1px solid rgba(239, 68, 68, 0.5);
             color: #EF4444;
-            border-radius: 8px;
+            border-radius: 32px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
             text-decoration: none;
+            margin: 0 0.5rem;
         }
 
         .quit-btn:hover {
@@ -156,6 +157,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             padding: 1rem 2rem;
             gap: 1rem;
         }
@@ -215,67 +217,161 @@
             border-radius: 16px;
         }
 
-        /* Zone centrale - Log de combat */
+        /* Notifications Toast - Position bas droite */
         .battle-log-zone {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 0.75rem 1rem;
-            max-height: 120px;
-            overflow-y: auto;
-        }
-
-        .battle-log-zone::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .battle-log-zone::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
-        }
-
-        .battle-log-zone::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
+            position: fixed;
+            top: 2%;
+            right: 40%;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 0.5rem;
+            z-index: 500;
+            pointer-events: none;
+            max-width: 350px;
+            width: auto;
         }
 
         .log-entry {
-            padding: 0.25rem 0;
-            font-size: 0.85rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            animation: fadeIn 0.3s ease;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-align: center;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            pointer-events: auto;
+            position: relative;
+            overflow: hidden;
         }
 
-        .log-entry:last-child {
-            border-bottom: none;
+        /* Animation d'entrée */
+        .log-entry.entering {
+            animation: toastEnter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Animation de sortie */
+        .log-entry.exiting {
+            animation: toastExit 0.3s ease-in forwards;
+        }
+
+        /* Animation de descente (quand un nouveau toast arrive) */
+        .log-entry.shifting {
+            animation: toastShift 0.3s ease-out forwards;
         }
 
         .log-entry.damage {
-            color: #EF4444;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(185, 28, 28, 0.9));
+            border: 1px solid rgba(252, 165, 165, 0.5);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .log-entry.heal {
-            color: #10B981;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.9), rgba(5, 150, 105, 0.9));
+            border: 1px solid rgba(110, 231, 183, 0.5);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .log-entry.info {
-            color: #60A5FA;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.9));
+            border: 1px solid rgba(147, 197, 253, 0.5);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .log-entry.turn {
-            color: #FBBF24;
-            font-weight: 600;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.95), rgba(245, 158, 11, 0.95));
+            border: 1px solid rgba(253, 224, 71, 0.6);
+            color: #1a1a2e;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
+            font-weight: 700;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-5px);
-            }
+        /* Barre de progression */
+        .log-entry::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.5);
+            animation: progressBar 4s linear forwards;
+        }
 
-            to {
+        .log-entry.turn::after {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes toastEnter {
+            0% {
+                opacity: 0;
+                transform: translateX(50px) scale(0.8);
+            }
+            100% {
                 opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        @keyframes toastExit {
+            0% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(100px) scale(0.8);
+            }
+        }
+
+        @keyframes toastShift {
+            0% {
+                transform: translateY(10px);
+            }
+            100% {
                 transform: translateY(0);
+            }
+        }
+
+        @keyframes progressBar {
+            0% {
+                width: 100%;
+            }
+            100% {
+                width: 0%;
+            }
+        }
+
+        /* Effet de brillance sur les messages importants */
+        .log-entry.turn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shine 2s ease-in-out infinite;
+        }
+
+        /* Effet hover pour fermer */
+        .log-entry:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .log-entry:hover::after {
+            animation-play-state: paused;
+        }
+
+        @keyframes shine {
+            0% {
+                left: -100%;
+            }
+            50%, 100% {
+                left: 100%;
             }
         }
 
@@ -465,6 +561,7 @@
             background: rgba(124, 58, 237, 0.5) !important;
             border: 2px solid rgba(124, 58, 237, 0.8) !important;
             padding: 0.75rem 1.5rem !important;
+            margin: 0.5rem 0;
             border-radius: 20px;
             font-size: 1.2rem !important;
             box-shadow: 0 0 20px rgba(124, 58, 237, 0.5) !important;
@@ -677,8 +774,8 @@
         }
 
         .control-btn {
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
+            padding: 1rem;
+            border-radius: 32px;
             font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
@@ -902,6 +999,17 @@
             .control-buttons {
                 left: 1rem;
             }
+
+            .battle-log-zone {
+                max-width: 300px;
+                top: 2%;
+                right: 15px;
+            }
+
+            .log-entry {
+                font-size: 0.85rem;
+                padding: 0.6rem 1rem;
+            }
         }
 
         @media (max-width: 768px) {
@@ -921,6 +1029,17 @@
 
             .player-hand-zone {
                 padding: 0.75rem 1rem;
+            }
+
+            .battle-log-zone {
+                top: 2%;
+                right: 10px;
+                max-width: 260px;
+            }
+
+            .log-entry {
+                font-size: 0.75rem;
+                padding: 0.5rem 0.75rem;
             }
 
             .music-controls {
@@ -945,7 +1064,7 @@
         /* Music controls */
         .music-controls {
             position: fixed;
-            top: 1rem;
+            top: 25.5rem;
             left: 1rem;
             z-index: 100;
             display: flex;
@@ -1103,11 +1222,9 @@
         <header class="battle-header">
             <h1 class="battle-title">⚔️ Combat</h1>
             <div class="turn-indicator">
-                <span class="turn-badge player-turn" id="turnBadge">Tour 1 - Votre tour</span>
+                <span class="turn-badge player-turn" id="turnBadge">Tour 1</span>
             </div>
-            <a href="{{ route('game.index') }}" class="quit-btn" onclick="return confirm('Abandonner le combat ?')">
-                ✖ Quitter
-            </a>
+            <a href="{{ route('game.index') }}" class="quit-btn" onclick="return confirm('Abandonner le combat ?')">✖</a>
         </header>
 
         <!-- Zone de combat -->
@@ -1136,9 +1253,9 @@
                 </div>
             </div>
 
-            <!-- Log de combat -->
+            <!-- Notifications Toast -->
             <div class="battle-log-zone" id="battleLog">
-                <div class="log-entry turn">⚔️ Le combat commence !</div>
+                <!-- Les notifications apparaissent ici dynamiquement -->
             </div>
 
             <!-- Zone joueur -->
@@ -1197,9 +1314,7 @@
 
     <!-- Boutons de contrôle -->
     <div class="control-buttons">
-        <button class="control-btn end-turn-btn" id="endTurnBtn" onclick="endTurn()">
-            ⏭️ Fin du tour
-        </button>
+        <button class="control-btn end-turn-btn" id="endTurnBtn" onclick="endTurn()">⏭️</button>
     </div>
 
     <!-- Modal Game Over -->
@@ -1648,13 +1763,16 @@
         // INITIALISER LE COMBAT
         // ========================================
         async function initBattle() {
+            addLogEntry('⚔️ Le combat commence !', 'turn');
             try {
                 const data = await apiCall('init-battle', 'POST', {
                     deck_id: deckId
                 });
                 gameState = data.battle_state;
                 renderAll();
-                addLogEntry('🎮 Combat initialisé ! C\'est votre tour.', 'turn');
+                setTimeout(() => {
+                    addLogEntry('🎮 C\'est votre tour !', 'info');
+                }, 500);
             } catch (error) {
                 console.error('Init failed:', error);
             }
@@ -2350,19 +2468,66 @@
         function updateTurnIndicator() {
             if (!gameState) return;
             const badge = document.getElementById('turnBadge');
-            badge.textContent = `Tour ${gameState.turn} - Votre tour`;
+            badge.textContent = `Tour ${gameState.turn}`;
         }
 
         // ========================================
-        // LOG DE COMBAT
+        // NOTIFICATIONS TOAST DYNAMIQUES
         // ========================================
+        const MAX_TOASTS = 3;
+        const TOAST_DURATION = 4000; // 4 secondes
+
         function addLogEntry(message, type = 'info') {
             const log = document.getElementById('battleLog');
+            const existingToasts = log.querySelectorAll('.log-entry:not(.exiting)');
+
+            // Si on a deja 3 toasts, retirer le plus ancien (le premier dans le DOM avec column-reverse)
+            if (existingToasts.length >= MAX_TOASTS) {
+                const oldestToast = existingToasts[0];
+                removeToast(oldestToast);
+            }
+
+            // Creer le nouveau toast
             const entry = document.createElement('div');
-            entry.className = `log-entry ${type}`;
+            entry.className = `log-entry ${type} entering`;
             entry.textContent = message;
+            entry.style.cursor = 'pointer';
+            entry.title = 'Cliquer pour fermer';
+
+            // Clic pour fermer
+            entry.addEventListener('click', () => removeToast(entry));
+
+            // Ajouter une animation de shift aux toasts existants
+            existingToasts.forEach(toast => {
+                toast.classList.add('shifting');
+                setTimeout(() => toast.classList.remove('shifting'), 300);
+            });
+
+            // Ajouter le nouveau toast a la fin (apparait en bas avec column-reverse)
             log.appendChild(entry);
-            log.scrollTop = log.scrollHeight;
+
+            // Retirer la classe entering apres l'animation
+            setTimeout(() => {
+                entry.classList.remove('entering');
+            }, 400);
+
+            // Programmer la suppression automatique
+            setTimeout(() => {
+                if (entry.parentNode) {
+                    removeToast(entry);
+                }
+            }, TOAST_DURATION);
+        }
+
+        function removeToast(toast) {
+            if (!toast || toast.classList.contains('exiting')) return;
+
+            toast.classList.add('exiting');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 300);
         }
 
         // ========================================

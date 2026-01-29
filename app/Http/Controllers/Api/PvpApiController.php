@@ -9,6 +9,35 @@ use Illuminate\Http\JsonResponse;
 
 class PvpApiController extends Controller
 {
+    public function getWaitingBattles(): JsonResponse
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Non authentifié'], 401);
+        }
+
+        $waitingBattles = Battle::where('status', 'waiting')
+            ->where('player1_id', '!=', $user->id)
+            ->with(['player1:id,name', 'player1Deck:id,name'])
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function ($battle) {
+                return [
+                    'id' => $battle->id,
+                    'player1_name' => $battle->player1->name,
+                    'player1_initial' => strtoupper(substr($battle->player1->name, 0, 1)),
+                    'deck_name' => $battle->player1Deck->name,
+                    'created_at' => $battle->created_at->diffForHumans(),
+                ];
+            });
+
+        return response()->json([
+            'battles' => $waitingBattles,
+        ]);
+    }
+
     public function getBattleState(Battle $battle): JsonResponse
     {
         $user = auth()->user();
@@ -27,6 +56,7 @@ class PvpApiController extends Controller
             'current_turn_user_id' => $battle->current_turn_user_id,
             'is_my_turn' => $battle->current_turn_user_id === $user->id,
             'turn_number' => $battle->turn_number,
+            'winner_id' => $battle->winner_id,
         ]);
     }
 
@@ -181,8 +211,14 @@ class PvpApiController extends Controller
         $message = "{$attackerName} inflige {$damage} dégâts à {$targetName}";
         $battleEnded = false;
         $winner = null;
+        $targetDestroyed = false;
 
-        if ($target['current_hp'] <= 0) {
+        // IMPORTANT: libérer les références AVANT de modifier le tableau
+        unset($attacker);
+        unset($target);
+
+        if ($state[$opponentKey]['field'][$targetIndex]['current_hp'] <= 0) {
+            $targetDestroyed = true;
             array_splice($state[$opponentKey]['field'], $targetIndex, 1);
             $message .= " - {$targetName} vaincu !";
 
@@ -218,6 +254,7 @@ class PvpApiController extends Controller
             'success' => true,
             'damage' => $damage,
             'message' => $message,
+            'target_destroyed' => $targetDestroyed,
             'battle_ended' => $battleEnded,
             'winner' => $winner,
             'battle_state' => $state,
@@ -267,6 +304,7 @@ class PvpApiController extends Controller
             $card['has_attacked'] = false;
             $card['current_endurance'] = min($card['endurance'], ($card['current_endurance'] ?? 0) + 30);
         }
+        unset($card); // IMPORTANT: libérer la référence pour éviter le bug de dédoublement
 
         $battle->update([
             'battle_state' => $state,
