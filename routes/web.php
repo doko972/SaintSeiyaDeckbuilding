@@ -10,6 +10,7 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\PvpController;
 use App\Http\Controllers\StarterPackController;
+use App\Http\Controllers\MusicController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -87,6 +88,7 @@ Route::middleware(['auth', 'ensure.starter'])->group(function () {
         Route::post('/join/{battle}', [PvpController::class, 'join'])->name('join');
         Route::get('/waiting/{battle}', [PvpController::class, 'waiting'])->name('waiting');
         Route::post('/cancel/{battle}', [PvpController::class, 'cancel'])->name('cancel');
+        Route::post('/forfeit/{battle}', [PvpController::class, 'forfeit'])->name('forfeit');
         Route::get('/battle/{battle}', [PvpController::class, 'battle'])->name('battle');
     });
 });
@@ -118,6 +120,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/cards/{card}/edit', [CardController::class, 'edit'])->name('cards.edit');
     Route::put('/cards/{card}', [CardController::class, 'update'])->name('cards.update');
     Route::delete('/cards/{card}', [CardController::class, 'destroy'])->name('cards.destroy');
+
+    // Gestion des Musiques
+    Route::get('/musics', [MusicController::class, 'index'])->name('musics.index');
+    Route::get('/musics/create', [MusicController::class, 'create'])->name('musics.create');
+    Route::post('/musics', [MusicController::class, 'store'])->name('musics.store');
+    Route::get('/musics/{music}/edit', [MusicController::class, 'edit'])->name('musics.edit');
+    Route::put('/musics/{music}', [MusicController::class, 'update'])->name('musics.update');
+    Route::delete('/musics/{music}', [MusicController::class, 'destroy'])->name('musics.destroy');
+    Route::patch('/musics/{music}/toggle', [MusicController::class, 'toggle'])->name('musics.toggle');
 });
 
 require __DIR__ . '/auth.php';

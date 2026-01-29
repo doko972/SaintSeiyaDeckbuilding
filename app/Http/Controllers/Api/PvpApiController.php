@@ -12,7 +12,11 @@ class PvpApiController extends Controller
     public function getBattleState(Battle $battle): JsonResponse
     {
         $user = auth()->user();
-        
+
+        if (!$user) {
+            return response()->json(['error' => 'Non authentifié'], 401);
+        }
+
         if ($battle->player1_id !== $user->id && $battle->player2_id !== $user->id) {
             return response()->json(['error' => 'Non autorisé'], 403);
         }
@@ -34,7 +38,16 @@ class PvpApiController extends Controller
         ]);
 
         $user = auth()->user();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Non authentifié'], 401);
+        }
+
         $battle = Battle::findOrFail($request->battle_id);
+
+        // Vérifier que l'utilisateur participe à ce combat
+        if ($battle->player1_id !== $user->id && $battle->player2_id !== $user->id) {
+            return response()->json(['success' => false, 'message' => 'Vous ne participez pas à ce combat'], 403);
+        }
 
         if (!$battle->isPlayerTurn($user)) {
             return response()->json(['success' => false, 'message' => 'Ce n\'est pas votre tour'], 400);
@@ -90,7 +103,16 @@ class PvpApiController extends Controller
         ]);
 
         $user = auth()->user();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Non authentifié'], 401);
+        }
+
         $battle = Battle::findOrFail($request->battle_id);
+
+        // Vérifier que l'utilisateur participe à ce combat
+        if ($battle->player1_id !== $user->id && $battle->player2_id !== $user->id) {
+            return response()->json(['success' => false, 'message' => 'Vous ne participez pas à ce combat'], 403);
+        }
 
         if (!$battle->isPlayerTurn($user)) {
             return response()->json(['success' => false, 'message' => 'Ce n\'est pas votre tour'], 400);
@@ -100,8 +122,22 @@ class PvpApiController extends Controller
         $opponentKey = $playerKey === 'player1' ? 'player2' : 'player1';
         $state = $battle->battle_state;
 
+        if (!$state) {
+            return response()->json(['success' => false, 'message' => 'État du combat invalide'], 500);
+        }
+
         $attackerIndex = $request->attacker_index;
         $targetIndex = $request->target_index;
+
+        // Vérifier que le joueur a des cartes sur le terrain
+        if (empty($state[$playerKey]['field'])) {
+            return response()->json(['success' => false, 'message' => 'Vous n\'avez pas de cartes sur le terrain'], 400);
+        }
+
+        // Vérifier que l'adversaire a des cartes sur le terrain
+        if (empty($state[$opponentKey]['field'])) {
+            return response()->json(['success' => false, 'message' => 'L\'adversaire n\'a pas de cartes sur le terrain'], 400);
+        }
 
         if (!isset($state[$playerKey]['field'][$attackerIndex])) {
             return response()->json(['success' => false, 'message' => 'Attaquant non trouvé'], 400);
@@ -115,24 +151,40 @@ class PvpApiController extends Controller
         $target = &$state[$opponentKey]['field'][$targetIndex];
 
         if ($attacker['has_attacked']) {
-            return response()->json(['success' => false, 'message' => 'Cette carte a déjà attaqué'], 400);
+            return response()->json(['success' => false, 'message' => 'Cette carte a déjà attaqué ce tour'], 400);
         }
 
+        // Vérifier l'endurance
         $attack = $attacker['main_attack'] ?? ['damage' => 50, 'endurance_cost' => 20, 'cosmos_cost' => 0];
-        
+        $enduranceCost = $attack['endurance_cost'] ?? 20;
+        $cosmosCost = $attack['cosmos_cost'] ?? 0;
+
+        if (($attacker['current_endurance'] ?? 0) < $enduranceCost) {
+            return response()->json(['success' => false, 'message' => 'Endurance insuffisante'], 400);
+        }
+
+        if (($state[$playerKey]['cosmos'] ?? 0) < $cosmosCost) {
+            return response()->json(['success' => false, 'message' => 'Cosmos insuffisant'], 400);
+        }
+
         $damage = max(0, ($attack['damage'] ?? 50) + ($attacker['power'] ?? 0) - ($target['defense'] ?? 0));
 
+        // Sauvegarder les noms avant modification
+        $attackerName = $attacker['name'];
+        $targetName = $target['name'];
+
         $target['current_hp'] -= $damage;
-        $attacker['current_endurance'] -= ($attack['endurance_cost'] ?? 20);
+        $attacker['current_endurance'] -= $enduranceCost;
+        $state[$playerKey]['cosmos'] -= $cosmosCost;
         $attacker['has_attacked'] = true;
 
-        $message = "{$attacker['name']} inflige {$damage} dégâts à {$target['name']}";
+        $message = "{$attackerName} inflige {$damage} dégâts à {$targetName}";
         $battleEnded = false;
         $winner = null;
 
         if ($target['current_hp'] <= 0) {
             array_splice($state[$opponentKey]['field'], $targetIndex, 1);
-            $message .= " - {$target['name']} vaincu !";
+            $message .= " - {$targetName} vaincu !";
 
             // Vérifier victoire
             if (empty($state[$opponentKey]['field']) && empty($state[$opponentKey]['hand']) && empty($state[$opponentKey]['deck'])) {
@@ -179,7 +231,16 @@ class PvpApiController extends Controller
         ]);
 
         $user = auth()->user();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Non authentifié'], 401);
+        }
+
         $battle = Battle::findOrFail($request->battle_id);
+
+        // Vérifier que l'utilisateur participe à ce combat
+        if ($battle->player1_id !== $user->id && $battle->player2_id !== $user->id) {
+            return response()->json(['success' => false, 'message' => 'Vous ne participez pas à ce combat'], 403);
+        }
 
         if (!$battle->isPlayerTurn($user)) {
             return response()->json(['success' => false, 'message' => 'Ce n\'est pas votre tour'], 400);

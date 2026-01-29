@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Battle;
 use App\Models\Deck;
+use App\Models\Music;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -170,6 +171,45 @@ class PvpController extends Controller
     }
 
     /**
+     * Abandonner un combat en cours
+     */
+    public function forfeit(Battle $battle): RedirectResponse
+    {
+        $user = auth()->user();
+
+        // Vérifier que le joueur participe à ce combat
+        if ($battle->player1_id !== $user->id && $battle->player2_id !== $user->id) {
+            return redirect()->route('pvp.lobby')->with('error', 'Action non autorisée.');
+        }
+
+        if (!$battle->isInProgress()) {
+            return redirect()->route('pvp.lobby')->with('error', 'Ce combat n\'est pas en cours.');
+        }
+
+        // Déterminer le gagnant (l'adversaire)
+        $winnerId = $battle->player1_id === $user->id ? $battle->player2_id : $battle->player1_id;
+
+        // Mettre à jour le combat
+        $battle->update([
+            'status' => 'finished',
+            'winner_id' => $winnerId,
+            'finished_at' => now(),
+        ]);
+
+        // Récompenses : le perdant (celui qui abandonne) reçoit moins
+        $user->losses++;
+        $user->save();
+
+        // Le gagnant reçoit la récompense
+        $winner = $winnerId === $battle->player1_id ? $battle->player1 : $battle->player2;
+        $winner->coins += 150;
+        $winner->wins++;
+        $winner->save();
+
+        return redirect()->route('pvp.lobby')->with('info', 'Vous avez abandonné le combat.');
+    }
+
+    /**
      * Page de combat PvP
      */
     public function battle(Battle $battle): View|RedirectResponse
@@ -186,7 +226,9 @@ class PvpController extends Controller
         }
 
         if ($battle->isFinished()) {
-            return view('pvp.result', compact('battle'));
+            $isWinner = $battle->winner_id === $user->id;
+            $resultMusic = $isWinner ? Music::getRandomVictoryMusic() : Music::getRandomDefeatMusic();
+            return view('pvp.result', compact('battle', 'resultMusic'));
         }
 
         $battle->load('player1', 'player2', 'player1Deck', 'player2Deck');
@@ -195,7 +237,12 @@ class PvpController extends Controller
         $opponent = $battle->getOpponent($user);
         $isMyTurn = $battle->isPlayerTurn($user);
 
-        return view('pvp.battle', compact('battle', 'playerNumber', 'opponent', 'isMyTurn'));
+        // Récupérer les musiques de combat actives
+        $battleMusics = Music::getBattleMusics();
+        $victoryMusic = Music::getRandomVictoryMusic();
+        $defeatMusic = Music::getRandomDefeatMusic();
+
+        return view('pvp.battle', compact('battle', 'playerNumber', 'opponent', 'isMyTurn', 'battleMusics', 'victoryMusic', 'defeatMusic'));
     }
 
     /**
@@ -219,15 +266,15 @@ class PvpController extends Controller
                 'deck' => $player1Deck,
                 'hand' => $player1Hand,
                 'field' => [],
-                'cosmos' => 3,
-                'max_cosmos' => 3,
+                'cosmos' => 5,
+                'max_cosmos' => 5,
             ],
             'player2' => [
                 'deck' => $player2Deck,
                 'hand' => $player2Hand,
                 'field' => [],
-                'cosmos' => 3,
-                'max_cosmos' => 3,
+                'cosmos' => 5,
+                'max_cosmos' => 5,
             ],
         ];
     }

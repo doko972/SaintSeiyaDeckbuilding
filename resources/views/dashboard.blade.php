@@ -344,6 +344,43 @@
         /* ========================================
            RECENT CARDS SECTION
         ======================================== */
+        .cards-scroll-container {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            overflow-y: visible;
+            padding: 1rem 0.5rem 1rem 0.5rem;
+            margin: -1rem -0.5rem;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(139, 92, 246, 0.5) transparent;
+            touch-action: pan-x;
+            cursor: grab;
+        }
+
+        .cards-scroll-container:active {
+            cursor: grabbing;
+        }
+
+        .cards-scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .cards-scroll-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .cards-scroll-container::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.5);
+            border-radius: 3px;
+        }
+
+        .cards-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 92, 246, 0.7);
+        }
+
         .recent-card {
             position: relative;
             width: 100px;
@@ -353,12 +390,14 @@
             border: 2px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
             background: linear-gradient(145deg, var(--card-color-1, #333), var(--card-color-2, #555));
+            z-index: 1;
         }
 
         .recent-card:hover {
-            transform: translateY(-10px) scale(1.05);
+            transform: translateY(-10px) scale(1.1);
             border-color: rgba(255, 215, 0, 0.5);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.2);
+            z-index: 10;
         }
 
         .recent-card img {
@@ -416,12 +455,85 @@
         }
 
         /* ========================================
+           HERO STATS
+        ======================================== */
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .hero-stat-label {
+            font-size: 0.875rem;
+            color: #E9D5FF;
+            margin-top: 0.25rem;
+        }
+
+        /* ========================================
            RESPONSIVE
         ======================================== */
         @media (max-width: 768px) {
-            .hero-banner .flex {
+            .hero-banner {
+                padding: 1.5rem !important;
+            }
+
+            .hero-banner > .relative > .flex {
                 flex-direction: column;
                 text-align: center;
+                gap: 1.5rem;
+            }
+
+            .hero-banner h1 {
+                font-size: 1.5rem !important;
+            }
+
+            .hero-banner .rank-badge {
+                font-size: 0.7rem;
+                padding: 0.25rem 0.5rem;
+            }
+
+            .hero-banner p {
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+            }
+
+            .hero-stats {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                gap: 1rem;
+                background: rgba(0, 0, 0, 0.3);
+                padding: 1rem;
+                border-radius: 12px;
+                margin-top: 0.5rem;
+            }
+
+            .hero-stat {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .hero-stat-value {
+                font-size: 1.2rem;
+                flex-direction: column;
+                gap: 0.2rem;
+            }
+
+            .hero-stat-label {
+                font-size: 0.7rem;
             }
 
             .stat-card {
@@ -438,6 +550,33 @@
 
             .action-icon {
                 font-size: 2rem;
+            }
+
+            .cosmos-bar-container {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-banner {
+                padding: 1rem !important;
+            }
+
+            .hero-banner h1 {
+                font-size: 1.25rem !important;
+            }
+
+            .hero-stats {
+                gap: 0.5rem;
+                padding: 0.75rem;
+            }
+
+            .hero-stat-value {
+                font-size: 1rem;
+            }
+
+            .hero-stat-label {
+                font-size: 0.6rem;
             }
         }
     </style>
@@ -505,24 +644,24 @@
                     </div>
 
                     <!-- Stats principales -->
-                    <div class="flex gap-8">
-                        <div class="text-center">
-                            <div class="text-4xl md:text-5xl font-bold text-yellow-400 drop-shadow-lg">
-                                {{ number_format(auth()->user()->coins) }}
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <div class="hero-stat-value text-yellow-400">
+                                🪙 {{ number_format(auth()->user()->coins) }}
                             </div>
-                            <div class="text-purple-200 text-sm">Pièces</div>
+                            <div class="hero-stat-label">Pièces</div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-4xl md:text-5xl font-bold text-green-400 drop-shadow-lg">
-                                {{ auth()->user()->wins }}
+                        <div class="hero-stat">
+                            <div class="hero-stat-value text-green-400">
+                                🏆 {{ auth()->user()->wins }}
                             </div>
-                            <div class="text-purple-200 text-sm">Victoires</div>
+                            <div class="hero-stat-label">Victoires</div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-4xl md:text-5xl font-bold text-red-400 drop-shadow-lg">
-                                {{ auth()->user()->losses }}
+                        <div class="hero-stat">
+                            <div class="hero-stat-value text-red-400">
+                                💀 {{ auth()->user()->losses }}
                             </div>
-                            <div class="text-purple-200 text-sm">Défaites</div>
+                            <div class="hero-stat-label">Défaites</div>
                         </div>
                     </div>
                 </div>
@@ -595,7 +734,7 @@
                         Voir tout →
                     </a>
                 </div>
-                <div class="flex gap-4 overflow-x-auto pb-2">
+                <div class="cards-scroll-container" id="recentCardsScroller">
                     @foreach($recentCards as $card)
                     <div class="recent-card flex-shrink-0" 
                          style="--card-color-1: {{ $card->faction->color_primary ?? '#333' }}; --card-color-2: {{ $card->faction->color_secondary ?? '#555' }};">
@@ -664,10 +803,68 @@
                     <a href="{{ route('admin.attacks.create') }}" class="admin-btn">
                         <span>➕</span> Nouvelle attaque
                     </a>
+                    <a href="{{ route('admin.musics.index') }}" class="admin-btn">
+                        <span>🎵</span> Gestion musiques
+                    </a>
                 </div>
             </div>
             @endif
 
         </div>
     </div>
+
+    <script>
+        // Drag to scroll pour les conteneurs de cartes
+        document.addEventListener('DOMContentLoaded', function() {
+            const scrollContainers = document.querySelectorAll('.cards-scroll-container');
+
+            scrollContainers.forEach(container => {
+                let isDown = false;
+                let startX;
+                let scrollLeft;
+
+                container.addEventListener('mousedown', (e) => {
+                    // Ignorer si on clique sur un lien ou bouton
+                    if (e.target.closest('a, button')) return;
+
+                    isDown = true;
+                    container.style.cursor = 'grabbing';
+                    startX = e.pageX - container.offsetLeft;
+                    scrollLeft = container.scrollLeft;
+                    e.preventDefault();
+                });
+
+                container.addEventListener('mouseleave', () => {
+                    isDown = false;
+                    container.style.cursor = 'grab';
+                });
+
+                container.addEventListener('mouseup', () => {
+                    isDown = false;
+                    container.style.cursor = 'grab';
+                });
+
+                container.addEventListener('mousemove', (e) => {
+                    if (!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - container.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    container.scrollLeft = scrollLeft - walk;
+                });
+
+                // Support tactile amélioré
+                container.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].pageX - container.offsetLeft;
+                    scrollLeft = container.scrollLeft;
+                }, { passive: true });
+
+                container.addEventListener('touchmove', (e) => {
+                    if (!startX) return;
+                    const x = e.touches[0].pageX - container.offsetLeft;
+                    const walk = (x - startX) * 1.5;
+                    container.scrollLeft = scrollLeft - walk;
+                }, { passive: true });
+            });
+        });
+    </script>
 </x-app-layout>

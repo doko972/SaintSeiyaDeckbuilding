@@ -337,10 +337,24 @@
             text-overflow: ellipsis;
         }
 
+        .hand-card-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.6rem;
+            margin-top: 4px;
+            color: #E5E7EB;
+        }
+
+        .hand-card-stats span {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
         /* Contrôles */
         .control-buttons {
             position: fixed;
-            bottom: 180px;
+            bottom: 110px;
             left: 2rem;
             display: flex;
             flex-direction: column;
@@ -375,8 +389,8 @@
         /* Action panel */
         .action-panel {
             position: fixed;
-            bottom: 200px;
-            right: 2rem;
+            bottom: 340px;
+            right: 6rem;
             background: rgba(0, 0, 0, 0.9);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 16px;
@@ -457,13 +471,491 @@
             font-size: 2rem;
         }
 
+        .quit-form {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+        }
+
         .quit-btn {
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 0.8rem;
             background: rgba(239, 68, 68, 0.2);
             border: 1px solid rgba(239, 68, 68, 0.5);
             color: #EF4444;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .quit-btn:hover {
+            background: rgba(239, 68, 68, 0.4);
+        }
+
+        .player-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .deck-name {
+            font-size: 0.7rem;
+            color: #9CA3AF;
+        }
+
+        .battle-header {
+            position: relative;
+        }
+
+        /* Music controls */
+        .music-controls {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .music-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(124, 58, 237, 0.3);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(124, 58, 237, 0.5);
+        }
+
+        .music-btn:hover {
+            background: rgba(124, 58, 237, 0.5);
+            transform: scale(1.1);
+        }
+
+        .music-btn.playing {
+            background: rgba(124, 58, 237, 0.6);
+            animation: pulse-music 2s infinite;
+        }
+
+        @keyframes pulse-music {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); }
+            50% { box-shadow: 0 0 15px 5px rgba(124, 58, 237, 0.2); }
+        }
+
+        .volume-panel {
+            position: absolute;
+            left: 50px;
+            top: 0;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 0.75rem;
+            min-width: 180px;
+            display: none;
+        }
+
+        .volume-panel.visible {
+            display: block;
+        }
+
+        .volume-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .volume-slider {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #A78BFA;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .volume-value {
+            font-size: 0.75rem;
+            color: #A78BFA;
+            min-width: 35px;
+            text-align: right;
+        }
+
+        .track-select {
+            margin-top: 0.5rem;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            padding: 0.4rem;
+            color: white;
+            font-size: 0.75rem;
+        }
+
+        .track-select option {
+            background: #1a1a2e;
+            color: white;
+        }
+
+        /* ========================================
+           RESPONSIVE - TABLETTE
+        ======================================== */
+        @media (max-width: 1024px) {
+            .battle-arena {
+                padding: 0.5rem 1rem;
+            }
+
+            .field-zone {
+                min-height: 150px;
+                gap: 0.5rem;
+            }
+
+            .battle-card {
+                width: 110px;
+            }
+
+            .battle-card-image {
+                height: 75px;
+            }
+
+            .hand-card {
+                width: 100px;
+            }
+
+            .hand-card-image {
+                height: 65px;
+            }
+
+            .player-hand {
+                gap: 0.5rem;
+                min-height: 140px;
+            }
+
+            .action-panel {
+                bottom: 280px;
+                right: 1rem;
+            }
+        }
+
+        /* ========================================
+           RESPONSIVE - MOBILE
+        ======================================== */
+        @media (max-width: 768px) {
+            /* Music controls mobile */
+            .music-controls {
+                top: auto;
+                bottom: 180px;
+                left: 0.5rem;
+            }
+
+            .music-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+
+            .volume-panel {
+                left: 42px;
+                min-width: 150px;
+                padding: 0.5rem;
+            }
+
+            /* Header mobile */
+            .battle-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .player-vs {
+                gap: 0.5rem;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .player-badge {
+                padding: 0.3rem 0.5rem;
+                gap: 0.4rem;
+            }
+
+            .player-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 0.8rem;
+            }
+
+            .vs-text {
+                font-size: 1rem;
+            }
+
+            .turn-indicator {
+                padding: 0.3rem 0.8rem;
+                font-size: 0.75rem;
+            }
+
+            .quit-form {
+                top: 0.3rem;
+                right: 0.3rem;
+            }
+
+            .quit-btn {
+                padding: 0.3rem 0.5rem;
+                font-size: 0.7rem;
+            }
+
+            .player-info {
+                display: none;
+            }
+
+            /* Zone de combat mobile */
+            .battle-arena {
+                padding: 0.3rem 0.5rem;
+                gap: 0.5rem;
+            }
+
+            .field-zone {
+                min-height: 120px;
+                padding: 0.5rem;
+                gap: 0.3rem;
+                flex-wrap: wrap;
+            }
+
+            .battle-card {
+                width: 85px;
+            }
+
+            .battle-card-image {
+                height: 55px;
+            }
+
+            .battle-card-info {
+                padding: 4px;
+            }
+
+            .battle-card-name {
+                font-size: 0.55rem;
+            }
+
+            .hp-bar-container {
+                height: 4px;
+                margin-bottom: 2px;
+            }
+
+            .battle-card-stats {
+                font-size: 0.5rem;
+            }
+
+            /* Log mobile */
+            .battle-log {
+                max-height: 60px;
+                padding: 0.4rem 0.6rem;
+                font-size: 0.7rem;
+            }
+
+            .log-entry {
+                font-size: 0.7rem;
+                padding: 0.15rem 0;
+            }
+
+            /* Main du joueur mobile */
+            .player-hand-zone {
+                padding: 0.5rem;
+            }
+
+            .hand-header {
+                flex-direction: column;
+                gap: 0.3rem;
+                align-items: flex-start;
+                margin-bottom: 0.5rem;
+            }
+
+            .hand-header > .flex {
+                display: none;
+            }
+
+            .cosmos-display {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.8rem;
+            }
+
+            .player-hand {
+                gap: 0.4rem;
+                min-height: 110px;
+                justify-content: flex-start;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 0.5rem;
+            }
+
+            .hand-card {
+                width: 80px;
+                flex-shrink: 0;
+            }
+
+            .hand-card-cost {
+                font-size: 0.55rem;
+                padding: 2px 4px;
+                top: 3px;
+                right: 3px;
+            }
+
+            .hand-card-image {
+                height: 50px;
+            }
+
+            .hand-card-info {
+                padding: 4px;
+            }
+
+            .hand-card-name {
+                font-size: 0.55rem;
+            }
+
+            .hand-card-stats {
+                font-size: 0.5rem;
+                gap: 2px;
+            }
+
+            .hand-card-stats span {
+                gap: 1px;
+            }
+
+            .hand-card:hover {
+                transform: none;
+            }
+
+            /* Contrôles mobile */
+            .control-buttons {
+                position: fixed;
+                /* bottom: auto; */
+                top: 80%;
+                left: 0.3rem;
+                transform: translateY(-50%);
+            }
+
+            .control-btn {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.7rem;
+            }
+
+            /* Panel d'action mobile */
+            .action-panel {
+                position: fixed;
+                bottom: auto;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                right: auto;
+                min-width: 250px;
+                max-width: 90vw;
+                z-index: 1500;
+            }
+
+            /* Empty slot mobile */
+            .empty-slot {
+                width: 85px;
+                height: 100px;
+                font-size: 1.5rem;
+            }
+
+            /* Waiting overlay mobile */
+            .waiting-content h2 {
+                font-size: 1.2rem;
+            }
+
+            .waiting-content {
+                padding: 1rem;
+            }
+        }
+
+        /* ========================================
+           RESPONSIVE - PETIT MOBILE
+        ======================================== */
+        @media (max-width: 480px) {
+            .battle-card {
+                width: 70px;
+            }
+
+            .battle-card-image {
+                height: 45px;
+            }
+
+            .battle-card-name {
+                font-size: 0.5rem;
+            }
+
+            .hand-card {
+                width: 70px;
+            }
+
+            .hand-card-image {
+                height: 45px;
+            }
+
+            .player-hand {
+                min-height: 95px;
+            }
+
+            .field-zone {
+                min-height: 100px;
+            }
+
+            .empty-slot {
+                width: 70px;
+                height: 85px;
+                font-size: 1.2rem;
+            }
+
+            .control-buttons {
+                left: 70%;
+            }
+
+            .control-btn {
+                padding: 0.5rem 0.6rem;
+                font-size: 0.65rem;
+            }
+        }
+
+        /* Amélioration tactile pour mobile */
+        @media (hover: none) and (pointer: coarse) {
+            .battle-card:hover,
+            .hand-card:hover {
+                transform: none;
+            }
+
+            .battle-card,
+            .hand-card,
+            .attack-btn,
+            .control-btn {
+                -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .battle-card.selected {
+                transform: scale(1.05);
+            }
+
+            .battle-card.targetable {
+                transform: scale(1.02);
+            }
         }
     </style>
 </head>
@@ -471,15 +963,63 @@
     <div class="cosmos-bg"></div>
     <img src="{{ asset('images/baniere.webp') }}" alt="" class="bg-image">
 
+    <!-- Music Player -->
+    @if(isset($battleMusics) && $battleMusics->count() > 0)
+    <audio id="battleMusic" loop preload="auto">
+        <source src="{{ Storage::url($battleMusics->first()->file_path) }}" type="audio/mpeg">
+    </audio>
+    @endif
+
+    <!-- Victory/Defeat Music -->
+    @if(isset($victoryMusic) && $victoryMusic)
+    <audio id="victoryMusic" preload="auto">
+        <source src="{{ Storage::url($victoryMusic->file_path) }}" type="audio/mpeg">
+    </audio>
+    @endif
+
+    @if(isset($defeatMusic) && $defeatMusic)
+    <audio id="defeatMusic" preload="auto">
+        <source src="{{ Storage::url($defeatMusic->file_path) }}" type="audio/mpeg">
+    </audio>
+    @endif
+
+    @if(isset($battleMusics) && $battleMusics->count() > 0)
+
+    <div class="music-controls">
+        <button class="music-btn" id="musicToggle" title="Musique">
+            🎵
+        </button>
+        <div class="volume-panel" id="volumePanel">
+            <div class="volume-slider-container">
+                <span>🔊</span>
+                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="{{ $battleMusics->first()->volume }}">
+                <span class="volume-value" id="volumeValue">{{ $battleMusics->first()->volume }}%</span>
+            </div>
+            @if($battleMusics->count() > 1)
+            <select class="track-select" id="trackSelect">
+                @foreach($battleMusics as $music)
+                <option value="{{ Storage::url($music->file_path) }}" data-volume="{{ $music->volume }}">{{ $music->name }}</option>
+                @endforeach
+            </select>
+            @endif
+        </div>
+    </div>
+    @endif
+
     <div class="battle-container">
         <!-- Header -->
         <header class="battle-header">
+            <form action="{{ route('pvp.forfeit', $battle) }}" method="POST" class="quit-form" onsubmit="return confirm('Abandonner le combat ? Vous perdrez la partie.')">
+                @csrf
+                <button type="submit" class="quit-btn">✖</button>
+            </form>
+
             <div class="player-vs">
                 <div class="player-badge player1 {{ $battle->current_turn_user_id == $battle->player1_id ? 'current-turn' : '' }}">
                     <div class="player-avatar">{{ strtoupper(substr($battle->player1->name, 0, 1)) }}</div>
-                    <div>
-                        <div class="font-bold">{{ $battle->player1->name }}</div>
-                        <div class="text-xs text-gray-400">{{ $battle->player1Deck->name }}</div>
+                    <div class="player-info">
+                        <div class="player-name">{{ $battle->player1->name }}</div>
+                        <div class="deck-name">{{ $battle->player1Deck->name }}</div>
                     </div>
                 </div>
 
@@ -487,9 +1027,9 @@
 
                 <div class="player-badge player2 {{ $battle->current_turn_user_id == $battle->player2_id ? 'current-turn' : '' }}">
                     <div class="player-avatar">{{ strtoupper(substr($battle->player2->name, 0, 1)) }}</div>
-                    <div>
-                        <div class="font-bold">{{ $battle->player2->name }}</div>
-                        <div class="text-xs text-gray-400">{{ $battle->player2Deck->name }}</div>
+                    <div class="player-info">
+                        <div class="player-name">{{ $battle->player2->name }}</div>
+                        <div class="deck-name">{{ $battle->player2Deck->name }}</div>
                     </div>
                 </div>
             </div>
@@ -497,10 +1037,6 @@
             <div class="turn-indicator {{ $isMyTurn ? 'my-turn' : 'opponent-turn' }}" id="turnIndicator">
                 {{ $isMyTurn ? '🎮 Votre tour !' : '⏳ Tour adverse...' }}
             </div>
-
-            <a href="{{ route('pvp.lobby') }}" class="quit-btn" onclick="return confirm('Abandonner le combat ? Vous perdrez la partie.')">
-                ✖ Quitter
-            </a>
         </header>
 
         <!-- Zone de combat -->
@@ -612,14 +1148,33 @@
                     credentials: 'same-origin'
                 });
 
+                // Rediriger vers login si non authentifié
+                if (response.status === 401) {
+                    stopPolling();
+                    window.location.href = '/login';
+                    return;
+                }
+
+                if (!response.ok) {
+                    console.error('Polling error: HTTP', response.status);
+                    return;
+                }
+
                 const data = await response.json();
 
                 if (data.battle_state) {
+                    const wasMyTurn = isMyTurn;
                     gameState = data.battle_state;
                     isMyTurn = data.is_my_turn;
-                    
+
                     renderAll();
                     updateTurnUI();
+
+                    // Log quand c'est notre tour (après que l'adversaire ait terminé)
+                    if (isMyTurn && !wasMyTurn) {
+                        const myState = getMyState();
+                        addLogEntry(`🔄 C'est votre tour ! Cosmos: ${myState.cosmos}/${myState.max_cosmos}`, 'turn');
+                    }
 
                     if (isMyTurn) {
                         stopPolling();
@@ -776,6 +1331,11 @@
                 <div class="hand-card-image" style="background-image: url('${card.image || ''}'); background-color: ${card.faction?.color_primary || '#333'};"></div>
                 <div class="hand-card-info">
                     <div class="hand-card-name">${card.name}</div>
+                    <div class="hand-card-stats">
+                        <span title="Points de vie">❤️ ${card.max_hp || card.health_points || '?'}</span>
+                        <span title="Puissance">⚔️ ${card.power || 0}</span>
+                        <span title="Défense">🛡️ ${card.defense || 0}</span>
+                    </div>
                 </div>
             `;
 
@@ -821,6 +1381,12 @@
                     credentials: 'same-origin'
                 });
 
+                // Gérer les erreurs HTTP
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || `Erreur HTTP ${response.status}`);
+                }
+
                 const data = await response.json();
 
                 if (data.success) {
@@ -828,10 +1394,13 @@
                     addLogEntry(`🎴 Vous jouez ${data.card_played}`, 'info');
                     renderAll();
                 } else {
-                    addLogEntry(`❌ ${data.message}`, 'damage');
+                    addLogEntry(`❌ ${data.message || 'Erreur inconnue'}`, 'damage');
+                    renderAll(); // Re-render pour restaurer l'état visuel
                 }
             } catch (error) {
                 console.error('Play card error:', error);
+                addLogEntry(`❌ ${error.message || 'Erreur de connexion'}`, 'damage');
+                renderAll(); // Re-render pour restaurer l'état visuel
             }
         }
 
@@ -861,12 +1430,41 @@
                 { key: 'main', name: card.main_attack?.name || 'Attaque', damage: card.main_attack?.damage || 50, endCost: card.main_attack?.endurance_cost || 20, cosCost: card.main_attack?.cosmos_cost || 0 }
             ];
 
+            // Afficher les stats de la carte sélectionnée
+            const statsDiv = document.createElement('div');
+            statsDiv.style.cssText = 'font-size: 0.75rem; color: #9CA3AF; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);';
+            statsDiv.innerHTML = `<span style="color: #60A5FA;">⚡ Endurance: ${card.current_endurance || 0}</span> | <span style="color: #A78BFA;">🌟 Cosmos: ${state.cosmos || 0}</span>`;
+            list.appendChild(statsDiv);
+
             attacks.forEach(atk => {
-                const canUse = card.current_endurance >= atk.endCost && state.cosmos >= atk.cosCost;
+                const hasEndurance = (card.current_endurance || 0) >= atk.endCost;
+                const hasCosmos = (state.cosmos || 0) >= atk.cosCost;
+                const canUse = hasEndurance && hasCosmos;
+
                 const btn = document.createElement('button');
                 btn.className = 'attack-btn';
                 btn.disabled = !canUse;
-                btn.innerHTML = `<span>${atk.name}</span><span style="font-size:0.7rem;color:#EF4444;">⚔️${atk.damage}</span>`;
+
+                // Afficher les coûts et la raison du blocage
+                let costInfo = '';
+                if (atk.endCost > 0) costInfo += `⚡${atk.endCost}`;
+                if (atk.cosCost > 0) costInfo += ` 🌟${atk.cosCost}`;
+
+                let reasonText = '';
+                if (!hasEndurance) reasonText = '(Endurance insuffisante)';
+                else if (!hasCosmos) reasonText = '(Cosmos insuffisant)';
+
+                btn.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;">
+                        <div style="display: flex; justify-content: space-between; width: 100%;">
+                            <span>${atk.name}</span>
+                            <span style="font-size:0.7rem;color:#EF4444;">⚔️${atk.damage}</span>
+                        </div>
+                        <div style="font-size: 0.65rem; color: #9CA3AF; margin-top: 2px;">
+                            Coût: ${costInfo || 'Aucun'} ${reasonText ? `<span style="color: #F87171;">${reasonText}</span>` : ''}
+                        </div>
+                    </div>
+                `;
                 btn.onclick = () => selectAttack(atk.key);
                 list.appendChild(btn);
             });
@@ -921,6 +1519,12 @@
                     credentials: 'same-origin'
                 });
 
+                // Gérer les erreurs HTTP
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || `Erreur HTTP ${response.status}`);
+                }
+
                 const data = await response.json();
 
                 if (data.success) {
@@ -943,13 +1547,14 @@
                         window.location.reload();
                     }
                 } else {
-                    addLogEntry(`❌ ${data.message}`, 'damage');
+                    addLogEntry(`❌ ${data.message || 'Erreur inconnue'}`, 'damage');
                 }
 
                 cancelSelection();
                 renderAll();
             } catch (error) {
                 console.error('Attack error:', error);
+                addLogEntry(`❌ ${error.message || 'Erreur de connexion'}`, 'damage');
                 cancelSelection();
             }
         }
@@ -978,6 +1583,12 @@
                     credentials: 'same-origin'
                 });
 
+                // Gérer les erreurs HTTP
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || `Erreur HTTP ${response.status}`);
+                }
+
                 const data = await response.json();
 
                 if (data.success) {
@@ -987,9 +1598,12 @@
                     renderAll();
                     updateTurnUI();
                     startPolling();
+                } else {
+                    addLogEntry(`❌ ${data.message || 'Erreur inconnue'}`, 'damage');
                 }
             } catch (error) {
                 console.error('End turn error:', error);
+                addLogEntry(`❌ ${error.message || 'Erreur de connexion'}`, 'damage');
             }
         }
 
@@ -1005,7 +1619,7 @@
         function updateHelpText() {
             const helpText = document.getElementById('helpText');
             const myState = getMyState();
-            
+
             if (!isMyTurn) {
                 helpText.textContent = "⏳ Attendez votre tour...";
                 helpText.className = "text-xs text-gray-400 bg-gray-400/20 px-2 py-1 rounded";
@@ -1020,6 +1634,141 @@
                 helpText.className = "text-xs text-orange-400 bg-orange-400/20 px-2 py-1 rounded";
             }
         }
+
+        // Music Player
+        @if($battleMusics->count() > 0)
+        const battleMusic = document.getElementById('battleMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        const volumePanel = document.getElementById('volumePanel');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeValueEl = document.getElementById('volumeValue');
+        const trackSelect = document.getElementById('trackSelect');
+
+        let isMusicPlaying = false;
+        let volumePanelVisible = false;
+        let hasTriedAutoplay = false;
+
+        // Initialize volume
+        battleMusic.volume = volumeSlider.value / 100;
+
+        // Try to autoplay
+        function tryAutoplay() {
+            if (hasTriedAutoplay && isMusicPlaying) return;
+
+            battleMusic.play().then(() => {
+                musicToggle.classList.add('playing');
+                musicToggle.innerHTML = '⏸️';
+                isMusicPlaying = true;
+                hasTriedAutoplay = true;
+            }).catch(err => {
+                console.log('Autoplay blocked, waiting for user interaction');
+            });
+        }
+
+        // Try autoplay on page load
+        tryAutoplay();
+
+        // Autoplay on first user interaction
+        function onFirstInteraction() {
+            if (!isMusicPlaying) {
+                tryAutoplay();
+            }
+            document.removeEventListener('click', onFirstInteraction);
+            document.removeEventListener('keydown', onFirstInteraction);
+            document.removeEventListener('touchstart', onFirstInteraction);
+        }
+
+        document.addEventListener('click', onFirstInteraction);
+        document.addEventListener('keydown', onFirstInteraction);
+        document.addEventListener('touchstart', onFirstInteraction);
+
+        // Toggle play/pause
+        musicToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+
+            if (isMusicPlaying) {
+                battleMusic.pause();
+                musicToggle.classList.remove('playing');
+                musicToggle.innerHTML = '🎵';
+                isMusicPlaying = false;
+            } else {
+                battleMusic.play().then(() => {
+                    musicToggle.classList.add('playing');
+                    musicToggle.innerHTML = '⏸️';
+                    isMusicPlaying = true;
+                }).catch(err => {
+                    console.log('Autoplay blocked:', err);
+                });
+            }
+        });
+
+        // Right-click or long-press to show volume panel
+        musicToggle.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            volumePanelVisible = !volumePanelVisible;
+            volumePanel.classList.toggle('visible', volumePanelVisible);
+        });
+
+        // Double-click to toggle volume panel
+        musicToggle.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+            volumePanelVisible = !volumePanelVisible;
+            volumePanel.classList.toggle('visible', volumePanelVisible);
+        });
+
+        // Volume slider
+        volumeSlider.addEventListener('input', function() {
+            battleMusic.volume = this.value / 100;
+            volumeValueEl.textContent = this.value + '%';
+            localStorage.setItem('battleMusicVolume', this.value);
+        });
+
+        // Track selector
+        if (trackSelect) {
+            trackSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const newSrc = this.value;
+                const defaultVolume = selectedOption.dataset.volume || 50;
+
+                const wasPlaying = isMusicPlaying;
+                battleMusic.src = newSrc;
+                volumeSlider.value = defaultVolume;
+                battleMusic.volume = defaultVolume / 100;
+                volumeValueEl.textContent = defaultVolume + '%';
+
+                if (wasPlaying) {
+                    battleMusic.play();
+                }
+
+                localStorage.setItem('battleMusicTrack', newSrc);
+            });
+        }
+
+        // Close volume panel when clicking outside
+        document.addEventListener('click', function(e) {
+            if (volumePanelVisible && !volumePanel.contains(e.target) && e.target !== musicToggle) {
+                volumePanelVisible = false;
+                volumePanel.classList.remove('visible');
+            }
+        });
+
+        // Load saved preferences
+        const savedVolume = localStorage.getItem('battleMusicVolume');
+        if (savedVolume) {
+            volumeSlider.value = savedVolume;
+            battleMusic.volume = savedVolume / 100;
+            volumeValueEl.textContent = savedVolume + '%';
+        }
+
+        const savedTrack = localStorage.getItem('battleMusicTrack');
+        if (savedTrack && trackSelect) {
+            const option = trackSelect.querySelector(`option[value="${savedTrack}"]`);
+            if (option) {
+                trackSelect.value = savedTrack;
+                battleMusic.src = savedTrack;
+            }
+        }
+        @endif
     </script>
 </body>
 </html>

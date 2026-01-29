@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Deck;
+use App\Models\Music;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -34,6 +35,11 @@ class GameViewController extends Controller
                 ->with('error', 'Ce deck est vide. Ajoutez des cartes avant de combattre.');
         }
 
-        return view('game.battle', compact('deck'));
+        // Récupérer les musiques de combat actives
+        $battleMusics = Music::getBattleMusics();
+        $victoryMusic = Music::getRandomVictoryMusic();
+        $defeatMusic = Music::getRandomDefeatMusic();
+
+        return view('game.battle', compact('deck', 'battleMusics', 'victoryMusic', 'defeatMusic'));
     }
 }

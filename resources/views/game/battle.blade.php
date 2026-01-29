@@ -922,6 +922,130 @@
             .player-hand-zone {
                 padding: 0.75rem 1rem;
             }
+
+            .music-controls {
+                top: auto;
+                bottom: 180px;
+                left: 0.5rem;
+            }
+
+            .music-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+
+            .volume-panel {
+                left: 42px;
+                min-width: 150px;
+                padding: 0.5rem;
+            }
+        }
+
+        /* Music controls */
+        .music-controls {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .music-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(124, 58, 237, 0.3);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(124, 58, 237, 0.5);
+        }
+
+        .music-btn:hover {
+            background: rgba(124, 58, 237, 0.5);
+            transform: scale(1.1);
+        }
+
+        .music-btn.playing {
+            background: rgba(124, 58, 237, 0.6);
+            animation: pulse-music 2s infinite;
+        }
+
+        @keyframes pulse-music {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); }
+            50% { box-shadow: 0 0 15px 5px rgba(124, 58, 237, 0.2); }
+        }
+
+        .volume-panel {
+            position: absolute;
+            left: 50px;
+            top: 0;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 0.75rem;
+            min-width: 180px;
+            display: none;
+        }
+
+        .volume-panel.visible {
+            display: block;
+        }
+
+        .volume-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .volume-slider {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #A78BFA;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .volume-value {
+            font-size: 0.75rem;
+            color: #A78BFA;
+            min-width: 35px;
+            text-align: right;
+        }
+
+        .track-select {
+            margin-top: 0.5rem;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            padding: 0.4rem;
+            color: white;
+            font-size: 0.75rem;
+        }
+
+        .track-select option {
+            background: #1a1a2e;
+            color: white;
         }
     </style>
 </head>
@@ -930,6 +1054,49 @@
     <div class="cosmos-bg">
         <div class="stars"></div>
     </div>
+
+    <!-- Music Player -->
+    @if(isset($battleMusics) && $battleMusics->count() > 0)
+    <audio id="battleMusic" loop preload="auto">
+        <source src="{{ Storage::url($battleMusics->first()->file_path) }}" type="audio/mpeg">
+    </audio>
+    @endif
+
+    <!-- Victory/Defeat Music -->
+    @if(isset($victoryMusic) && $victoryMusic)
+    <audio id="victoryMusic" preload="auto">
+        <source src="{{ Storage::url($victoryMusic->file_path) }}" type="audio/mpeg">
+    </audio>
+    @endif
+
+    @if(isset($defeatMusic) && $defeatMusic)
+    <audio id="defeatMusic" preload="auto">
+        <source src="{{ Storage::url($defeatMusic->file_path) }}" type="audio/mpeg">
+    </audio>
+    @endif
+
+    @if(isset($battleMusics) && $battleMusics->count() > 0)
+
+    <div class="music-controls">
+        <button class="music-btn" id="musicToggle" title="Musique">
+            🎵
+        </button>
+        <div class="volume-panel" id="volumePanel">
+            <div class="volume-slider-container">
+                <span>🔊</span>
+                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="{{ $battleMusics->first()->volume }}">
+                <span class="volume-value" id="volumeValue">{{ $battleMusics->first()->volume }}%</span>
+            </div>
+            @if($battleMusics->count() > 1)
+            <select class="track-select" id="trackSelect">
+                @foreach($battleMusics as $music)
+                <option value="{{ Storage::url($music->file_path) }}" data-volume="{{ $music->volume }}">{{ $music->name }}</option>
+                @endforeach
+            </select>
+            @endif
+        </div>
+    </div>
+    @endif
 
     <div class="battle-container">
         <!-- Header -->
@@ -1606,8 +1773,19 @@
                         console.log('Clic sur carte, phase actuelle:', phase);
                         selectAttacker(index);
                     };
-                    div.style.cursor = 'pointer'; // cliquable ?
+                    div.style.cursor = 'pointer';
                 }
+
+                if (selectedAttacker === index) {
+                    div.classList.add('selected');
+                }
+            } else if (owner === 'opponent' && phase === 'selectingTarget') {
+                div.classList.add('targetable');
+                div.style.cursor = 'pointer';
+                div.onclick = () => {
+                    console.log('Clic sur cible adverse, index:', index);
+                    selectTarget(index);
+                };
             }
 
             return div;
@@ -2105,16 +2283,36 @@
             const subtitle = document.getElementById('gameOverSubtitle');
             const reward = document.getElementById('rewardAmount');
 
+            // Stop battle music and play victory/defeat music
+            const battleMusicEl = document.getElementById('battleMusic');
+            if (battleMusicEl) {
+                battleMusicEl.pause();
+            }
+
             if (victory) {
                 title.textContent = '🏆 Victoire !';
                 title.className = 'game-over-title victory';
                 subtitle.textContent = 'Vous avez vaincu l\'adversaire !';
                 reward.textContent = '100';
+
+                // Play victory music
+                const victoryMusicEl = document.getElementById('victoryMusic');
+                if (victoryMusicEl) {
+                    victoryMusicEl.volume = 0.7;
+                    victoryMusicEl.play().catch(e => console.log('Victory music blocked:', e));
+                }
             } else {
                 title.textContent = '💀 Défaite';
                 title.className = 'game-over-title defeat';
                 subtitle.textContent = 'L\'adversaire vous a vaincu...';
                 reward.textContent = '25';
+
+                // Play defeat music
+                const defeatMusicEl = document.getElementById('defeatMusic');
+                if (defeatMusicEl) {
+                    defeatMusicEl.volume = 0.7;
+                    defeatMusicEl.play().catch(e => console.log('Defeat music blocked:', e));
+                }
             }
 
             apiCall('claim-reward', 'POST', {
@@ -2181,6 +2379,143 @@
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
+
+        // ========================================
+        // MUSIC PLAYER
+        // ========================================
+        @if(isset($battleMusics) && $battleMusics->count() > 0)
+        const battleMusic = document.getElementById('battleMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        const volumePanel = document.getElementById('volumePanel');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeValueEl = document.getElementById('volumeValue');
+        const trackSelect = document.getElementById('trackSelect');
+
+        let isMusicPlaying = false;
+        let volumePanelVisible = false;
+        let hasTriedAutoplay = false;
+
+        // Initialize volume
+        battleMusic.volume = volumeSlider.value / 100;
+
+        // Try to autoplay
+        function tryAutoplay() {
+            if (hasTriedAutoplay && isMusicPlaying) return;
+
+            battleMusic.play().then(() => {
+                musicToggle.classList.add('playing');
+                musicToggle.innerHTML = '⏸️';
+                isMusicPlaying = true;
+                hasTriedAutoplay = true;
+            }).catch(err => {
+                console.log('Autoplay blocked, waiting for user interaction');
+            });
+        }
+
+        // Try autoplay on page load
+        tryAutoplay();
+
+        // Autoplay on first user interaction
+        function onFirstInteraction() {
+            if (!isMusicPlaying) {
+                tryAutoplay();
+            }
+            document.removeEventListener('click', onFirstInteraction);
+            document.removeEventListener('keydown', onFirstInteraction);
+            document.removeEventListener('touchstart', onFirstInteraction);
+        }
+
+        document.addEventListener('click', onFirstInteraction);
+        document.addEventListener('keydown', onFirstInteraction);
+        document.addEventListener('touchstart', onFirstInteraction);
+
+        // Toggle play/pause
+        musicToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+
+            if (isMusicPlaying) {
+                battleMusic.pause();
+                musicToggle.classList.remove('playing');
+                musicToggle.innerHTML = '🎵';
+                isMusicPlaying = false;
+            } else {
+                battleMusic.play().then(() => {
+                    musicToggle.classList.add('playing');
+                    musicToggle.innerHTML = '⏸️';
+                    isMusicPlaying = true;
+                }).catch(err => {
+                    console.log('Autoplay blocked:', err);
+                });
+            }
+        });
+
+        // Right-click or long-press to show volume panel
+        musicToggle.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            volumePanelVisible = !volumePanelVisible;
+            volumePanel.classList.toggle('visible', volumePanelVisible);
+        });
+
+        // Double-click to toggle volume panel
+        musicToggle.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+            volumePanelVisible = !volumePanelVisible;
+            volumePanel.classList.toggle('visible', volumePanelVisible);
+        });
+
+        // Volume slider
+        volumeSlider.addEventListener('input', function() {
+            battleMusic.volume = this.value / 100;
+            volumeValueEl.textContent = this.value + '%';
+            localStorage.setItem('battleMusicVolume', this.value);
+        });
+
+        // Track selector
+        if (trackSelect) {
+            trackSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const newSrc = this.value;
+                const defaultVolume = selectedOption.dataset.volume || 50;
+
+                const wasPlaying = isMusicPlaying;
+                battleMusic.src = newSrc;
+                volumeSlider.value = defaultVolume;
+                battleMusic.volume = defaultVolume / 100;
+                volumeValueEl.textContent = defaultVolume + '%';
+
+                if (wasPlaying) {
+                    battleMusic.play();
+                }
+
+                localStorage.setItem('battleMusicTrack', newSrc);
+            });
+        }
+
+        // Close volume panel when clicking outside
+        document.addEventListener('click', function(e) {
+            if (volumePanelVisible && !volumePanel.contains(e.target) && e.target !== musicToggle) {
+                volumePanelVisible = false;
+                volumePanel.classList.remove('visible');
+            }
+        });
+
+        // Load saved preferences
+        const savedVolume = localStorage.getItem('battleMusicVolume');
+        if (savedVolume) {
+            volumeSlider.value = savedVolume;
+            battleMusic.volume = savedVolume / 100;
+            volumeValueEl.textContent = savedVolume + '%';
+        }
+
+        const savedTrack = localStorage.getItem('battleMusicTrack');
+        if (savedTrack && trackSelect) {
+            const option = trackSelect.querySelector(`option[value="${savedTrack}"]`);
+            if (option) {
+                trackSelect.value = savedTrack;
+                battleMusic.src = savedTrack;
+            }
+        }
+        @endif
     </script>
 </body>
 
