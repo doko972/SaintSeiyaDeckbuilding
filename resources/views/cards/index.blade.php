@@ -45,8 +45,8 @@
                         <option value="common" {{ request('rarity') == 'common' ? 'selected' : '' }}>Commune</option>
                         <option value="rare" {{ request('rarity') == 'rare' ? 'selected' : '' }}>Rare</option>
                         <option value="epic" {{ request('rarity') == 'epic' ? 'selected' : '' }}>Épique</option>
-                        <option value="legendary" {{ request('rarity') == 'legendary' ? 'selected' : '' }}>Légendaire
-                        </option>
+                        <option value="legendary" {{ request('rarity') == 'legendary' ? 'selected' : '' }}>Légendaire</option>
+                        <option value="mythic" {{ request('rarity') == 'mythic' ? 'selected' : '' }}>Mythique</option>
                     </select>
 
                     <!-- Armure -->
@@ -91,6 +91,9 @@
                     <span
                         class="px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-sm rounded-full">{{ \App\Models\Card::where('rarity', 'legendary')->count() }}
                         Légendaires</span>
+                    <span
+                        class="px-3 py-1 bg-gradient-to-r from-pink-500 via-orange-400 to-cyan-400 text-white text-sm rounded-full">{{ \App\Models\Card::where('rarity', 'mythic')->count() }}
+                        Mythiques</span>
                 </div>
             </div>
 
@@ -137,6 +140,10 @@
 
                                                 @case('legendary')
                                                     <span class="rarity-legendary">Légendaire</span>
+                                                @break
+
+                                                @case('mythic')
+                                                    <span class="rarity-mythic">Mythique</span>
                                                 @break
                                             @endswitch
                                         </div>

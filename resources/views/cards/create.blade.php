@@ -138,8 +138,8 @@
                                     </option>
                                     <option value="epic" {{ old('rarity') == 'epic' ? 'selected' : '' }}>Épique
                                     </option>
-                                    <option value="legendary" {{ old('rarity') == 'legendary' ? 'selected' : '' }}>
-                                        Légendaire</option>
+                                    <option value="legendary" {{ old('rarity') == 'legendary' ? 'selected' : '' }}>Légendaire</option>
+                                    <option value="mythic" {{ old('rarity') == 'mythic' ? 'selected' : '' }}>Mythique</option>
                                 </select>
                             </div>
                         </div>

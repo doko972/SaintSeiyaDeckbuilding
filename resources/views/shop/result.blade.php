@@ -574,6 +574,7 @@
                                             @case('rare') Rare @break
                                             @case('epic') Épique @break
                                             @case('legendary') Légendaire @break
+                                            @case('mythic') Mythique @break
                                         @endswitch
                                     </div>
                                 </div>

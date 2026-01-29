@@ -139,6 +139,10 @@
                                                     @case('legendary')
                                                         <span class="rarity-legendary">Légendaire</span>
                                                     @break
+
+                                                    @case('mythic')
+                                                        <span class="rarity-mythic">Mythique</span>
+                                                    @break
                                                 @endswitch
                                             </div>
 

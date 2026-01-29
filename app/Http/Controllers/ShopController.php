@@ -39,7 +39,7 @@ class ShopController extends Controller
                 'price' => self::BOOSTER_PRICES['bronze'],
                 'icon' => '🥉',
                 'color' => 'from-orange-600 to-orange-800',
-                'rates' => ['Commune: 70%', 'Rare: 25%', 'Épique: 5%'],
+                'rates' => ['Commune: 80%', 'Rare: 18%', 'Épique: 2%'],
             ],
             [
                 'id' => 'silver',
@@ -48,7 +48,7 @@ class ShopController extends Controller
                 'price' => self::BOOSTER_PRICES['silver'],
                 'icon' => '🥈',
                 'color' => 'from-gray-400 to-gray-600',
-                'rates' => ['Commune: 40%', 'Rare: 45%', 'Épique: 15%'],
+                'rates' => ['Commune: 50%', 'Rare: 40%', 'Épique: 9.5%', 'Légendaire: 0.5%'],
             ],
             [
                 'id' => 'gold',
@@ -57,7 +57,7 @@ class ShopController extends Controller
                 'price' => self::BOOSTER_PRICES['gold'],
                 'icon' => '🥇',
                 'color' => 'from-yellow-500 to-yellow-700',
-                'rates' => ['Rare: 50%', 'Épique: 40%', 'Légendaire: 10%'],
+                'rates' => ['Rare: 55%', 'Épique: 42%', 'Légendaire: 3%'],
             ],
             [
                 'id' => 'legendary',
@@ -66,7 +66,7 @@ class ShopController extends Controller
                 'price' => self::BOOSTER_PRICES['legendary'],
                 'icon' => '👑',
                 'color' => 'from-purple-600 to-pink-600',
-                'rates' => ['Épique: 60%', 'Légendaire: 40%', '1 Légendaire garantie'],
+                'rates' => ['Rare: 20%', 'Épique: 69%', 'Légendaire: 10%', 'Mythique: 1%', '1 Légendaire garantie'],
             ],
         ];
 
@@ -156,29 +156,36 @@ public function result(): View|RedirectResponse
      */
     private function rollRarity(string $type, int $cardIndex): string
     {
-        $roll = rand(1, 100);
+        $roll = rand(1, 1000); // Plus de précision pour les faibles pourcentages
 
         switch ($type) {
             case 'bronze':
-                if ($roll <= 70) return 'common';
-                if ($roll <= 95) return 'rare';
+                // 80% common, 18% rare, 2% epic
+                if ($roll <= 800) return 'common';
+                if ($roll <= 980) return 'rare';
                 return 'epic';
 
             case 'silver':
-                if ($roll <= 40) return 'common';
-                if ($roll <= 85) return 'rare';
-                return 'epic';
+                // 50% common, 40% rare, 9.5% epic, 0.5% legendary
+                if ($roll <= 500) return 'common';
+                if ($roll <= 900) return 'rare';
+                if ($roll <= 995) return 'epic';
+                return 'legendary';
 
             case 'gold':
-                if ($roll <= 50) return 'rare';
-                if ($roll <= 90) return 'epic';
+                // 55% rare, 42% epic, 3% legendary
+                if ($roll <= 550) return 'rare';
+                if ($roll <= 970) return 'epic';
                 return 'legendary';
 
             case 'legendary':
                 // Première carte toujours légendaire
                 if ($cardIndex === 0) return 'legendary';
-                if ($roll <= 60) return 'epic';
-                return 'legendary';
+                // 20% rare, 69% epic, 10% legendary, 1% mythic
+                if ($roll <= 200) return 'rare';
+                if ($roll <= 890) return 'epic';
+                if ($roll <= 990) return 'legendary';
+                return 'mythic';
 
             default:
                 return 'common';

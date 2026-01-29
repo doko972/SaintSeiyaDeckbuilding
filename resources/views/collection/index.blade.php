@@ -470,6 +470,7 @@
                                             @case('rare') <span class="rarity-rare">Rare</span> @break
                                             @case('epic') <span class="rarity-epic">Épique</span> @break
                                             @case('legendary') <span class="rarity-legendary">Légendaire</span> @break
+                                            @case('mythic') <span class="rarity-mythic">Mythique</span> @break
                                         @endswitch
                                     </div>
 

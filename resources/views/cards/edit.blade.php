@@ -150,8 +150,9 @@
                                     <option value="epic"
                                         {{ old('rarity', $card->rarity) == 'epic' ? 'selected' : '' }}>Épique</option>
                                     <option value="legendary"
-                                        {{ old('rarity', $card->rarity) == 'legendary' ? 'selected' : '' }}>Légendaire
-                                    </option>
+                                        {{ old('rarity', $card->rarity) == 'legendary' ? 'selected' : '' }}>Légendaire</option>
+                                    <option value="mythic"
+                                        {{ old('rarity', $card->rarity) == 'mythic' ? 'selected' : '' }}>Mythique</option>
                                 </select>
                             </div>
                         </div>

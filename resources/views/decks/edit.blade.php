@@ -141,6 +141,7 @@
                                                                 @case('rare') bg-blue-600 @break
                                                                 @case('epic') bg-purple-600 @break
                                                                 @case('legendary') bg-gradient-to-r from-yellow-500 to-orange-500 @break
+                                                                @case('mythic') bg-gradient-to-r from-pink-500 via-orange-400 to-cyan-400 @break
                                                             @endswitch text-white">
                                                             {{ $card->pivot->quantity }}x
                                                         </span>
