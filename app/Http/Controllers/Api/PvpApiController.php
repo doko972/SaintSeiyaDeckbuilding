@@ -184,8 +184,28 @@ class PvpApiController extends Controller
             return response()->json(['success' => false, 'message' => 'Cette carte a déjà attaqué ce tour'], 400);
         }
 
-        // Vérifier l'endurance
-        $attack = $attacker['main_attack'] ?? ['damage' => 50, 'endurance_cost' => 20, 'cosmos_cost' => 0];
+        // Déterminer l'attaque utilisée selon le type
+        $attackType = $request->attack_type;
+        $attack = null;
+
+        switch ($attackType) {
+            case 'secondary1':
+                $attack = $attacker['secondary_attack_1'] ?? null;
+                break;
+            case 'secondary2':
+                $attack = $attacker['secondary_attack_2'] ?? null;
+                break;
+            case 'main':
+            default:
+                $attack = $attacker['main_attack'] ?? null;
+                break;
+        }
+
+        // Si l'attaque n'existe pas, utiliser les valeurs par défaut
+        if (!$attack) {
+            $attack = ['damage' => 50, 'endurance_cost' => 20, 'cosmos_cost' => 0];
+        }
+
         $enduranceCost = $attack['endurance_cost'] ?? 20;
         $cosmosCost = $attack['cosmos_cost'] ?? 0;
 
@@ -212,6 +232,7 @@ class PvpApiController extends Controller
         $battleEnded = false;
         $winner = null;
         $targetDestroyed = false;
+        $rankPromotion = null;
 
         // IMPORTANT: libérer les références AVANT de modifier le tableau
         unset($attacker);
@@ -238,6 +259,9 @@ class PvpApiController extends Controller
                 $user->wins++;
                 $user->save();
 
+                // Vérifier le changement de rang
+                $rankPromotion = $user->checkAndUpdateRank();
+
                 $opponent = $battle->player1_id === $user->id ? $battle->player2 : $battle->player1;
                 $opponent->coins += 25;
                 $opponent->losses++;
@@ -257,6 +281,7 @@ class PvpApiController extends Controller
             'target_destroyed' => $targetDestroyed,
             'battle_ended' => $battleEnded,
             'winner' => $winner,
+            'rank_promotion' => $rankPromotion ?? null,
             'battle_state' => $state,
         ]);
     }

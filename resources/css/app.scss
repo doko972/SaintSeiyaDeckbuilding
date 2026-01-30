@@ -1020,14 +1020,14 @@ $color-light: #FCD34D;
 .card-mini-rarity {
     position: absolute;
     top: 10px;
-    right: 10px;
+    right: 0;
     z-index: 10;
 
     span {
         display: inline-block;
         padding: 4px 10px;
         border-radius: 6px;
-        font-size: 0.7rem;
+        font-size: 0.5rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;

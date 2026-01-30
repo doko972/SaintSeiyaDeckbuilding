@@ -9,14 +9,16 @@
             class="w-full h-full object-cover opacity-[0.10]">
             <div class="absolute inset-0 bg-gradient-to-b from-gray-900/60 via-gray-900/40 to-gray-900/80"></div>
         </div>
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 relative z-10">
-            <div class="flex justify-end items-center mb-3">
-                <a href="{{ route('admin.cards.create') }}"
-                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 font-bold rounded-xl hover:from-yellow-400 hover:to-amber-400 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-yellow-500/30">
-                    ➕ Nouvelle Carte
-                </a>
-            </div>
-            
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            @if(auth()->check() && auth()->user()->isAdmin())
+                <div class="flex justify-end items-center mb-3">
+                    <a href="{{ route('admin.cards.create') }}"
+                        class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 font-bold rounded-xl hover:from-yellow-400 hover:to-amber-400 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-yellow-500/30">
+                        ➕ Nouvelle Carte
+                    </a>
+                </div>
+            @endif
+
             <!-- Filtres -->
             <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 mb-8 border border-white/20">
                 <form method="GET" action="{{ route('cards.index') }}" class="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -74,11 +76,11 @@
             </div>
 
             <!-- Stats -->
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex flex-col gap-4 mb-6">
                 <p class="text-gray-400">
                     <span class="text-white font-bold">{{ $cards->count() }}</span> carte(s) trouvée(s)
                 </p>
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                     <span
                         class="px-3 py-1 bg-gray-600 text-gray-300 text-sm rounded-full">{{ \App\Models\Card::where('rarity', 'common')->count() }}
                         Communes</span>

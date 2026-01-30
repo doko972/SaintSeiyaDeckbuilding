@@ -656,9 +656,10 @@ class GameController extends Controller
 
         $user = $request->user();
         $isVictory = $request->winner === 'player';
+        $rankPromotion = null;
 
         if ($isVictory) {
-            $user->recordWin(100);
+            $rankPromotion = $user->recordWin(100);
             $message = 'Victoire ! Vous gagnez 100 pièces !';
         } else {
             $user->recordLoss(25);
@@ -671,6 +672,7 @@ class GameController extends Controller
             'coins' => $user->coins,
             'wins' => $user->wins,
             'losses' => $user->losses,
+            'rank_promotion' => $rankPromotion,
         ]);
     }
 }

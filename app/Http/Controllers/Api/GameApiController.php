@@ -316,20 +316,25 @@ class GameApiController extends Controller
         /** @var \App\Models\User $user */
         $user = auth()->user();
         $reward = $request->victory ? 100 : 25;
+        $rankPromotion = null;
 
         $user->coins += $reward;
 
         if ($request->victory) {
             $user->wins++;
+            $user->save();
+            // Vérifier le changement de rang
+            $rankPromotion = $user->checkAndUpdateRank();
         } else {
             $user->losses++;
+            $user->save();
         }
-        $user->save();
 
         return response()->json([
             'success' => true,
             'reward' => $reward,
             'new_balance' => $user->coins,
+            'rank_promotion' => $rankPromotion,
         ]);
     }
 

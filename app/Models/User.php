@@ -22,8 +22,19 @@ class User extends Authenticatable
         'coins',
         'wins',
         'losses',
+        'current_rank',
         'has_selected_starter',
         'starter_bronze_id',
+    ];
+
+    /**
+     * Configuration des rangs et leurs seuils de victoires
+     */
+    public const RANKS = [
+        'bronze' => ['wins' => 0, 'name' => 'Chevalier de Bronze', 'icon' => '🥉', 'reward' => 0],
+        'argent' => ['wins' => 20, 'name' => 'Chevalier d\'Argent', 'icon' => '🥈', 'reward' => 500],
+        'or' => ['wins' => 50, 'name' => 'Chevalier d\'Or', 'icon' => '🥇', 'reward' => 1000],
+        'divin' => ['wins' => 100, 'name' => 'Chevalier Divin', 'icon' => '👑', 'reward' => 2000],
     ];
 
     protected $hidden = [
@@ -145,11 +156,16 @@ class User extends Authenticatable
 
     /**
      * Enregistre une victoire
+     * Retourne les informations de récompense de rang si un nouveau rang est atteint
      */
-    public function recordWin(int $coinsReward = 100): void
+    public function recordWin(int $coinsReward = 100): ?array
     {
         $this->increment('wins');
+        $this->refresh(); // Rafraîchir pour avoir le nouveau nombre de wins
         $this->addCoins($coinsReward);
+
+        // Vérifier si un nouveau rang est atteint
+        return $this->checkAndUpdateRank();
     }
 
     /**
@@ -159,6 +175,88 @@ class User extends Authenticatable
     {
         $this->increment('losses');
         $this->addCoins($coinsReward);
+    }
+
+    /**
+     * Calcule le rang basé sur le nombre de victoires
+     */
+    public function calculateRank(): string
+    {
+        $wins = $this->wins;
+
+        if ($wins >= self::RANKS['divin']['wins']) {
+            return 'divin';
+        } elseif ($wins >= self::RANKS['or']['wins']) {
+            return 'or';
+        } elseif ($wins >= self::RANKS['argent']['wins']) {
+            return 'argent';
+        }
+
+        return 'bronze';
+    }
+
+    /**
+     * Obtient les informations du rang actuel
+     */
+    public function getRankInfo(): array
+    {
+        $rank = $this->current_rank ?? 'bronze';
+        return self::RANKS[$rank] ?? self::RANKS['bronze'];
+    }
+
+    /**
+     * Obtient les informations du prochain rang
+     */
+    public function getNextRankInfo(): ?array
+    {
+        $rankOrder = ['bronze', 'argent', 'or', 'divin'];
+        $currentIndex = array_search($this->current_rank ?? 'bronze', $rankOrder);
+
+        if ($currentIndex < count($rankOrder) - 1) {
+            $nextRank = $rankOrder[$currentIndex + 1];
+            return array_merge(self::RANKS[$nextRank], ['key' => $nextRank]);
+        }
+
+        return null; // Déjà au rang max
+    }
+
+    /**
+     * Vérifie et met à jour le rang si nécessaire
+     * Retourne les informations de récompense si un nouveau rang est atteint
+     */
+    public function checkAndUpdateRank(): ?array
+    {
+        $newRank = $this->calculateRank();
+        $currentRank = $this->current_rank ?? 'bronze';
+
+        // Si le rang a changé (progression uniquement)
+        $rankOrder = ['bronze', 'argent', 'or', 'divin'];
+        $currentIndex = array_search($currentRank, $rankOrder);
+        $newIndex = array_search($newRank, $rankOrder);
+
+        if ($newIndex > $currentIndex) {
+            // Nouveau rang atteint !
+            $rankInfo = self::RANKS[$newRank];
+            $reward = $rankInfo['reward'];
+
+            // Mettre à jour le rang
+            $this->current_rank = $newRank;
+            $this->save();
+
+            // Donner la récompense
+            if ($reward > 0) {
+                $this->addCoins($reward);
+            }
+
+            return [
+                'new_rank' => $newRank,
+                'rank_name' => $rankInfo['name'],
+                'rank_icon' => $rankInfo['icon'],
+                'reward' => $reward,
+            ];
+        }
+
+        return null;
     }
 
     /**

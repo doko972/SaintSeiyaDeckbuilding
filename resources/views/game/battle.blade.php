@@ -907,6 +907,64 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
+        /* Rank Promotion Banner */
+        .rank-promotion-banner {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: rankPromotionPulse 2s ease-in-out infinite, rankPromotionSlideIn 0.5s ease;
+        }
+
+        @keyframes rankPromotionPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
+        }
+
+        @keyframes rankPromotionSlideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .rank-promotion-icon {
+            font-size: 3rem;
+            animation: rankIconBounce 1s ease infinite;
+        }
+
+        @keyframes rankIconBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .rank-promotion-text {
+            text-align: left;
+        }
+
+        .rank-promotion-title {
+            font-size: 0.85rem;
+            color: #FFD700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .rank-promotion-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: white;
+            margin: 4px 0;
+        }
+
+        .rank-promotion-reward {
+            font-size: 0.9rem;
+            color: #4ADE80;
+            font-weight: 600;
+        }
+
         /* ========================================
            LOADING OVERLAY
         ======================================== */
@@ -1322,6 +1380,14 @@
         <div class="game-over-content">
             <div class="game-over-title" id="gameOverTitle">Victoire !</div>
             <div class="game-over-subtitle" id="gameOverSubtitle">Vous avez vaincu l'adversaire !</div>
+            <div class="rank-promotion-banner" id="rankPromotionBanner" style="display: none;">
+                <div class="rank-promotion-icon" id="rankPromotionIcon"></div>
+                <div class="rank-promotion-text">
+                    <div class="rank-promotion-title">Promotion !</div>
+                    <div class="rank-promotion-name" id="rankPromotionName"></div>
+                    <div class="rank-promotion-reward" id="rankPromotionReward"></div>
+                </div>
+            </div>
             <div class="reward-display">
                 🪙 +<span id="rewardAmount">100</span> pièces
             </div>
@@ -2395,11 +2461,12 @@
         // ========================================
         // FIN DE PARTIE
         // ========================================
-        function endGame(victory) {
+        async function endGame(victory) {
             const modal = document.getElementById('gameOverModal');
             const title = document.getElementById('gameOverTitle');
             const subtitle = document.getElementById('gameOverSubtitle');
             const reward = document.getElementById('rewardAmount');
+            const promotionBanner = document.getElementById('rankPromotionBanner');
 
             // Stop battle music and play victory/defeat music
             const battleMusicEl = document.getElementById('battleMusic');
@@ -2424,6 +2491,7 @@
                 title.className = 'game-over-title defeat';
                 subtitle.textContent = 'L\'adversaire vous a vaincu...';
                 reward.textContent = '25';
+                promotionBanner.style.display = 'none';
 
                 // Play defeat music
                 const defeatMusicEl = document.getElementById('defeatMusic');
@@ -2433,11 +2501,27 @@
                 }
             }
 
-            apiCall('claim-reward', 'POST', {
-                deck_id: deckId,
-                victory: victory,
-                battle_state: gameState
-            });
+            // Appel API pour récupérer la récompense et vérifier la promotion
+            try {
+                const response = await apiCall('claim-reward', 'POST', {
+                    deck_id: deckId,
+                    victory: victory,
+                    battle_state: gameState
+                });
+
+                // Afficher la promotion de rang si applicable
+                if (response && response.rank_promotion) {
+                    promotionBanner.style.display = 'flex';
+                    document.getElementById('rankPromotionIcon').textContent = response.rank_promotion.rank_icon;
+                    document.getElementById('rankPromotionName').textContent = response.rank_promotion.rank_name;
+                    document.getElementById('rankPromotionReward').textContent = `+${response.rank_promotion.reward} pièces`;
+                } else {
+                    promotionBanner.style.display = 'none';
+                }
+            } catch (e) {
+                console.error('Error claiming reward:', e);
+                promotionBanner.style.display = 'none';
+            }
 
             modal.classList.add('visible');
         }

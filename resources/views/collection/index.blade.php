@@ -151,20 +151,21 @@
         /* Image de la carte */
         .card-mini-image {
             position: relative;
-            height: 180px;
             width: 100%;
+            aspect-ratio: 3 / 4;
             overflow: hidden;
+            background: linear-gradient(145deg, rgba(0,0,0,0.3), rgba(0,0,0,0.5));
         }
 
         .card-mini-image img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             transition: transform 0.4s ease;
         }
 
         .holo-card-mini:hover .card-mini-image img {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         .card-mini-placeholder {
@@ -181,7 +182,7 @@
         .card-mini-quantity {
             position: absolute;
             top: 10px;
-            right: 10px;
+            left: 10px;
             background: rgba(0, 0, 0, 0.8);
             color: #FFD700;
             font-weight: 800;
@@ -189,17 +190,19 @@
             padding: 4px 10px;
             border-radius: 20px;
             border: 1px solid rgba(255, 215, 0, 0.5);
+            z-index: 5;
         }
 
         /* Badge rareté */
         .card-mini-rarity {
             position: absolute;
-            bottom: 10px;
-            left: 10px;
+            top: 10px;
+            right: 10px;
             font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            z-index: 4;
         }
 
         .rarity-common {
@@ -237,6 +240,43 @@
         @keyframes legendaryBadge {
             0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
             50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+        }
+
+        /* Cartes non possédées (grisées) */
+        .holo-card-mini.not-owned {
+            filter: grayscale(100%) brightness(0.5);
+            opacity: 0.6;
+            border-color: rgba(100, 100, 100, 0.3) !important;
+            box-shadow: none !important;
+            animation: none !important;
+        }
+
+        .holo-card-mini.not-owned:hover {
+            filter: grayscale(80%) brightness(0.6);
+            opacity: 0.8;
+            transform: translateY(-5px) scale(1.01);
+        }
+
+        .holo-card-mini.not-owned .card-mini-holo {
+            display: none;
+        }
+
+        /* Badge "Non obtenue" */
+        .card-not-owned-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #9CA3AF;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(156, 163, 175, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 10;
         }
 
         /* Overlay holo */
@@ -334,10 +374,6 @@
            RESPONSIVE
         ======================================== */
         @media (max-width: 640px) {
-            .card-mini-image {
-                height: 150px;
-            }
-
             .card-mini-stats {
                 grid-template-columns: repeat(4, 1fr);
                 gap: 2px;
@@ -349,6 +385,14 @@
 
             .mini-stat-value {
                 font-size: 0.8rem;
+            }
+
+            .card-mini-name {
+                font-size: 0.8rem;
+            }
+
+            .card-mini-info {
+                padding: 0.75rem;
             }
         }
     </style>
@@ -369,7 +413,7 @@
                         <span class="text-4xl">🎴</span>
                         Ma Collection
                     </h1>
-                    <p class="text-gray-400 mt-1">Toutes vos cartes obtenues</p>
+                    <p class="text-gray-400 mt-1">Toutes les cartes du jeu - Les cartes grisées ne sont pas encore dans votre collection</p>
                 </div>
                 <a href="{{ route('shop.index') }}" 
                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 font-bold rounded-xl hover:from-yellow-400 hover:to-amber-400 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-yellow-500/30">
@@ -424,30 +468,23 @@
             </div>
 
             <!-- Collection -->
-            @if($collection->isEmpty())
+            @if($allCards->isEmpty())
                 <!-- État vide -->
                 <div class="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-12 text-center">
                     <div class="text-7xl mb-6">📭</div>
-                    <h3 class="text-2xl font-bold text-white mb-3">Collection vide</h3>
+                    <h3 class="text-2xl font-bold text-white mb-3">Aucune carte disponible</h3>
                     <p class="text-gray-400 mb-8 max-w-md mx-auto">
-                        Achetez des boosters dans la boutique pour obtenir vos premières cartes et commencer votre collection !
+                        Il n'y a pas encore de cartes dans le jeu.
                     </p>
-                    <a href="{{ route('shop.index') }}" 
-                       class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 font-bold rounded-xl hover:from-yellow-400 hover:to-amber-400 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-yellow-500/30">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                        </svg>
-                        Aller à la boutique
-                    </a>
                 </div>
             @else
                 <!-- Grille des cartes -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 rounded-3xl">
-                    @foreach($collection as $card)
+                    @foreach($allCards as $card)
                         <a href="{{ route('collection.show', $card) }}" class="block">
-                            <div class="holo-card-mini rarity-{{ $card->rarity }}"
+                            <div class="holo-card-mini rarity-{{ $card->rarity }} {{ !$card->owned ? 'not-owned' : '' }}"
                                  style="--color1: {{ $card->faction->color_primary ?? '#6366f1' }}; --color2: {{ $card->faction->color_secondary ?? '#8b5cf6' }};">
-                                
+
                                 <!-- Image -->
                                 <div class="card-mini-image">
                                     @if($card->image_primary)
@@ -458,9 +495,14 @@
                                         </div>
                                     @endif
 
-                                    <!-- Badge Quantité -->
-                                    @if($card->pivot->quantity > 1)
-                                        <div class="card-mini-quantity">x{{ $card->pivot->quantity }}</div>
+                                    <!-- Badge Quantité (seulement si possédée) -->
+                                    @if($card->owned && $card->owned_quantity > 1)
+                                        <div class="card-mini-quantity">x{{ $card->owned_quantity }}</div>
+                                    @endif
+
+                                    <!-- Badge "Non obtenue" -->
+                                    @if(!$card->owned)
+                                        <div class="card-not-owned-badge">Non obtenue</div>
                                     @endif
 
                                     <!-- Badge Rareté -->
@@ -474,8 +516,10 @@
                                         @endswitch
                                     </div>
 
-                                    <!-- Overlay Holo -->
-                                    <div class="card-mini-holo"></div>
+                                    <!-- Overlay Holo (seulement si possédée) -->
+                                    @if($card->owned)
+                                        <div class="card-mini-holo"></div>
+                                    @endif
                                 </div>
 
                                 <!-- Infos -->
@@ -510,13 +554,6 @@
                         </a>
                     @endforeach
                 </div>
-
-                <!-- Pagination si nécessaire -->
-                @if(method_exists($collection, 'links'))
-                    <div class="mt-8">
-                        {{ $collection->links() }}
-                    </div>
-                @endif
             @endif
 
         </div>

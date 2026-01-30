@@ -329,7 +329,7 @@
 
         /* Cartes */
         .battle-card {
-            width: 130px;
+            width: 160px;
             border-radius: 12px;
             overflow: hidden;
             background: linear-gradient(145deg, var(--color1, #333), var(--color2, #555));
@@ -360,18 +360,18 @@
         }
 
         .battle-card-image {
-            height: 90px;
+            height: 115px;
             background-size: cover;
             background-position: top center;
         }
 
         .battle-card-info {
-            padding: 8px;
+            padding: 10px;
             background: rgba(0, 0, 0, 0.7);
         }
 
         .battle-card-name {
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             font-weight: 700;
             white-space: nowrap;
             overflow: hidden;
@@ -397,7 +397,7 @@
         .battle-card-stats {
             display: flex;
             justify-content: space-between;
-            font-size: 0.6rem;
+            font-size: 0.75rem;
         }
 
         /* Main du joueur */
@@ -581,34 +581,53 @@
             cursor: pointer;
         }
 
-        /* Waiting overlay */
+        /* Waiting notification (non-blocking) */
         .waiting-overlay {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid rgba(255, 165, 0, 0.6);
+            border-radius: 12px;
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
+            z-index: 500;
+            box-shadow: 0 4px 20px rgba(255, 165, 0, 0.3);
+            pointer-events: none;
         }
 
         .waiting-overlay.visible { display: flex; }
 
         .waiting-content {
             text-align: center;
-            padding: 2rem;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .waiting-content .text-4xl {
+            font-size: 1.5rem;
+            margin: 0;
         }
 
         .waiting-content h2 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+            font-size: 1rem;
+            margin: 0;
+            color: #ffa500;
+        }
+
+        .waiting-content p {
+            font-size: 0.85rem;
+            margin: 0;
         }
 
         /* Empty slot */
         .empty-slot {
-            width: 130px;
-            height: 160px;
+            width: 160px;
+            height: 195px;
             border: 2px dashed rgba(255, 255, 255, 0.2);
             border-radius: 12px;
             display: flex;
@@ -905,6 +924,64 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
+        /* Rank Promotion Banner */
+        .rank-promotion-banner {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: rankPromotionPulse 2s ease-in-out infinite, rankPromotionSlideIn 0.5s ease;
+        }
+
+        @keyframes rankPromotionPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
+        }
+
+        @keyframes rankPromotionSlideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .rank-promotion-icon {
+            font-size: 3rem;
+            animation: rankIconBounce 1s ease infinite;
+        }
+
+        @keyframes rankIconBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .rank-promotion-text {
+            text-align: left;
+        }
+
+        .rank-promotion-title {
+            font-size: 0.85rem;
+            color: #FFD700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .rank-promotion-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: white;
+            margin: 4px 0;
+        }
+
+        .rank-promotion-reward {
+            font-size: 0.9rem;
+            color: #4ADE80;
+            font-weight: 600;
+        }
+
         /* ========================================
            RESPONSIVE - TABLETTE
         ======================================== */
@@ -919,24 +996,29 @@
             }
 
             .battle-card {
-                width: 110px;
+                width: 140px;
             }
 
             .battle-card-image {
-                height: 75px;
+                height: 100px;
             }
 
             .hand-card {
-                width: 100px;
+                width: 120px;
             }
 
             .hand-card-image {
-                height: 65px;
+                height: 80px;
             }
 
             .player-hand {
                 gap: 0.5rem;
                 min-height: 140px;
+            }
+
+            .empty-slot {
+                width: 140px;
+                height: 170px;
             }
 
             .action-panel {
@@ -1040,28 +1122,28 @@
             }
 
             .battle-card {
-                width: 85px;
+                width: 105px;
             }
 
             .battle-card-image {
-                height: 55px;
+                height: 75px;
             }
 
             .battle-card-info {
-                padding: 4px;
+                padding: 6px;
             }
 
             .battle-card-name {
-                font-size: 0.55rem;
+                font-size: 0.65rem;
             }
 
             .hp-bar-container {
-                height: 4px;
-                margin-bottom: 2px;
+                height: 5px;
+                margin-bottom: 3px;
             }
 
             .battle-card-stats {
-                font-size: 0.5rem;
+                font-size: 0.6rem;
             }
 
             /* Log mobile */
@@ -1172,18 +1254,28 @@
 
             /* Empty slot mobile */
             .empty-slot {
-                width: 85px;
-                height: 100px;
+                width: 105px;
+                height: 130px;
                 font-size: 1.5rem;
             }
 
-            /* Waiting overlay mobile */
+            /* Waiting notification mobile */
+            .waiting-overlay {
+                bottom: 10px;
+                max-width: 90vw;
+            }
+
             .waiting-content h2 {
-                font-size: 1.2rem;
+                font-size: 0.9rem;
             }
 
             .waiting-content {
-                padding: 1rem;
+                padding: 0.6rem 1rem;
+                gap: 8px;
+            }
+
+            .waiting-content .text-4xl {
+                font-size: 1.2rem;
             }
         }
 
@@ -1192,23 +1284,23 @@
         ======================================== */
         @media (max-width: 480px) {
             .battle-card {
-                width: 70px;
+                width: 85px;
             }
 
             .battle-card-image {
-                height: 45px;
+                height: 60px;
             }
 
             .battle-card-name {
-                font-size: 0.5rem;
+                font-size: 0.55rem;
             }
 
             .hand-card {
-                width: 70px;
+                width: 85px;
             }
 
             .hand-card-image {
-                height: 45px;
+                height: 55px;
             }
 
             .player-hand {
@@ -1220,8 +1312,8 @@
             }
 
             .empty-slot {
-                width: 70px;
-                height: 85px;
+                width: 85px;
+                height: 105px;
                 font-size: 1.2rem;
             }
 
@@ -1395,12 +1487,14 @@
         </button>
     </div>
 
-    <!-- Waiting overlay -->
+    <!-- Waiting notification (non-blocking) -->
     <div class="waiting-overlay {{ !$isMyTurn ? 'visible' : '' }}" id="waitingOverlay">
         <div class="waiting-content">
-            <div class="text-4xl mb-4 animate-bounce">⏳</div>
-            <h2>Tour de {{ $opponent->name }}</h2>
-            <p class="text-gray-400">En attente de son action...</p>
+            <div class="text-4xl animate-bounce">⏳</div>
+            <div>
+                <h2>Tour de {{ $opponent->name }}</h2>
+                <p class="text-gray-400">En attente de son action...</p>
+            </div>
         </div>
     </div>
 
@@ -1409,6 +1503,14 @@
         <div class="game-over-content">
             <div class="game-over-title" id="gameOverTitle">Victoire !</div>
             <div class="game-over-subtitle" id="gameOverSubtitle">Vous avez gagné le combat !</div>
+            <div class="rank-promotion-banner" id="rankPromotionBanner" style="display: none;">
+                <div class="rank-promotion-icon" id="rankPromotionIcon"></div>
+                <div class="rank-promotion-text">
+                    <div class="rank-promotion-title">Promotion !</div>
+                    <div class="rank-promotion-name" id="rankPromotionName"></div>
+                    <div class="rank-promotion-reward" id="rankPromotionReward"></div>
+                </div>
+            </div>
             <div class="game-over-buttons">
                 <a href="{{ route('pvp.lobby') }}" class="game-over-btn primary">🎮 Retour au lobby</a>
                 <a href="{{ route('dashboard') }}" class="game-over-btn secondary">🏠 Accueil</a>
@@ -2078,6 +2180,26 @@
                 { key: 'main', name: card.main_attack?.name || 'Attaque', damage: card.main_attack?.damage || 50, endCost: card.main_attack?.endurance_cost || 20, cosCost: card.main_attack?.cosmos_cost || 0 }
             ];
 
+            // Ajouter les attaques secondaires si disponibles
+            if (card.secondary_attack_1) {
+                attacks.push({
+                    key: 'secondary1',
+                    name: card.secondary_attack_1.name,
+                    damage: card.secondary_attack_1.damage,
+                    endCost: card.secondary_attack_1.endurance_cost,
+                    cosCost: card.secondary_attack_1.cosmos_cost
+                });
+            }
+            if (card.secondary_attack_2) {
+                attacks.push({
+                    key: 'secondary2',
+                    name: card.secondary_attack_2.name,
+                    damage: card.secondary_attack_2.damage,
+                    endCost: card.secondary_attack_2.endurance_cost,
+                    cosCost: card.secondary_attack_2.cosmos_cost
+                });
+            }
+
             // Afficher les stats de la carte sélectionnée
             const statsDiv = document.createElement('div');
             statsDiv.style.cssText = 'font-size: 0.75rem; color: #9CA3AF; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);';
@@ -2150,9 +2272,20 @@
             // Animation d'attaque
             const myState = getMyState();
             const card = myState.field[selectedAttacker];
+
+            // Récupérer les dégâts de l'attaque sélectionnée
+            let attackDamage = 50;
+            if (selectedAttack === 'secondary1' && card.secondary_attack_1) {
+                attackDamage = card.secondary_attack_1.damage;
+            } else if (selectedAttack === 'secondary2' && card.secondary_attack_2) {
+                attackDamage = card.secondary_attack_2.damage;
+            } else if (card.main_attack) {
+                attackDamage = card.main_attack.damage;
+            }
+
             const attackData = {
                 element: 'fire', // TODO: récupérer l'élément réel
-                damage: card.main_attack?.damage || 50
+                damage: attackDamage
             };
 
             await animations.attackAnimation(attackerCard, targetCard, attackData);
@@ -2206,7 +2339,7 @@
                         const winnerId = parseInt(data.winner);
                         const isWinner = winnerId === myId;
                         console.log('Battle ended - Winner ID:', winnerId, 'My ID:', myId, 'Is Winner:', isWinner);
-                        endGame(isWinner);
+                        endGame(isWinner, data.rank_promotion);
                         return;
                     }
                 } else {
@@ -2357,10 +2490,11 @@
         // ========================================
         // FIN DE PARTIE
         // ========================================
-        function endGame(victory) {
+        function endGame(victory, rankPromotion = null) {
             const modal = document.getElementById('gameOverModal');
             const title = document.getElementById('gameOverTitle');
             const subtitle = document.getElementById('gameOverSubtitle');
+            const promotionBanner = document.getElementById('rankPromotionBanner');
 
             // Arrêter la musique de combat
             const battleMusicEl = document.getElementById('battleMusic');
@@ -2373,6 +2507,16 @@
                 title.className = 'game-over-title victory';
                 subtitle.textContent = 'Vous avez vaincu votre adversaire !';
 
+                // Afficher la promotion de rang si applicable
+                if (rankPromotion) {
+                    promotionBanner.style.display = 'flex';
+                    document.getElementById('rankPromotionIcon').textContent = rankPromotion.rank_icon;
+                    document.getElementById('rankPromotionName').textContent = rankPromotion.rank_name;
+                    document.getElementById('rankPromotionReward').textContent = `+${rankPromotion.reward} pièces`;
+                } else {
+                    promotionBanner.style.display = 'none';
+                }
+
                 // Jouer la musique de victoire
                 const victoryMusicEl = document.getElementById('victoryMusic');
                 if (victoryMusicEl) {
@@ -2383,6 +2527,7 @@
                 title.textContent = '💀 Défaite';
                 title.className = 'game-over-title defeat';
                 subtitle.textContent = 'Votre adversaire vous a vaincu...';
+                promotionBanner.style.display = 'none';
 
                 // Jouer la musique de défaite
                 const defeatMusicEl = document.getElementById('defeatMusic');

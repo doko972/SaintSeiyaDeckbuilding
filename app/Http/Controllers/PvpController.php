@@ -223,10 +223,13 @@ class PvpController extends Controller
         $user->save();
 
         // Le gagnant reçoit la récompense
-        $winner = $winnerId === $battle->player1_id ? $battle->player1 : $battle->player2;
-        $winner->coins += 150;
-        $winner->wins++;
-        $winner->save();
+        $winnerUser = $winnerId === $battle->player1_id ? $battle->player1 : $battle->player2;
+        $winnerUser->coins += 150;
+        $winnerUser->wins++;
+        $winnerUser->save();
+
+        // Vérifier le changement de rang pour le gagnant
+        $winnerUser->checkAndUpdateRank();
 
         return redirect()->route('pvp.lobby')->with('info', 'Vous avez abandonné le combat.');
     }
@@ -334,6 +337,18 @@ class PvpController extends Controller
                         'damage' => $card->mainAttack->damage,
                         'endurance_cost' => $card->mainAttack->endurance_cost,
                         'cosmos_cost' => $card->mainAttack->cosmos_cost,
+                    ] : null,
+                    'secondary_attack_1' => $card->secondaryAttack1 ? [
+                        'name' => $card->secondaryAttack1->name,
+                        'damage' => $card->secondaryAttack1->damage,
+                        'endurance_cost' => $card->secondaryAttack1->endurance_cost,
+                        'cosmos_cost' => $card->secondaryAttack1->cosmos_cost,
+                    ] : null,
+                    'secondary_attack_2' => $card->secondaryAttack2 ? [
+                        'name' => $card->secondaryAttack2->name,
+                        'damage' => $card->secondaryAttack2->damage,
+                        'endurance_cost' => $card->secondaryAttack2->endurance_cost,
+                        'cosmos_cost' => $card->secondaryAttack2->cosmos_cost,
                     ] : null,
                     'has_attacked' => false,
                 ];
