@@ -2,6 +2,13 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    <!-- Session Error (connexion depuis un autre appareil) -->
+    @if (session('error'))
+        <div class="mb-4 p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200 text-sm">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="text-center mb-6">
         <h2 class="text-2xl font-bold text-white">Connexion</h2>
         <p class="text-purple-300 text-sm">Entrez dans le Sanctuaire</p>

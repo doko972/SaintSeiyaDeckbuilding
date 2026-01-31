@@ -10,6 +10,7 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\PvpController;
 use App\Http\Controllers\StarterPackController;
+use App\Http\Controllers\FirstDrawController;
 use App\Http\Controllers\MusicController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,17 @@ Route::middleware(['auth'])->prefix('starter-pack')->name('starter-pack.')->grou
     Route::get('/', [StarterPackController::class, 'index'])->name('index');
     Route::post('/select', [StarterPackController::class, 'selectBronze'])->name('select');
     Route::get('/details', [StarterPackController::class, 'details'])->name('details');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Routes Premier Tirage Gratuit (après le starter pack)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->prefix('first-draw')->name('first-draw.')->group(function () {
+    Route::get('/', [FirstDrawController::class, 'index'])->name('index');
+    Route::post('/draw', [FirstDrawController::class, 'draw'])->name('draw');
+    Route::get('/result', [FirstDrawController::class, 'result'])->name('result');
 });
 
 /*

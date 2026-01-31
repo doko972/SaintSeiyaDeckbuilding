@@ -24,7 +24,9 @@ class User extends Authenticatable
         'losses',
         'current_rank',
         'has_selected_starter',
+        'has_completed_first_draw',
         'starter_bronze_id',
+        'current_session_id',
     ];
 
     /**
@@ -46,6 +48,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'has_selected_starter' => 'boolean',
+        'has_completed_first_draw' => 'boolean',
     ];
 
     /**

@@ -58,7 +58,8 @@ class StarterPackController extends Controller
         $success = $this->starterPackService->distributeStarterPack($user, $request->bronze_card_id);
 
         if ($success) {
-            return redirect()->route('dashboard')->with('success', 'Bienvenue ! Vous avez reçu votre starter pack avec succès !');
+            // Rediriger vers le premier tirage gratuit
+            return redirect()->route('first-draw.index')->with('success', 'Starter pack recu ! Effectuez maintenant votre premier tirage gratuit.');
         }
 
         return back()->with('error', 'Une erreur est survenue lors de la distribution du starter pack.');

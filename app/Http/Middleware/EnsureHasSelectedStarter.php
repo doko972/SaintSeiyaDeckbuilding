@@ -26,6 +26,15 @@ class EnsureHasSelectedStarter
             }
         }
 
+        // Si l'utilisateur a sélectionné son starter mais n'a pas fait son premier tirage
+        if ($user && $user->has_selected_starter && !$user->has_completed_first_draw) {
+            // Exception : ne pas bloquer les routes du premier tirage
+            if (!$request->routeIs('first-draw.*') && !$request->routeIs('logout')) {
+                return redirect()->route('first-draw.index')
+                    ->with('info', 'Effectuez votre premier tirage gratuit de 7 cartes !');
+            }
+        }
+
         return $next($request);
     }
 }

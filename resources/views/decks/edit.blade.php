@@ -57,6 +57,13 @@
                                     <label for="is_active" class="text-gray-300">Définir comme deck actif</label>
                                 </div>
 
+                                <!-- Erreur cartes -->
+                                @error('cards')
+                                    <div class="bg-red-900/50 border border-red-500 rounded-lg p-3 text-red-200 text-sm">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+
                                 <!-- Résumé -->
                                 <div class="bg-black/30 rounded-xl p-4 border border-white/10">
                                     <h4 class="text-sm font-semibold text-gray-400 mb-3">📊 Résumé</h4>
@@ -65,6 +72,7 @@
                                             <span class="text-gray-400">Cartes sélectionnées</span>
                                             <span class="text-white font-bold"
                                                 id="totalCards">{{ $deck->cards->sum('pivot.quantity') }}</span>
+                                            <span class="text-gray-500">/ 7 max</span>
                                         </div>
                                         <div class="flex justify-between">
                                             <span class="text-gray-400">Coût total</span>
@@ -195,6 +203,15 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const cardSelectors = document.querySelectorAll('.card-selector');
+            const MAX_CARDS = 7;
+
+            function getTotalCards() {
+                let total = 0;
+                document.querySelectorAll('.qty-input').forEach(input => {
+                    total += parseInt(input.value) || 0;
+                });
+                return total;
+            }
 
             cardSelectors.forEach(selector => {
                 const cardCost = parseInt(selector.dataset.cost);
@@ -214,7 +231,7 @@
                     if (e.target.classList.contains('qty-btn') || e.target.closest('.qty-btn'))
                         return;
 
-                    if (quantity === 0 && maxQty > 0) {
+                    if (quantity === 0 && maxQty > 0 && getTotalCards() < MAX_CARDS) {
                         quantity = 1;
                         updateDisplay();
                     }
@@ -232,7 +249,7 @@
                 // Bouton plus
                 plusBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    if (quantity < maxQty) {
+                    if (quantity < maxQty && getTotalCards() < MAX_CARDS) {
                         quantity++;
                         updateDisplay();
                     }
@@ -258,17 +275,19 @@
                 }
 
                 function updateTotals() {
-                    let totalCards = 0;
+                    let totalCards = getTotalCards();
                     let totalCost = 0;
 
                     document.querySelectorAll('.qty-input').forEach(input => {
                         const qty = parseInt(input.value) || 0;
                         const cost = parseInt(input.closest('.card-selector').dataset.cost) || 0;
-                        totalCards += qty;
                         totalCost += qty * cost;
                     });
 
-                    document.getElementById('totalCards').textContent = totalCards;
+                    const totalCardsEl = document.getElementById('totalCards');
+                    totalCardsEl.textContent = totalCards;
+                    totalCardsEl.classList.toggle('text-red-500', totalCards >= MAX_CARDS);
+                    totalCardsEl.classList.toggle('text-white', totalCards < MAX_CARDS);
                     document.getElementById('totalCost').textContent = totalCost;
                 }
             });

@@ -12,6 +12,109 @@ use Illuminate\Support\Facades\Storage;
 class GameApiController extends Controller
 {
     /**
+     * Normaliser l'état du jeu (réindexer tous les tableaux)
+     * Évite les problèmes de conversion JSON avec des clés non séquentielles
+     * ET les problèmes de références PHP corrompues
+     */
+    private function normalizeState(array $state): array
+    {
+        // Reconstruire complètement le state pour éliminer TOUTE référence PHP
+        $newState = [
+            'turn' => $state['turn'] ?? 1,
+            'phase' => $state['phase'] ?? 'player',
+            'player' => [
+                'cosmos' => $state['player']['cosmos'] ?? 5,
+                'max_cosmos' => $state['player']['max_cosmos'] ?? 5,
+                'health' => $state['player']['health'] ?? 30,
+                'hand' => [],
+                'field' => [],
+                'deck' => [],
+            ],
+            'opponent' => [
+                'cosmos' => $state['opponent']['cosmos'] ?? 5,
+                'max_cosmos' => $state['opponent']['max_cosmos'] ?? 5,
+                'health' => $state['opponent']['health'] ?? 30,
+                'hand' => [],
+                'field' => [],
+                'deck' => [],
+            ],
+        ];
+
+        // Reconstruire explicitement chaque carte du joueur
+        foreach ($state['player']['hand'] ?? [] as $card) {
+            $newState['player']['hand'][] = $this->cloneCard($card);
+        }
+        foreach ($state['player']['field'] ?? [] as $card) {
+            $newState['player']['field'][] = $this->cloneCard($card);
+        }
+        foreach ($state['player']['deck'] ?? [] as $card) {
+            $newState['player']['deck'][] = $this->cloneCard($card);
+        }
+
+        // Reconstruire explicitement chaque carte de l'adversaire
+        foreach ($state['opponent']['hand'] ?? [] as $card) {
+            $newState['opponent']['hand'][] = $this->cloneCard($card);
+        }
+        foreach ($state['opponent']['field'] ?? [] as $card) {
+            $newState['opponent']['field'][] = $this->cloneCard($card);
+        }
+        foreach ($state['opponent']['deck'] ?? [] as $card) {
+            $newState['opponent']['deck'][] = $this->cloneCard($card);
+        }
+
+        return $newState;
+    }
+
+    /**
+     * Cloner une carte en copiant explicitement chaque propriété
+     */
+    private function cloneCard(array $card): array
+    {
+        return [
+            'id' => $card['id'] ?? null,
+            'instance_id' => $card['instance_id'] ?? uniqid('card_'),
+            'name' => $card['name'] ?? 'Unknown',
+            'cost' => $card['cost'] ?? 0,
+            'health_points' => $card['health_points'] ?? 100,
+            'max_hp' => $card['max_hp'] ?? 100,
+            'current_hp' => $card['current_hp'] ?? 100,
+            'endurance' => $card['endurance'] ?? 100,
+            'current_endurance' => $card['current_endurance'] ?? 100,
+            'defense' => $card['defense'] ?? 0,
+            'power' => $card['power'] ?? 0,
+            'cosmos' => $card['cosmos'] ?? 0,
+            'rarity' => $card['rarity'] ?? 'common',
+            'image' => $card['image'] ?? null,
+            'has_attacked' => $card['has_attacked'] ?? false,
+            'faction' => isset($card['faction']) ? [
+                'name' => $card['faction']['name'] ?? null,
+                'color_primary' => $card['faction']['color_primary'] ?? '#333',
+                'color_secondary' => $card['faction']['color_secondary'] ?? '#555',
+            ] : null,
+            'main_attack' => isset($card['main_attack']) ? [
+                'name' => $card['main_attack']['name'] ?? 'Attaque',
+                'damage' => $card['main_attack']['damage'] ?? 50,
+                'endurance_cost' => $card['main_attack']['endurance_cost'] ?? 20,
+                'cosmos_cost' => $card['main_attack']['cosmos_cost'] ?? 0,
+                'effect_type' => $card['main_attack']['effect_type'] ?? null,
+                'effect_value' => $card['main_attack']['effect_value'] ?? null,
+            ] : null,
+            'secondary_attack_1' => isset($card['secondary_attack_1']) ? [
+                'name' => $card['secondary_attack_1']['name'] ?? null,
+                'damage' => $card['secondary_attack_1']['damage'] ?? 0,
+                'endurance_cost' => $card['secondary_attack_1']['endurance_cost'] ?? 0,
+                'cosmos_cost' => $card['secondary_attack_1']['cosmos_cost'] ?? 0,
+            ] : null,
+            'secondary_attack_2' => isset($card['secondary_attack_2']) ? [
+                'name' => $card['secondary_attack_2']['name'] ?? null,
+                'damage' => $card['secondary_attack_2']['damage'] ?? 0,
+                'endurance_cost' => $card['secondary_attack_2']['endurance_cost'] ?? 0,
+                'cosmos_cost' => $card['secondary_attack_2']['cosmos_cost'] ?? 0,
+            ] : null,
+        ];
+    }
+
+    /**
      * Initialiser un combat
      */
     public function initBattle(Request $request): JsonResponse
@@ -71,7 +174,7 @@ class GameApiController extends Controller
 
         return response()->json([
             'success' => true,
-            'battle_state' => $battleState,
+            'battle_state' => $this->normalizeState($battleState),
         ]);
     }
 
@@ -85,7 +188,14 @@ class GameApiController extends Controller
             'battle_state' => 'required|array',
         ]);
 
-        $state = $request->battle_state;
+        // IMPORTANT: Copie profonde immédiate pour éliminer toute référence PHP
+        $state = json_decode(json_encode($request->battle_state), true);
+
+        // Réindexer les tableaux pour éviter les problèmes de clés non séquentielles
+        $state['player']['hand'] = array_values($state['player']['hand'] ?? []);
+        $state['player']['field'] = array_values($state['player']['field'] ?? []);
+        $state['opponent']['hand'] = array_values($state['opponent']['hand'] ?? []);
+        $state['opponent']['field'] = array_values($state['opponent']['field'] ?? []);
         $cardIndex = $request->card_index;
 
         // Vérifier que la carte existe en main
@@ -117,7 +227,7 @@ class GameApiController extends Controller
         return response()->json([
             'success' => true,
             'card_played' => $card['name'],
-            'battle_state' => $state,
+            'battle_state' => $this->normalizeState($state),
         ]);
     }
 
@@ -133,7 +243,15 @@ class GameApiController extends Controller
             'battle_state' => 'required|array',
         ]);
 
-        $state = $request->battle_state;
+        // IMPORTANT: Copie profonde immédiate pour éliminer toute référence PHP
+        $state = json_decode(json_encode($request->battle_state), true);
+
+        // Réindexer les tableaux pour éviter les problèmes de clés non séquentielles
+        $state['player']['hand'] = array_values($state['player']['hand'] ?? []);
+        $state['player']['field'] = array_values($state['player']['field'] ?? []);
+        $state['opponent']['hand'] = array_values($state['opponent']['hand'] ?? []);
+        $state['opponent']['field'] = array_values($state['opponent']['field'] ?? []);
+
         $attackerIndex = $request->attacker_index;
         $targetIndex = $request->target_index;
         $attackType = $request->attack_type;
@@ -148,19 +266,26 @@ class GameApiController extends Controller
             return response()->json(['message' => 'Cible non trouvée'], 400);
         }
 
-        $attacker = &$state['player']['field'][$attackerIndex];
-        $target = &$state['opponent']['field'][$targetIndex];
-
+        // SANS références - accès direct par indices
         // Vérifier si a déjà attaqué
-        if ($attacker['has_attacked']) {
+        if ($state['player']['field'][$attackerIndex]['has_attacked']) {
             return response()->json(['message' => 'Cette carte a déjà attaqué'], 400);
         }
 
+        // Sauvegarder les infos nécessaires
+        $attackerName = $state['player']['field'][$attackerIndex]['name'];
+        $attackerPower = $state['player']['field'][$attackerIndex]['power'] ?? 0;
+        $attackerEndurance = $state['player']['field'][$attackerIndex]['current_endurance'] ?? 0;
+
+        $targetName = $state['opponent']['field'][$targetIndex]['name'];
+        $targetDefense = $state['opponent']['field'][$targetIndex]['defense'] ?? 0;
+        $targetCurrentHp = $state['opponent']['field'][$targetIndex]['current_hp'];
+
         // Déterminer l'attaque
         $attack = match ($attackType) {
-            'main' => $attacker['main_attack'] ?? null,
-            'secondary1' => $attacker['secondary_attack_1'] ?? null,
-            'secondary2' => $attacker['secondary_attack_2'] ?? null,
+            'main' => $state['player']['field'][$attackerIndex]['main_attack'] ?? null,
+            'secondary1' => $state['player']['field'][$attackerIndex]['secondary_attack_1'] ?? null,
+            'secondary2' => $state['player']['field'][$attackerIndex]['secondary_attack_2'] ?? null,
             default => null,
         };
 
@@ -175,7 +300,7 @@ class GameApiController extends Controller
         }
 
         // Vérifier les coûts
-        if ($attacker['current_endurance'] < $attack['endurance_cost']) {
+        if ($attackerEndurance < $attack['endurance_cost']) {
             return response()->json(['message' => 'Endurance insuffisante'], 400);
         }
 
@@ -184,25 +309,18 @@ class GameApiController extends Controller
         }
 
         // Calculer les dégâts
-        $damage = max(0, $attack['damage'] + ($attacker['power'] ?? 0) - ($target['defense'] ?? 0));
+        $damage = max(0, $attack['damage'] + $attackerPower - $targetDefense);
+        $targetWillDie = ($targetCurrentHp - $damage) <= 0;
 
-        // ✅ SAUVEGARDER les infos de la cible AVANT modification
-        $targetName = $target['name'];
-        $targetWillDie = ($target['current_hp'] - $damage) <= 0;
-
-        // Appliquer les dégâts
-        $target['current_hp'] -= $damage;
-        $attacker['current_endurance'] -= $attack['endurance_cost'];
+        // Appliquer les modifications via indices (PAS de références)
+        $state['opponent']['field'][$targetIndex]['current_hp'] -= $damage;
+        $state['player']['field'][$attackerIndex]['current_endurance'] -= $attack['endurance_cost'];
         $state['player']['cosmos'] -= $attack['cosmos_cost'];
-        $attacker['has_attacked'] = true;
+        $state['player']['field'][$attackerIndex]['has_attacked'] = true;
 
-        $message = "{$attacker['name']} utilise {$attack['name']} sur {$targetName} (-{$damage} PV)";
+        $message = "{$attackerName} utilise {$attack['name']} sur {$targetName} (-{$damage} PV)";
         $battleEnded = false;
         $winner = null;
-
-        // IMPORTANT: libérer les références AVANT de modifier le tableau
-        unset($attacker);
-        unset($target);
 
         // Vérifier si la cible est morte
         if ($targetWillDie) {
@@ -224,7 +342,7 @@ class GameApiController extends Controller
             'message' => $message,
             'battle_ended' => $battleEnded,
             'winner' => $winner,
-            'battle_state' => $state,
+            'battle_state' => $this->normalizeState($state),
         ]);
     }
 
@@ -237,9 +355,19 @@ class GameApiController extends Controller
             'battle_state' => 'required|array',
         ]);
 
-        $state = $request->battle_state;
+        // IMPORTANT: Copie profonde immédiate pour éliminer toute référence PHP
+        $state = json_decode(json_encode($request->battle_state), true);
+
+        // Réindexer les tableaux pour éviter les problèmes de clés non séquentielles
+        $state['player']['hand'] = array_values($state['player']['hand'] ?? []);
+        $state['player']['field'] = array_values($state['player']['field'] ?? []);
+        $state['player']['deck'] = array_values($state['player']['deck'] ?? []);
+        $state['opponent']['hand'] = array_values($state['opponent']['hand'] ?? []);
+        $state['opponent']['field'] = array_values($state['opponent']['field'] ?? []);
+        $state['opponent']['deck'] = array_values($state['opponent']['deck'] ?? []);
+
         $aiActions = [];
-        $destroyedCards = []; // ✅ NOUVEAU
+        $destroyedCards = [];
 
         // Tour de l'IA
         // 1. L'IA pioche
@@ -255,15 +383,18 @@ class GameApiController extends Controller
 
         // 3. L'IA joue des cartes
         $state = $this->aiPlayCards($state);
+        // IMPORTANT: Copie profonde après aiPlayCards pour éliminer toute référence
+        $state = json_decode(json_encode($state), true);
         if (count($state['opponent']['field']) > 0) {
             $aiActions[] = "L'adversaire déploie ses forces";
         }
 
         // 4. L'IA attaque
         $attackResults = $this->aiAttack($state);
-        $state = $attackResults['state'];
+        // IMPORTANT: Copie profonde après aiAttack pour éliminer toute référence
+        $state = json_decode(json_encode($attackResults['state']), true);
         $aiActions = array_merge($aiActions, $attackResults['actions']);
-        $destroyedCards = $attackResults['destroyed_cards'] ?? []; // ✅ NOUVEAU
+        $destroyedCards = $attackResults['destroyed_cards'] ?? [];
 
         // Vérifier défaite du joueur
         $battleEnded = false;
@@ -287,20 +418,24 @@ class GameApiController extends Controller
         $state['player']['max_cosmos'] = min(10, $state['player']['max_cosmos'] + 1);
         $state['player']['cosmos'] = $state['player']['max_cosmos'];
 
-        // Reset attaques et endurance des cartes du joueur
-        foreach ($state['player']['field'] as &$card) {
-            $card['has_attacked'] = false;
-            $card['current_endurance'] = min($card['endurance'], $card['current_endurance'] + 30);
+        // Reset attaques et endurance des cartes du joueur (SANS références)
+        $playerFieldCount = count($state['player']['field']);
+        for ($i = 0; $i < $playerFieldCount; $i++) {
+            if (isset($state['player']['field'][$i])) {
+                $state['player']['field'][$i]['has_attacked'] = false;
+                $currentEndurance = $state['player']['field'][$i]['current_endurance'] ?? 0;
+                $maxEndurance = $state['player']['field'][$i]['endurance'] ?? 100;
+                $state['player']['field'][$i]['current_endurance'] = min($maxEndurance, $currentEndurance + 30);
+            }
         }
-        unset($card); // IMPORTANT: libérer la référence pour éviter le bug de dédoublement
 
         return response()->json([
             'success' => true,
             'ai_actions' => $aiActions,
-            'destroyed_cards' => $destroyedCards, // ✅ NOUVEAU
+            'destroyed_cards' => $destroyedCards,
             'battle_ended' => $battleEnded,
             'winner' => $winner,
-            'battle_state' => $state,
+            'battle_state' => $this->normalizeState($state),
         ]);
     }
 
@@ -399,31 +534,42 @@ class GameApiController extends Controller
 
     /**
      * IA joue des cartes
+     * IMPORTANT: N'utilise PAS de foreach ni de références pour éviter les bugs PHP de corruption
      */
     private function aiPlayCards(array $state): array
     {
         // L'IA joue des cartes tant qu'elle peut
         while (count($state['opponent']['field']) < 3 && !empty($state['opponent']['hand'])) {
-            // Trouver une carte jouable
+            // Trouver une carte jouable - utiliser for au lieu de foreach
             $playableIndex = null;
-            foreach ($state['opponent']['hand'] as $index => $card) {
-                if ($card['cost'] <= $state['opponent']['cosmos']) {
-                    $playableIndex = $index;
-                    break;
+            $handCount = count($state['opponent']['hand']);
+
+            for ($idx = 0; $idx < $handCount; $idx++) {
+                if (isset($state['opponent']['hand'][$idx])) {
+                    $cardCost = $state['opponent']['hand'][$idx]['cost'] ?? 0;
+                    if ($cardCost <= $state['opponent']['cosmos']) {
+                        $playableIndex = $idx;
+                        break;
+                    }
                 }
             }
 
-            if ($playableIndex === null)
+            if ($playableIndex === null) {
                 break;
+            }
 
-            $card = $state['opponent']['hand'][$playableIndex];
-            $card['current_hp'] = $card['max_hp'];
-            $card['current_endurance'] = $card['endurance'];
-            $card['has_attacked'] = true; // Ne peut pas attaquer le tour où elle est jouée
+            // IMPORTANT: Copie profonde de la carte pour éviter toute référence PHP
+            $cardToPlay = json_decode(json_encode($state['opponent']['hand'][$playableIndex]), true);
+            $cardToPlay['current_hp'] = $cardToPlay['max_hp'];
+            $cardToPlay['current_endurance'] = $cardToPlay['endurance'];
+            $cardToPlay['has_attacked'] = true; // Ne peut pas attaquer le tour où elle est jouée
 
-            $state['opponent']['cosmos'] -= $card['cost'];
-            $state['opponent']['field'][] = $card;
+            $state['opponent']['cosmos'] -= $cardToPlay['cost'];
+            $state['opponent']['field'][] = $cardToPlay;
             array_splice($state['opponent']['hand'], $playableIndex, 1);
+
+            // Réindexer la main après suppression
+            $state['opponent']['hand'] = array_values($state['opponent']['hand']);
         }
 
         return $state;
@@ -431,48 +577,72 @@ class GameApiController extends Controller
 
     /**
      * IA attaque
+     * IMPORTANT: Cette fonction n'utilise PAS de références pour éviter les bugs PHP
      */
     private function aiAttack(array $state): array
     {
         $actions = [];
-        $destroyedCards = []; // ✅ NOUVEAU : tracker les cartes détruites
+        $destroyedCards = [];
 
         if (empty($state['player']['field'])) {
             return ['state' => $state, 'actions' => $actions, 'destroyed_cards' => $destroyedCards];
         }
 
-        foreach ($state['opponent']['field'] as &$attacker) {
-            if ($attacker['has_attacked'])
+        // Utiliser les indices au lieu des références pour éviter les corruptions
+        $opponentFieldCount = count($state['opponent']['field']);
+
+        for ($attackerIdx = 0; $attackerIdx < $opponentFieldCount; $attackerIdx++) {
+            if (!isset($state['opponent']['field'][$attackerIdx])) {
                 continue;
-            if (empty($state['player']['field']))
+            }
+
+            if ($state['opponent']['field'][$attackerIdx]['has_attacked']) {
+                continue;
+            }
+
+            if (empty($state['player']['field'])) {
                 break;
+            }
 
-            // Choisir une cible (la plus faible)
+            // Choisir une cible (la plus faible) - SANS foreach pour éviter les bugs PHP
             $targetIndex = 0;
-            $lowestHp = $state['player']['field'][0]['current_hp'];
+            $lowestHp = $state['player']['field'][0]['current_hp'] ?? PHP_INT_MAX;
+            $playerFieldCount = count($state['player']['field']);
 
-            foreach ($state['player']['field'] as $i => $target) {
-                if ($target['current_hp'] < $lowestHp) {
-                    $lowestHp = $target['current_hp'];
-                    $targetIndex = $i;
+            for ($pIdx = 0; $pIdx < $playerFieldCount; $pIdx++) {
+                if (isset($state['player']['field'][$pIdx])) {
+                    $cardHp = $state['player']['field'][$pIdx]['current_hp'] ?? 0;
+                    if ($cardHp < $lowestHp) {
+                        $lowestHp = $cardHp;
+                        $targetIndex = $pIdx;
+                    }
                 }
             }
 
-            $target = &$state['player']['field'][$targetIndex];
+            if (!isset($state['player']['field'][$targetIndex])) {
+                continue;
+            }
 
-            // ✅ SAUVEGARDER le nom de la cible AVANT modification
-            $targetName = $target['name'];
+            // Sauvegarder les infos de la cible
+            $targetName = $state['player']['field'][$targetIndex]['name'];
+            $targetDefense = $state['player']['field'][$targetIndex]['defense'] ?? 0;
+            $targetCurrentHp = $state['player']['field'][$targetIndex]['current_hp'];
+            $targetInstanceId = $state['player']['field'][$targetIndex]['instance_id'] ?? null;
 
             // Choisir l'attaque (main ou attaque basique)
-            $attack = $attacker['main_attack'] ?? [
+            $attack = $state['opponent']['field'][$attackerIdx]['main_attack'] ?? [
                 'name' => 'Attaque',
                 'damage' => 50,
                 'endurance_cost' => 20,
                 'cosmos_cost' => 0
             ];
 
+            $attackerEndurance = $state['opponent']['field'][$attackerIdx]['current_endurance'] ?? 0;
+            $attackerPower = $state['opponent']['field'][$attackerIdx]['power'] ?? 0;
+            $attackerName = $state['opponent']['field'][$attackerIdx]['name'];
+
             // Vérifier l'endurance
-            if ($attacker['current_endurance'] < $attack['endurance_cost']) {
+            if ($attackerEndurance < $attack['endurance_cost']) {
                 continue;
             }
 
@@ -481,46 +651,41 @@ class GameApiController extends Controller
                 continue;
             }
 
-            $damage = max(0, $attack['damage'] + ($attacker['power'] ?? 0) - ($target['defense'] ?? 0));
+            $damage = max(0, $attack['damage'] + $attackerPower - $targetDefense);
+            $targetWillDie = ($targetCurrentHp - $damage) <= 0;
 
-            // ✅ Vérifier si la cible va mourir AVANT d'appliquer les dégâts
-            $targetWillDie = ($target['current_hp'] - $damage) <= 0;
-
-            $target['current_hp'] -= $damage;
-            $attacker['current_endurance'] -= $attack['endurance_cost'];
+            // Appliquer les modifications via les indices (PAS de références)
+            $state['player']['field'][$targetIndex]['current_hp'] -= $damage;
+            $state['opponent']['field'][$attackerIdx]['current_endurance'] -= $attack['endurance_cost'];
             $state['opponent']['cosmos'] -= $attack['cosmos_cost'];
-            $attacker['has_attacked'] = true;
+            $state['opponent']['field'][$attackerIdx]['has_attacked'] = true;
 
-            $actions[] = "{$attacker['name']} attaque {$targetName} (-{$damage} PV)";
+            $actions[] = "{$attackerName} attaque {$targetName} (-{$damage} PV)";
 
             // Vérifier si cible morte
             if ($targetWillDie) {
-                // ✅ Ajouter aux cartes détruites AVANT de retirer du tableau
-                // Inclure instance_id pour une identification précise côté frontend
                 $destroyedCards[] = [
                     'name' => $targetName,
-                    'instance_id' => $state['player']['field'][$targetIndex]['instance_id'] ?? null,
+                    'instance_id' => $targetInstanceId,
                     'index' => $targetIndex,
                     'owner' => 'player'
                 ];
 
-                // IMPORTANT: libérer la référence AVANT array_splice pour éviter la corruption
-                unset($target);
                 array_splice($state['player']['field'], $targetIndex, 1);
                 $actions[] = "{$targetName} est vaincu !";
-            } else {
-                // IMPORTANT: libérer la référence même si la carte n'est pas détruite
-                unset($target);
             }
         }
-        unset($attacker); // IMPORTANT: libérer la référence de la boucle principale
 
-        // Reset pour prochain tour
-        foreach ($state['opponent']['field'] as &$card) {
-            $card['has_attacked'] = false;
-            $card['current_endurance'] = min($card['endurance'], $card['current_endurance'] + 30);
+        // Reset pour prochain tour (sans références)
+        $opponentFieldCount = count($state['opponent']['field']);
+        for ($i = 0; $i < $opponentFieldCount; $i++) {
+            if (isset($state['opponent']['field'][$i])) {
+                $state['opponent']['field'][$i]['has_attacked'] = false;
+                $currentEndurance = $state['opponent']['field'][$i]['current_endurance'] ?? 0;
+                $maxEndurance = $state['opponent']['field'][$i]['endurance'] ?? 100;
+                $state['opponent']['field'][$i]['current_endurance'] = min($maxEndurance, $currentEndurance + 30);
+            }
         }
-        unset($card); // IMPORTANT: libérer la référence pour éviter le bug de dédoublement
 
         return ['state' => $state, 'actions' => $actions, 'destroyed_cards' => $destroyedCards];
     }

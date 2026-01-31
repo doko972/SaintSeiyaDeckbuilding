@@ -13,6 +13,16 @@ class DatabaseSeeder extends Seeder
             FactionSeeder::class,
             AttackSeeder::class,
             CardSeeder::class,
+            AsgardWarriorsSeeder::class,
+            PoseidonMarinasSeeder::class,
+            BlackSaintsSeeder::class,
+            BronzeSaintsSecondarySeeder::class,
+            SpectresSecondarySeeder::class,
+            SteelSaintsSeeder::class,
+            SilverSaintsSeeder::class,
+            GoldSpectresSeeder::class,
         ]);
     }
+
+    
 }

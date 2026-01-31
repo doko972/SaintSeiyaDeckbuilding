@@ -1848,6 +1848,13 @@
         // RENDU COMPLET
         // ========================================
         function renderAll() {
+            // DEBUG: Afficher le nombre de cartes dans chaque zone
+            console.log('=== renderAll() DEBUG ===');
+            console.log('Player field:', gameState?.player?.field?.length, gameState?.player?.field?.map(c => c.name));
+            console.log('Player hand:', gameState?.player?.hand?.length);
+            console.log('Opponent field:', gameState?.opponent?.field?.length, gameState?.opponent?.field?.map(c => c.name));
+            console.log('========================');
+
             renderOpponentField();
             renderPlayerField();
             renderPlayerHand();

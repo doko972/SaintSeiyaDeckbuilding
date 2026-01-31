@@ -43,6 +43,12 @@ public function create(): View
         'cards.*' => 'integer|min:0',
     ]);
 
+    // Vérifier la limite de 7 cartes maximum
+    $totalCards = !empty($validated['cards']) ? array_sum($validated['cards']) : 0;
+    if ($totalCards > 7) {
+        return back()->withErrors(['cards' => 'Un deck ne peut pas contenir plus de 7 cartes.'])->withInput();
+    }
+
     // Si ce deck devient actif, désactiver les autres
     if ($request->boolean('is_active')) {
         auth()->user()->decks()->update(['is_active' => false]);
@@ -124,6 +130,12 @@ public function edit(Deck $deck): View
         'cards' => 'nullable|array',
         'cards.*' => 'integer|min:0',
     ]);
+
+    // Vérifier la limite de 7 cartes maximum
+    $totalCards = !empty($validated['cards']) ? array_sum($validated['cards']) : 0;
+    if ($totalCards > 7) {
+        return back()->withErrors(['cards' => 'Un deck ne peut pas contenir plus de 7 cartes.'])->withInput();
+    }
 
     // Si ce deck devient actif, désactiver les autres
     if ($request->boolean('is_active')) {
