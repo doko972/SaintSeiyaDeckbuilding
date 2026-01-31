@@ -346,11 +346,12 @@ class GameApiController extends Controller
         $deck = [];
 
         foreach ($cards as $card) {
-            $quantity = $card->pivot->quantity ?? 1;
+            $quantity = $card->pivot?->quantity ?? 1;
 
             for ($i = 0; $i < $quantity; $i++) {
                 $deck[] = [
                     'id' => $card->id,
+                    'instance_id' => uniqid('card_' . $card->id . '_'),
                     'name' => $card->name,
                     'cost' => $card->cost,
                     'health_points' => $card->health_points,
@@ -494,9 +495,11 @@ class GameApiController extends Controller
 
             // Vérifier si cible morte
             if ($targetWillDie) {
-                // ✅ NOUVEAU : Ajouter aux cartes détruites AVANT de retirer du tableau
+                // ✅ Ajouter aux cartes détruites AVANT de retirer du tableau
+                // Inclure instance_id pour une identification précise côté frontend
                 $destroyedCards[] = [
                     'name' => $targetName,
+                    'instance_id' => $state['player']['field'][$targetIndex]['instance_id'] ?? null,
                     'index' => $targetIndex,
                     'owner' => 'player'
                 ];

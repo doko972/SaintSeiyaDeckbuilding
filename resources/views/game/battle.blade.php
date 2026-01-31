@@ -1911,6 +1911,7 @@
             div.dataset.index = index;
             div.dataset.owner = owner;
             div.dataset.name = card.name;
+            div.dataset.instanceId = card.instance_id || `${card.id}_${index}`;
 
             if (card.faction) {
                 div.style.setProperty('--color1', card.faction.color_primary || '#333');
@@ -1979,6 +1980,7 @@
             const div = document.createElement('div');
             div.className = 'hand-card';
             div.dataset.index = index;
+            div.dataset.instanceId = card.instance_id || `${card.id}_hand_${index}`;
 
             const canPlay = gameState.player.cosmos >= card.cost && gameState.player.field.length < 3;
             div.classList.add(canPlay ? 'playable' : 'unplayable');
@@ -2245,9 +2247,15 @@
         async function endTurn() {
             try {
                 // ✅ SAUVEGARDER les références des cartes du joueur AVANT l'appel API
+                // Utilise instance_id comme clé principale, avec fallback sur le nom
                 const playerCardElements = {};
+                const playerCardsByName = {};
                 document.querySelectorAll('.battle-card[data-owner="player"]').forEach(card => {
-                    playerCardElements[card.dataset.name] = card;
+                    if (card.dataset.instanceId) {
+                        playerCardElements[card.dataset.instanceId] = card;
+                    }
+                    // Fallback par nom (pour compatibilité)
+                    playerCardsByName[card.dataset.name] = card;
                 });
 
                 const data = await apiCall('end-turn', 'POST', {
@@ -2271,7 +2279,7 @@
                             action.includes(dc.name) && action.includes('vaincu')
                         );
 
-                        await animateAIAction(action, playerCardElements, destroyedCard);
+                        await animateAIAction(action, playerCardElements, playerCardsByName, destroyedCard);
                         await sleep(600);
                     }
                 }
@@ -2297,7 +2305,7 @@
         // ========================================
         // ANIMATIONS IA
         // ========================================
-        async function animateAIAction(actionText, playerCardElements = {}, destroyedCard = null) {
+        async function animateAIAction(actionText, playerCardElements = {}, playerCardsByName = {}, destroyedCard = null) {
             console.log('AI Action:', actionText, 'Destroyed:', destroyedCard);
 
             if (actionText.includes('pioche') || actionText.includes('tire')) {
@@ -2308,11 +2316,15 @@
                 await animateAIPlayCard(cardName);
                 addLogEntry(`🤖 ${actionText}`, 'info');
             } else if (actionText.includes('attaque') || actionText.includes('inflige')) {
-                await animateAIAttack(actionText, playerCardElements);
+                await animateAIAttack(actionText, playerCardElements, playerCardsByName);
                 addLogEntry(`🤖 ${actionText}`, 'damage');
             } else if (actionText.includes('vaincu') && destroyedCard) {
                 // ✅ Animation de destruction pour la carte vaincue
-                const targetCard = playerCardElements[destroyedCard.name];
+                // Chercher par instance_id d'abord, puis par nom
+                let targetCard = destroyedCard.instance_id ? playerCardElements[destroyedCard.instance_id] : null;
+                if (!targetCard) {
+                    targetCard = playerCardsByName[destroyedCard.name];
+                }
                 if (targetCard && targetCard.parentNode) {
                     console.log('🔥 Carte vaincue, animation de destruction:', destroyedCard.name);
                     await animations.destroyCardAnimation(targetCard);
@@ -2398,10 +2410,11 @@
             await sleep(300);
 
             tempCard.remove();
-            renderAll();
+            // Ne pas appeler renderAll() ici car gameState n'est pas encore mis à jour
+            // renderAll() sera appelé à la fin de endTurn() après mise à jour de gameState
         }
 
-        async function animateAIAttack(actionText, playerCardElements = {}) {
+        async function animateAIAttack(actionText, playerCardElements = {}, playerCardsByName = {}) {
             console.log('🤖 Animation attaque IA:', actionText);
 
             const damageMatch = actionText.match(/(\d+)\s*(?:dégâts|PV)/i);
@@ -2421,10 +2434,10 @@
 
             const attackerCard = opponentCards[0];
 
-            // ✅ Utiliser les références sauvegardées
+            // ✅ Utiliser les références sauvegardées (par nom)
             let targetCard = null;
-            if (targetName && playerCardElements[targetName]) {
-                targetCard = playerCardElements[targetName];
+            if (targetName && playerCardsByName[targetName]) {
+                targetCard = playerCardsByName[targetName];
                 console.log('✅ Carte trouvée dans les références sauvegardées:', targetName);
             }
 
