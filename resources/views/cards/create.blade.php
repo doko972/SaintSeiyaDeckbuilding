@@ -154,7 +154,7 @@
                                 <label for="health_points" class="block text-sm font-medium text-red-400 mb-2">❤️ PV
                                     *</label>
                                 <input type="number" name="health_points" id="health_points"
-                                    value="{{ old('health_points', 100) }}" min="1" max="500" required
+                                    value="{{ old('health_points', 100) }}" min="1" max="1000" required
                                     class="w-full bg-white/10 border border-red-500/30 rounded-lg px-3 py-2 text-white text-center text-xl font-bold focus:border-red-500 focus:ring-red-500">
                             </div>
 

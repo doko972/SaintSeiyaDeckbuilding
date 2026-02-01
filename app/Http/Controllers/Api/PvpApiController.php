@@ -4,11 +4,19 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Battle;
+use App\Services\ComboService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class PvpApiController extends Controller
 {
+    protected ComboService $comboService;
+
+    public function __construct(ComboService $comboService)
+    {
+        $this->comboService = $comboService;
+    }
+
     public function getWaitingBattles(): JsonResponse
     {
         $user = auth()->user();
@@ -187,23 +195,77 @@ class PvpApiController extends Controller
         // Déterminer l'attaque utilisée selon le type
         $attackType = $request->attack_type;
         $attack = null;
+        $isComboAttack = false;
+        $comboName = null;
 
-        switch ($attackType) {
-            case 'secondary1':
-                $attack = $attacker['secondary_attack_1'] ?? null;
-                break;
-            case 'secondary2':
-                $attack = $attacker['secondary_attack_2'] ?? null;
-                break;
-            case 'main':
-            default:
-                $attack = $attacker['main_attack'] ?? null;
-                break;
-        }
+        // Vérifier si c'est une attaque combo (format: combo_X où X est l'ID du combo)
+        if (str_starts_with($attackType, 'combo_')) {
+            $comboId = (int) str_replace('combo_', '', $attackType);
+            $allCombos = $state['all_combos'] ?? [];
 
-        // Si l'attaque n'existe pas, utiliser les valeurs par défaut
-        if (!$attack) {
-            $attack = ['damage' => 50, 'endurance_cost' => 20, 'cosmos_cost' => 0];
+            // Trouver le combo
+            $combo = null;
+            foreach ($allCombos as $c) {
+                if ($c['id'] === $comboId) {
+                    $combo = $c;
+                    break;
+                }
+            }
+
+            if (!$combo) {
+                return response()->json(['success' => false, 'message' => 'Combo non trouvé'], 400);
+            }
+
+            // Vérifier si le combo a déjà été utilisé par ce joueur
+            $usedCombos = $state['used_combos'][$playerKey] ?? [];
+            if (in_array($comboId, $usedCombos)) {
+                return response()->json(['success' => false, 'message' => 'Ce combo a déjà été utilisé dans cette partie'], 400);
+            }
+
+            // Vérifier que la carte est le leader
+            if ($attacker['id'] !== $combo['leader_card_id']) {
+                return response()->json(['success' => false, 'message' => 'Cette carte n\'est pas le leader du combo'], 400);
+            }
+
+            // Vérifier que le combo est actif sur le terrain
+            $canUseResult = $this->comboService->canUseCombo(
+                $combo,
+                $attacker,
+                $state[$playerKey]['cosmos'] ?? 0,
+                $state[$playerKey]['field']
+            );
+
+            if (!$canUseResult['can_use']) {
+                return response()->json(['success' => false, 'message' => $canUseResult['reason']], 400);
+            }
+
+            // Utiliser l'attaque du combo
+            $attack = $combo['attack'];
+            $isComboAttack = true;
+            $comboName = $combo['name'];
+            $usedComboId = $comboId; // Sauvegarder l'ID pour marquer comme utilisé après succès
+
+            // Ajouter les coûts supplémentaires du combo
+            $attack['endurance_cost'] = ($attack['endurance_cost'] ?? 0) + ($combo['endurance_cost'] ?? 0);
+            $attack['cosmos_cost'] = ($attack['cosmos_cost'] ?? 0) + ($combo['cosmos_cost'] ?? 0);
+        } else {
+            switch ($attackType) {
+                case 'secondary1':
+                    $attack = $attacker['secondary_attack_1'] ?? null;
+                    break;
+                case 'secondary2':
+                    $attack = $attacker['secondary_attack_2'] ?? null;
+                    break;
+                case 'main':
+                default:
+                    $attack = $attacker['main_attack'] ?? null;
+                    break;
+            }
+
+            // Si l'attaque n'existe pas, utiliser les valeurs par défaut
+            if (!$attack) {
+                $attack = ['damage' => 50, 'endurance_cost' => 20, 'cosmos_cost' => 0];
+            }
         }
 
         $enduranceCost = $attack['endurance_cost'] ?? 20;
@@ -228,7 +290,20 @@ class PvpApiController extends Controller
         $state[$playerKey]['cosmos'] -= $cosmosCost;
         $attacker['has_attacked'] = true;
 
-        $message = "{$attackerName} inflige {$damage} dégâts à {$targetName}";
+        // Marquer le combo comme utilisé (une seule utilisation par partie)
+        if ($isComboAttack && isset($usedComboId)) {
+            if (!isset($state['used_combos'])) {
+                $state['used_combos'] = ['player1' => [], 'player2' => []];
+            }
+            if (!isset($state['used_combos'][$playerKey])) {
+                $state['used_combos'][$playerKey] = [];
+            }
+            $state['used_combos'][$playerKey][] = $usedComboId;
+        }
+
+        $message = $isComboAttack
+            ? "⚡ COMBO {$comboName} ! {$attackerName} inflige {$damage} dégâts à {$targetName}"
+            : "{$attackerName} inflige {$damage} dégâts à {$targetName}";
         $battleEnded = false;
         $winner = null;
         $targetDestroyed = false;

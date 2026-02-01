@@ -9,9 +9,11 @@ use App\Http\Controllers\GameViewController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\PvpController;
+use App\Http\Controllers\Api\PvpApiController;
 use App\Http\Controllers\StarterPackController;
 use App\Http\Controllers\FirstDrawController;
 use App\Http\Controllers\MusicController;
+use App\Http\Controllers\ComboController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -103,6 +105,15 @@ Route::middleware(['auth', 'ensure.starter'])->group(function () {
         Route::post('/forfeit/{battle}', [PvpController::class, 'forfeit'])->name('forfeit');
         Route::get('/battle/{battle}', [PvpController::class, 'battle'])->name('battle');
     });
+
+    // Routes API PvP (dans web.php pour une bonne gestion des sessions)
+    Route::prefix('api/v1/pvp')->group(function () {
+        Route::get('/waiting-battles', [PvpApiController::class, 'getWaitingBattles']);
+        Route::get('/battle-state/{battle}', [PvpApiController::class, 'getBattleState']);
+        Route::post('/play-card', [PvpApiController::class, 'playCard']);
+        Route::post('/attack', [PvpApiController::class, 'attack']);
+        Route::post('/end-turn', [PvpApiController::class, 'endTurn']);
+    });
 });
 
 /*
@@ -141,6 +152,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/musics/{music}', [MusicController::class, 'update'])->name('musics.update');
     Route::delete('/musics/{music}', [MusicController::class, 'destroy'])->name('musics.destroy');
     Route::patch('/musics/{music}/toggle', [MusicController::class, 'toggle'])->name('musics.toggle');
+
+    // Gestion des Combos
+    Route::get('/combos', [ComboController::class, 'index'])->name('combos.index');
+    Route::get('/combos/create', [ComboController::class, 'create'])->name('combos.create');
+    Route::post('/combos', [ComboController::class, 'store'])->name('combos.store');
+    Route::get('/combos/{combo}/edit', [ComboController::class, 'edit'])->name('combos.edit');
+    Route::put('/combos/{combo}', [ComboController::class, 'update'])->name('combos.update');
+    Route::delete('/combos/{combo}', [ComboController::class, 'destroy'])->name('combos.destroy');
+    Route::patch('/combos/{combo}/toggle', [ComboController::class, 'toggle'])->name('combos.toggle');
 });
 
 require __DIR__ . '/auth.php';

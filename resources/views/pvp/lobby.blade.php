@@ -129,7 +129,7 @@
             <!-- Joueurs en ligne (optionnel) -->
             <div class="mt-10 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden">
                 <div class="p-6 bg-gradient-to-r from-purple-600 to-pink-600">
-                    <h3 class="text-xl font-bold text-white">👥 Joueurs récemment actifs</h3>
+                    <h3 class="text-xl font-bold text-white">👥 Joueurs en ligne</h3>
                 </div>
 
                 <div class="p-6">

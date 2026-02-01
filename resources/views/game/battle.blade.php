@@ -723,6 +723,287 @@
             cursor: not-allowed;
         }
 
+        /* Styles pour les combos */
+        .combo-separator {
+            text-align: center;
+            padding: 0.5rem 0;
+            margin: 0.5rem 0;
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            font-weight: bold;
+            color: #FFD700;
+            font-size: 0.8rem;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            animation: comboPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes comboPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+        }
+
+        .combo-attack {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15)) !important;
+            border: 1px solid rgba(255, 215, 0, 0.4) !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .combo-attack::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+            animation: comboShine 3s ease-in-out infinite;
+        }
+
+        @keyframes comboShine {
+            0% { left: -100%; }
+            50%, 100% { left: 100%; }
+        }
+
+        .combo-attack:hover:not(:disabled) {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(255, 165, 0, 0.25)) !important;
+            border-color: rgba(255, 215, 0, 0.6) !important;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Indicateur combo sur les cartes */
+        .combo-indicator {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 8px;
+            z-index: 10;
+            animation: comboIndicatorPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes comboIndicatorPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+            50% { transform: scale(1.1); box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+        }
+
+        /* ========================================
+           EXPLOSION COMBO - ANIMATION SPECTACULAIRE
+        ======================================== */
+        .combo-explosion-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+
+        .combo-explosion-container.active {
+            display: block;
+        }
+
+        /* Flash doré initial */
+        .combo-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.9) 0%, rgba(255, 165, 0, 0.6) 30%, transparent 70%);
+            opacity: 0;
+            animation: comboFlash 0.8s ease-out forwards;
+        }
+
+        @keyframes comboFlash {
+            0% { opacity: 0; transform: scale(0.5); }
+            20% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0; transform: scale(2); }
+        }
+
+        /* Cercle d'onde de choc */
+        .combo-shockwave {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            margin: -50px 0 0 -50px;
+            border: 4px solid rgba(255, 215, 0, 0.8);
+            border-radius: 50%;
+            animation: comboShockwave 1s ease-out forwards;
+        }
+
+        .combo-shockwave:nth-child(2) { animation-delay: 0.1s; }
+        .combo-shockwave:nth-child(3) { animation-delay: 0.2s; }
+
+        @keyframes comboShockwave {
+            0% { transform: scale(0); opacity: 1; border-width: 8px; }
+            100% { transform: scale(15); opacity: 0; border-width: 1px; }
+        }
+
+        /* Particules d'explosion */
+        .combo-particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 50%;
+            box-shadow: 0 0 20px #FFD700, 0 0 40px #FFA500;
+        }
+
+        @keyframes comboParticle {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Étoiles cosmiques */
+        .combo-star {
+            position: absolute;
+            font-size: 2rem;
+            animation: comboStar 1.2s ease-out forwards;
+        }
+
+        @keyframes comboStar {
+            0% {
+                transform: translate(-50%, -50%) scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(180deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(calc(var(--tx) * 2), calc(var(--ty) * 2)) scale(0) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Texte COMBO au centre */
+        .combo-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: 900;
+            color: #FFD700;
+            text-shadow:
+                0 0 10px #FFD700,
+                0 0 20px #FFA500,
+                0 0 40px #FF6B00,
+                0 0 80px #FF0000,
+                2px 2px 0 #8B0000;
+            animation: comboText 1.5s ease-out forwards;
+            white-space: nowrap;
+        }
+
+        @keyframes comboText {
+            0% {
+                transform: translate(-50%, -50%) scale(0) rotate(-10deg);
+                opacity: 0;
+            }
+            30% {
+                transform: translate(-50%, -50%) scale(1.3) rotate(5deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.5) rotate(0deg);
+                opacity: 0;
+            }
+        }
+
+        /* Rayons de lumière */
+        .combo-ray {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 200px;
+            background: linear-gradient(to top, transparent, rgba(255, 215, 0, 0.8), transparent);
+            transform-origin: bottom center;
+            animation: comboRay 1s ease-out forwards;
+        }
+
+        @keyframes comboRay {
+            0% {
+                transform: translateX(-50%) scaleY(0);
+                opacity: 1;
+            }
+            50% {
+                transform: translateX(-50%) scaleY(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-50%) scaleY(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Effet de tremblement d'écran */
+        @keyframes comboScreenShake {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-10px, -5px); }
+            20% { transform: translate(10px, 5px); }
+            30% { transform: translate(-8px, 8px); }
+            40% { transform: translate(8px, -8px); }
+            50% { transform: translate(-5px, 5px); }
+            60% { transform: translate(5px, -5px); }
+            70% { transform: translate(-3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            90% { transform: translate(-1px, 1px); }
+        }
+
+        .screen-shake {
+            animation: comboScreenShake 0.6s ease-out;
+        }
+
+        /* Cercle cosmique central */
+        .combo-cosmos-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150px;
+            height: 150px;
+            margin: -75px 0 0 -75px;
+            border: 3px solid transparent;
+            border-top-color: #FFD700;
+            border-bottom-color: #FFA500;
+            border-radius: 50%;
+            animation: comboCosmosRing 1s ease-out forwards;
+        }
+
+        @keyframes comboCosmosRing {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(2) rotate(180deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
         .attack-name {
             font-weight: 600;
             font-size: 0.85rem;
@@ -1231,6 +1512,9 @@
     <div class="cosmos-bg">
         <div class="stars"></div>
     </div>
+
+    <!-- Conteneur explosion combo -->
+    <div class="combo-explosion-container" id="comboExplosion"></div>
 
     <!-- Music Player -->
     @if(isset($battleMusics) && $battleMusics->count() > 0)
@@ -1778,6 +2062,99 @@
                         setTimeout(() => sparkle.remove(), 600);
                     }, i * 30);
                 }
+            },
+
+            // Animation explosion COMBO spectaculaire
+            comboExplosion: async function(comboName) {
+                return new Promise((resolve) => {
+                    const container = document.getElementById('comboExplosion');
+                    container.innerHTML = '';
+                    container.classList.add('active');
+
+                    // Ajouter le tremblement d'écran
+                    document.body.classList.add('screen-shake');
+
+                    // Flash doré
+                    const flash = document.createElement('div');
+                    flash.className = 'combo-flash';
+                    container.appendChild(flash);
+
+                    // Ondes de choc (3 vagues)
+                    for (let i = 0; i < 3; i++) {
+                        const shockwave = document.createElement('div');
+                        shockwave.className = 'combo-shockwave';
+                        container.appendChild(shockwave);
+                    }
+
+                    // Cercle cosmique
+                    const cosmosRing = document.createElement('div');
+                    cosmosRing.className = 'combo-cosmos-ring';
+                    container.appendChild(cosmosRing);
+
+                    // Rayons de lumière (12 rayons)
+                    for (let i = 0; i < 12; i++) {
+                        const ray = document.createElement('div');
+                        ray.className = 'combo-ray';
+                        ray.style.transform = `translateX(-50%) rotate(${i * 30}deg)`;
+                        ray.style.animationDelay = `${i * 0.05}s`;
+                        container.appendChild(ray);
+                    }
+
+                    // Particules d'explosion (30 particules)
+                    for (let i = 0; i < 30; i++) {
+                        const particle = document.createElement('div');
+                        particle.className = 'combo-particle';
+                        const angle = (Math.PI * 2 * i) / 30;
+                        const distance = 200 + Math.random() * 300;
+                        const tx = Math.cos(angle) * distance;
+                        const ty = Math.sin(angle) * distance;
+                        particle.style.left = '50%';
+                        particle.style.top = '50%';
+                        particle.style.setProperty('--tx', tx + 'px');
+                        particle.style.setProperty('--ty', ty + 'px');
+                        particle.style.animation = `comboParticle ${0.8 + Math.random() * 0.4}s ease-out forwards`;
+                        particle.style.animationDelay = `${Math.random() * 0.2}s`;
+                        particle.style.width = (6 + Math.random() * 8) + 'px';
+                        particle.style.height = particle.style.width;
+                        container.appendChild(particle);
+                    }
+
+                    // Étoiles cosmiques (8 étoiles)
+                    const starEmojis = ['⭐', '✨', '💫', '🌟', '⚡'];
+                    for (let i = 0; i < 8; i++) {
+                        const star = document.createElement('div');
+                        star.className = 'combo-star';
+                        star.textContent = starEmojis[Math.floor(Math.random() * starEmojis.length)];
+                        const angle = (Math.PI * 2 * i) / 8;
+                        const distance = 100 + Math.random() * 100;
+                        const tx = Math.cos(angle) * distance;
+                        const ty = Math.sin(angle) * distance;
+                        star.style.left = '50%';
+                        star.style.top = '50%';
+                        star.style.setProperty('--tx', tx + 'px');
+                        star.style.setProperty('--ty', ty + 'px');
+                        star.style.animationDelay = `${0.1 + Math.random() * 0.2}s`;
+                        container.appendChild(star);
+                    }
+
+                    // Texte COMBO au centre
+                    const text = document.createElement('div');
+                    text.className = 'combo-text';
+                    text.innerHTML = `⚡ ${comboName || 'COMBO'} ⚡`;
+                    container.appendChild(text);
+
+                    // Retirer le shake après animation
+                    setTimeout(() => {
+                        document.body.classList.remove('screen-shake');
+                    }, 600);
+
+                    // Nettoyer après l'animation
+                    setTimeout(() => {
+                        container.classList.remove('active');
+                        container.innerHTML = '';
+                        resolve();
+                    }, 1800);
+                });
             }
         };
 
@@ -1910,6 +2287,39 @@
         // ========================================
         // CRÉATION DES CARTES
         // ========================================
+        // Vérifie si une carte fait partie d'un combo actif sur le terrain (PvE)
+        function isCardInActiveCombo(card, fieldCards) {
+            const allCombos = gameState.all_combos || [];
+            const fieldCardIds = (fieldCards || []).map(c => c.id);
+
+            for (const combo of allCombos) {
+                const comboCardIds = combo.card_ids || [];
+
+                // Vérifie si cette carte fait partie du combo
+                if (!comboCardIds.includes(card.id)) continue;
+
+                // Vérifie si les 3 cartes du combo sont sur le terrain
+                let matchCount = 0;
+                const usedIndices = [];
+
+                comboCardIds.forEach(comboCardId => {
+                    for (let i = 0; i < fieldCardIds.length; i++) {
+                        if (fieldCardIds[i] === comboCardId && !usedIndices.includes(i)) {
+                            matchCount++;
+                            usedIndices.push(i);
+                            break;
+                        }
+                    }
+                });
+
+                if (matchCount >= 3) {
+                    return { inCombo: true, isLeader: combo.leader_card_id === card.id, comboName: combo.name };
+                }
+            }
+
+            return { inCombo: false, isLeader: false, comboName: null };
+        }
+
         function createBattleCard(card, index, owner) {
             const div = document.createElement('div');
 
@@ -1928,7 +2338,15 @@
             const hpPercent = (card.current_hp / card.max_hp) * 100;
             const hpClass = hpPercent <= 25 ? 'low' : '';
 
+            // Vérifier si la carte fait partie d'un combo actif (seulement pour le joueur)
+            const fieldCards = owner === 'player' ? gameState.player.field : gameState.opponent.field;
+            const comboStatus = owner === 'player' ? isCardInActiveCombo(card, fieldCards) : { inCombo: false };
+            const comboIndicatorHtml = comboStatus.inCombo
+                ? `<div class="combo-indicator" title="${comboStatus.comboName}">${comboStatus.isLeader ? '👑⚡' : '⚡'}</div>`
+                : '';
+
             div.innerHTML = `
+                ${comboIndicatorHtml}
                 <div class="battle-card-image" style="background-image: url('${card.image || ''}'); background-color: ${card.faction?.color_primary || '#333'};"></div>
                 <div class="battle-card-info">
                     <div class="battle-card-name">${card.name}</div>
@@ -2060,6 +2478,40 @@
             renderAll();
         }
 
+        // Détecte les combos disponibles pour une carte (PvE)
+        function detectCombosForCard(card) {
+            const allCombos = gameState.all_combos || [];
+            const fieldCards = gameState.player.field || [];
+            const fieldCardIds = fieldCards.map(c => c.id);
+            const availableCombos = [];
+
+            allCombos.forEach(combo => {
+                // Vérifier si la carte est le leader
+                if (combo.leader_card_id !== card.id) return;
+
+                // Vérifier si les 3 cartes du combo sont sur le terrain
+                const comboCardIds = combo.card_ids || [];
+                let matchCount = 0;
+                const usedIndices = [];
+
+                comboCardIds.forEach(comboCardId => {
+                    for (let i = 0; i < fieldCardIds.length; i++) {
+                        if (fieldCardIds[i] === comboCardId && !usedIndices.includes(i)) {
+                            matchCount++;
+                            usedIndices.push(i);
+                            break;
+                        }
+                    }
+                });
+
+                if (matchCount >= 3) {
+                    availableCombos.push(combo);
+                }
+            });
+
+            return availableCombos;
+        }
+
         function showAttackPanel(card) {
             const panel = document.getElementById('actionPanel');
             const overlay = document.getElementById('actionPanelOverlay');
@@ -2121,6 +2573,62 @@
                 list.appendChild(btn);
             });
 
+            // Détecter les combos disponibles pour cette carte
+            const availableCombos = detectCombosForCard(card);
+
+            if (availableCombos.length > 0) {
+                // Séparateur COMBOS
+                const separator = document.createElement('div');
+                separator.className = 'combo-separator';
+                separator.innerHTML = `<span>⚡ COMBOS ⚡</span>`;
+                list.appendChild(separator);
+
+                availableCombos.forEach(combo => {
+                    const totalEndCost = (combo.attack?.endurance_cost || 0) + (combo.endurance_cost || 0);
+                    const totalCosCost = (combo.attack?.cosmos_cost || 0) + (combo.cosmos_cost || 0);
+
+                    const hasEndurance = (card.current_endurance || 0) >= totalEndCost;
+                    const hasCosmos = (gameState.player.cosmos || 0) >= totalCosCost;
+
+                    // Vérifier si le combo a déjà été utilisé (une seule fois par partie)
+                    const usedCombos = gameState.used_combos || [];
+                    const alreadyUsed = usedCombos.includes(combo.id);
+
+                    const canUse = hasEndurance && hasCosmos && !alreadyUsed;
+
+                    const btn = document.createElement('button');
+                    btn.className = 'attack-btn combo-attack';
+                    btn.disabled = !canUse;
+
+                    let reasonText = '';
+                    if (alreadyUsed) reasonText = '(Déjà utilisé)';
+                    else if (!hasEndurance) reasonText = '(END insuffisant)';
+                    else if (!hasCosmos) reasonText = '(COS insuffisant)';
+
+                    btn.innerHTML = `
+                        <div style="width: 100%;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="font-weight: 600; color: ${alreadyUsed ? '#6B7280' : '#FFD700'};">${alreadyUsed ? '✓' : '⚡'} ${combo.name}</div>
+                                <div style="font-size: 1.2rem; color: ${alreadyUsed ? '#6B7280' : '#FFD700'}; font-weight: bold;">
+                                    ${combo.attack?.damage || 0} 💥
+                                </div>
+                            </div>
+                            <div style="font-size: 0.65rem; color: ${alreadyUsed ? '#6B7280' : '#FCD34D'}; margin-top: 2px;">
+                                ${combo.attack?.name || 'Attaque Combo'}
+                            </div>
+                            <div style="font-size: 0.7rem; color: #9CA3AF; margin-top: 4px;">
+                                ⚡ ${totalEndCost} END | 🌟 ${totalCosCost} COS
+                                ${reasonText ? `<span style="color: ${alreadyUsed ? '#9CA3AF' : '#F87171'}; margin-left: 5px;">${reasonText}</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    btn.onclick = () => {
+                        if (canUse) selectAttack(`combo_${combo.id}`);
+                    };
+                    list.appendChild(btn);
+                });
+            }
+
             // ✅ Afficher l'overlay ET le panneau
             overlay.classList.add('visible');
             panel.classList.add('visible');
@@ -2179,6 +2687,18 @@
                 element: 'fire',
                 damage: card.main_attack?.damage || 50
             };
+
+            // Si c'est une attaque combo, lancer l'explosion spectaculaire d'abord
+            const isComboAttack = selectedAttack && selectedAttack.startsWith('combo_');
+            if (isComboAttack) {
+                // Trouver le nom du combo pour l'afficher
+                const comboId = parseInt(selectedAttack.replace('combo_', ''));
+                const allCombos = gameState.all_combos || [];
+                const combo = allCombos.find(c => c.id === comboId);
+                const comboName = combo ? combo.name : 'COMBO';
+
+                await animations.comboExplosion(comboName);
+            }
 
             await animations.attackAnimation(attackerCard, targetCard, attackData);
 

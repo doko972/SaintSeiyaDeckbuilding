@@ -5,12 +5,20 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Card;
 use App\Models\Deck;
+use App\Services\ComboService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 
 class GameApiController extends Controller
 {
+    protected ComboService $comboService;
+
+    public function __construct(ComboService $comboService)
+    {
+        $this->comboService = $comboService;
+    }
+
     /**
      * Normaliser l'état du jeu (réindexer tous les tableaux)
      * Évite les problèmes de conversion JSON avec des clés non séquentielles
@@ -167,6 +175,10 @@ class GameApiController extends Controller
                 'max_cosmos' => 5,
                 'health' => 30,
             ],
+            // Charger tous les combos actifs pour le combat
+            'all_combos' => $this->comboService->getAllActiveCombos(),
+            // Tracker les combos utilisés (une seule utilisation par partie)
+            'used_combos' => [],
         ];
 
         // IA joue des cartes au début
@@ -282,21 +294,77 @@ class GameApiController extends Controller
         $targetCurrentHp = $state['opponent']['field'][$targetIndex]['current_hp'];
 
         // Déterminer l'attaque
-        $attack = match ($attackType) {
-            'main' => $state['player']['field'][$attackerIndex]['main_attack'] ?? null,
-            'secondary1' => $state['player']['field'][$attackerIndex]['secondary_attack_1'] ?? null,
-            'secondary2' => $state['player']['field'][$attackerIndex]['secondary_attack_2'] ?? null,
-            default => null,
-        };
+        $isComboAttack = false;
+        $comboName = null;
+        $attacker = $state['player']['field'][$attackerIndex];
 
-        if (!$attack) {
-            // Attaque basique
-            $attack = [
-                'name' => 'Attaque',
-                'damage' => 50,
-                'endurance_cost' => 20,
-                'cosmos_cost' => 0,
-            ];
+        // Vérifier si c'est une attaque combo (format: combo_X où X est l'ID du combo)
+        if (str_starts_with($attackType, 'combo_')) {
+            $comboId = (int) str_replace('combo_', '', $attackType);
+            $allCombos = $state['all_combos'] ?? [];
+
+            // Trouver le combo
+            $combo = null;
+            foreach ($allCombos as $c) {
+                if ($c['id'] === $comboId) {
+                    $combo = $c;
+                    break;
+                }
+            }
+
+            if (!$combo) {
+                return response()->json(['message' => 'Combo non trouvé'], 400);
+            }
+
+            // Vérifier si le combo a déjà été utilisé dans cette partie
+            $usedCombos = $state['used_combos'] ?? [];
+            if (in_array($comboId, $usedCombos)) {
+                return response()->json(['message' => 'Ce combo a déjà été utilisé dans cette partie'], 400);
+            }
+
+            // Vérifier que la carte est le leader
+            if ($attacker['id'] !== $combo['leader_card_id']) {
+                return response()->json(['message' => 'Cette carte n\'est pas le leader du combo'], 400);
+            }
+
+            // Vérifier que le combo est actif sur le terrain
+            $canUseResult = $this->comboService->canUseCombo(
+                $combo,
+                $attacker,
+                $state['player']['cosmos'] ?? 0,
+                $state['player']['field']
+            );
+
+            if (!$canUseResult['can_use']) {
+                return response()->json(['message' => $canUseResult['reason']], 400);
+            }
+
+            // Utiliser l'attaque du combo
+            $attack = $combo['attack'];
+            $isComboAttack = true;
+            $comboName = $combo['name'];
+            $usedComboId = $comboId; // Sauvegarder pour marquer comme utilisé
+
+            // Ajouter les coûts supplémentaires du combo
+            $attack['endurance_cost'] = ($attack['endurance_cost'] ?? 0) + ($combo['endurance_cost'] ?? 0);
+            $attack['cosmos_cost'] = ($attack['cosmos_cost'] ?? 0) + ($combo['cosmos_cost'] ?? 0);
+        } else {
+            $attack = match ($attackType) {
+                'main' => $state['player']['field'][$attackerIndex]['main_attack'] ?? null,
+                'secondary1' => $state['player']['field'][$attackerIndex]['secondary_attack_1'] ?? null,
+                'secondary2' => $state['player']['field'][$attackerIndex]['secondary_attack_2'] ?? null,
+                default => null,
+            };
+
+            if (!$attack) {
+                // Attaque basique
+                $attack = [
+                    'name' => 'Attaque',
+                    'damage' => 50,
+                    'endurance_cost' => 20,
+                    'cosmos_cost' => 0,
+                ];
+            }
         }
 
         // Vérifier les coûts
@@ -318,7 +386,17 @@ class GameApiController extends Controller
         $state['player']['cosmos'] -= $attack['cosmos_cost'];
         $state['player']['field'][$attackerIndex]['has_attacked'] = true;
 
-        $message = "{$attackerName} utilise {$attack['name']} sur {$targetName} (-{$damage} PV)";
+        // Marquer le combo comme utilisé (une seule utilisation par partie)
+        if ($isComboAttack && isset($usedComboId)) {
+            if (!isset($state['used_combos'])) {
+                $state['used_combos'] = [];
+            }
+            $state['used_combos'][] = $usedComboId;
+        }
+
+        $message = $isComboAttack
+            ? "⚡ COMBO {$comboName} ! {$attackerName} utilise {$attack['name']} sur {$targetName} (-{$damage} PV)"
+            : "{$attackerName} utilise {$attack['name']} sur {$targetName} (-{$damage} PV)";
         $battleEnded = false;
         $winner = null;
 

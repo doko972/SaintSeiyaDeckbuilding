@@ -6,12 +6,20 @@ use App\Models\Battle;
 use App\Models\Deck;
 use App\Models\Music;
 use App\Models\User;
+use App\Services\ComboService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class PvpController extends Controller
 {
+    protected ComboService $comboService;
+
+    public function __construct(ComboService $comboService)
+    {
+        $this->comboService = $comboService;
+    }
+
     /**
      * Affiche le lobby PvP
      */
@@ -300,6 +308,13 @@ class PvpController extends Controller
                 'field' => [],
                 'cosmos' => 5,
                 'max_cosmos' => 5,
+            ],
+            // Charger tous les combos actifs pour le combat
+            'all_combos' => $this->comboService->getAllActiveCombos(),
+            // Tracker les combos utilisés (une seule utilisation par partie)
+            'used_combos' => [
+                'player1' => [],
+                'player2' => [],
             ],
         ];
     }

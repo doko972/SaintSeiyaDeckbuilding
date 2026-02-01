@@ -806,6 +806,9 @@
                     <a href="{{ route('admin.musics.index') }}" class="admin-btn">
                         <span>🎵</span> Gestion musiques
                     </a>
+                    <a href="{{ route('admin.combos.index') }}" class="admin-btn">
+                        <span>⚡</span> Gestion combos
+                    </a>
                 </div>
             </div>
             @endif

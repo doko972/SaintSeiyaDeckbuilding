@@ -571,6 +571,287 @@
 
         .attack-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+        /* Styles pour les combos */
+        .combo-separator {
+            text-align: center;
+            padding: 0.5rem 0;
+            margin: 0.5rem 0;
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            font-weight: bold;
+            color: #FFD700;
+            font-size: 0.8rem;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            animation: comboPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes comboPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+        }
+
+        .combo-attack {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15)) !important;
+            border: 1px solid rgba(255, 215, 0, 0.4) !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .combo-attack::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+            animation: comboShine 3s ease-in-out infinite;
+        }
+
+        @keyframes comboShine {
+            0% { left: -100%; }
+            50%, 100% { left: 100%; }
+        }
+
+        .combo-attack:hover:not(:disabled) {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(255, 165, 0, 0.25)) !important;
+            border-color: rgba(255, 215, 0, 0.6) !important;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Indicateur combo sur les cartes */
+        .combo-indicator {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 8px;
+            z-index: 10;
+            animation: comboIndicatorPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes comboIndicatorPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+            50% { transform: scale(1.1); box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+        }
+
+        /* ========================================
+           EXPLOSION COMBO - ANIMATION SPECTACULAIRE
+        ======================================== */
+        .combo-explosion-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+
+        .combo-explosion-container.active {
+            display: block;
+        }
+
+        /* Flash doré initial */
+        .combo-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.9) 0%, rgba(255, 165, 0, 0.6) 30%, transparent 70%);
+            opacity: 0;
+            animation: comboFlash 0.8s ease-out forwards;
+        }
+
+        @keyframes comboFlash {
+            0% { opacity: 0; transform: scale(0.5); }
+            20% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0; transform: scale(2); }
+        }
+
+        /* Cercle d'onde de choc */
+        .combo-shockwave {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            margin: -50px 0 0 -50px;
+            border: 4px solid rgba(255, 215, 0, 0.8);
+            border-radius: 50%;
+            animation: comboShockwave 1s ease-out forwards;
+        }
+
+        .combo-shockwave:nth-child(2) { animation-delay: 0.1s; }
+        .combo-shockwave:nth-child(3) { animation-delay: 0.2s; }
+
+        @keyframes comboShockwave {
+            0% { transform: scale(0); opacity: 1; border-width: 8px; }
+            100% { transform: scale(15); opacity: 0; border-width: 1px; }
+        }
+
+        /* Particules d'explosion */
+        .combo-particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 50%;
+            box-shadow: 0 0 20px #FFD700, 0 0 40px #FFA500;
+        }
+
+        @keyframes comboParticle {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Étoiles cosmiques */
+        .combo-star {
+            position: absolute;
+            font-size: 2rem;
+            animation: comboStar 1.2s ease-out forwards;
+        }
+
+        @keyframes comboStar {
+            0% {
+                transform: translate(-50%, -50%) scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(180deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(calc(var(--tx) * 2), calc(var(--ty) * 2)) scale(0) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Texte COMBO au centre */
+        .combo-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: 900;
+            color: #FFD700;
+            text-shadow:
+                0 0 10px #FFD700,
+                0 0 20px #FFA500,
+                0 0 40px #FF6B00,
+                0 0 80px #FF0000,
+                2px 2px 0 #8B0000;
+            animation: comboText 1.5s ease-out forwards;
+            white-space: nowrap;
+        }
+
+        @keyframes comboText {
+            0% {
+                transform: translate(-50%, -50%) scale(0) rotate(-10deg);
+                opacity: 0;
+            }
+            30% {
+                transform: translate(-50%, -50%) scale(1.3) rotate(5deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.5) rotate(0deg);
+                opacity: 0;
+            }
+        }
+
+        /* Rayons de lumière */
+        .combo-ray {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 200px;
+            background: linear-gradient(to top, transparent, rgba(255, 215, 0, 0.8), transparent);
+            transform-origin: bottom center;
+            animation: comboRay 1s ease-out forwards;
+        }
+
+        @keyframes comboRay {
+            0% {
+                transform: translateX(-50%) scaleY(0);
+                opacity: 1;
+            }
+            50% {
+                transform: translateX(-50%) scaleY(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-50%) scaleY(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Effet de tremblement d'écran */
+        @keyframes comboScreenShake {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-10px, -5px); }
+            20% { transform: translate(10px, 5px); }
+            30% { transform: translate(-8px, 8px); }
+            40% { transform: translate(8px, -8px); }
+            50% { transform: translate(-5px, 5px); }
+            60% { transform: translate(5px, -5px); }
+            70% { transform: translate(-3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            90% { transform: translate(-1px, 1px); }
+        }
+
+        .screen-shake {
+            animation: comboScreenShake 0.6s ease-out;
+        }
+
+        /* Cercle cosmique central */
+        .combo-cosmos-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150px;
+            height: 150px;
+            margin: -75px 0 0 -75px;
+            border: 3px solid transparent;
+            border-top-color: #FFD700;
+            border-bottom-color: #FFA500;
+            border-radius: 50%;
+            animation: comboCosmosRing 1s ease-out forwards;
+        }
+
+        @keyframes comboCosmosRing {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(2) rotate(180deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
         .cancel-btn {
             width: 100%;
             padding: 0.5rem;
@@ -1357,6 +1638,9 @@
     </div>
     <img src="{{ asset('images/baniere.webp') }}" alt="" class="bg-image">
 
+    <!-- Conteneur explosion combo -->
+    <div class="combo-explosion-container" id="comboExplosion"></div>
+
     <!-- Music Player -->
     @if(isset($battleMusics) && $battleMusics->count() > 0)
     <audio id="battleMusic" loop preload="auto">
@@ -1532,6 +1816,7 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
         let gameState = @json($battle->battle_state);
+        let previousGameState = JSON.parse(JSON.stringify(gameState)); // Pour détecter les changements
         let isMyTurn = {{ $isMyTurn ? 'true' : 'false' }};
         let selectedAttacker = null;
         let selectedAttack = null;
@@ -1839,8 +2124,332 @@
                         setTimeout(() => sparkle.remove(), 600);
                     }, i * 30);
                 }
+            },
+
+            // Animation explosion COMBO spectaculaire
+            comboExplosion: async function(comboName) {
+                return new Promise((resolve) => {
+                    const container = document.getElementById('comboExplosion');
+                    container.innerHTML = '';
+                    container.classList.add('active');
+
+                    // Ajouter le tremblement d'écran
+                    document.body.classList.add('screen-shake');
+
+                    // Flash doré
+                    const flash = document.createElement('div');
+                    flash.className = 'combo-flash';
+                    container.appendChild(flash);
+
+                    // Ondes de choc (3 vagues)
+                    for (let i = 0; i < 3; i++) {
+                        const shockwave = document.createElement('div');
+                        shockwave.className = 'combo-shockwave';
+                        container.appendChild(shockwave);
+                    }
+
+                    // Cercle cosmique
+                    const cosmosRing = document.createElement('div');
+                    cosmosRing.className = 'combo-cosmos-ring';
+                    container.appendChild(cosmosRing);
+
+                    // Rayons de lumière (12 rayons)
+                    for (let i = 0; i < 12; i++) {
+                        const ray = document.createElement('div');
+                        ray.className = 'combo-ray';
+                        ray.style.transform = `translateX(-50%) rotate(${i * 30}deg)`;
+                        ray.style.animationDelay = `${i * 0.05}s`;
+                        container.appendChild(ray);
+                    }
+
+                    // Particules d'explosion (30 particules)
+                    for (let i = 0; i < 30; i++) {
+                        const particle = document.createElement('div');
+                        particle.className = 'combo-particle';
+                        const angle = (Math.PI * 2 * i) / 30;
+                        const distance = 200 + Math.random() * 300;
+                        const tx = Math.cos(angle) * distance;
+                        const ty = Math.sin(angle) * distance;
+                        particle.style.left = '50%';
+                        particle.style.top = '50%';
+                        particle.style.setProperty('--tx', tx + 'px');
+                        particle.style.setProperty('--ty', ty + 'px');
+                        particle.style.animation = `comboParticle ${0.8 + Math.random() * 0.4}s ease-out forwards`;
+                        particle.style.animationDelay = `${Math.random() * 0.2}s`;
+                        particle.style.width = (6 + Math.random() * 8) + 'px';
+                        particle.style.height = particle.style.width;
+                        container.appendChild(particle);
+                    }
+
+                    // Étoiles cosmiques (8 étoiles)
+                    const starEmojis = ['⭐', '✨', '💫', '🌟', '⚡'];
+                    for (let i = 0; i < 8; i++) {
+                        const star = document.createElement('div');
+                        star.className = 'combo-star';
+                        star.textContent = starEmojis[Math.floor(Math.random() * starEmojis.length)];
+                        const angle = (Math.PI * 2 * i) / 8;
+                        const distance = 100 + Math.random() * 100;
+                        const tx = Math.cos(angle) * distance;
+                        const ty = Math.sin(angle) * distance;
+                        star.style.left = '50%';
+                        star.style.top = '50%';
+                        star.style.setProperty('--tx', tx + 'px');
+                        star.style.setProperty('--ty', ty + 'px');
+                        star.style.animationDelay = `${0.1 + Math.random() * 0.2}s`;
+                        container.appendChild(star);
+                    }
+
+                    // Texte COMBO au centre
+                    const text = document.createElement('div');
+                    text.className = 'combo-text';
+                    text.innerHTML = `⚡ ${comboName || 'COMBO'} ⚡`;
+                    container.appendChild(text);
+
+                    // Retirer le shake après animation
+                    setTimeout(() => {
+                        document.body.classList.remove('screen-shake');
+                    }, 600);
+
+                    // Nettoyer après l'animation
+                    setTimeout(() => {
+                        container.classList.remove('active');
+                        container.innerHTML = '';
+                        resolve();
+                    }, 1800);
+                });
             }
         };
+
+        // ========================================
+        // ANIMATIONS ADVERSAIRE
+        // ========================================
+
+        // Détecter et animer les actions de l'adversaire
+        async function detectAndAnimateOpponentActions(oldState, newState) {
+            const oldOpponent = playerNumber === 1 ? oldState.player2 : oldState.player1;
+            const newOpponent = playerNumber === 1 ? newState.player2 : newState.player1;
+            const oldMy = playerNumber === 1 ? oldState.player1 : oldState.player2;
+            const newMy = playerNumber === 1 ? newState.player1 : newState.player2;
+
+            // Sauvegarder les références des cartes du joueur AVANT le rendu
+            const playerCardElements = {};
+            const playerCardsByName = {};
+            document.querySelectorAll('.battle-card[data-owner="player"]').forEach(card => {
+                const index = card.dataset.cardIndex;
+                const name = card.querySelector('.battle-card-name')?.textContent;
+                if (index !== undefined) {
+                    playerCardElements[index] = card;
+                }
+                if (name) {
+                    playerCardsByName[name] = card;
+                }
+            });
+
+            // Détecter les nouvelles cartes jouées par l'adversaire
+            const oldFieldIds = oldOpponent.field.map(c => c.id + '_' + c.name);
+            const newFieldIds = newOpponent.field.map(c => c.id + '_' + c.name);
+
+            for (let i = 0; i < newOpponent.field.length; i++) {
+                const card = newOpponent.field[i];
+                const cardKey = card.id + '_' + card.name;
+                if (!oldFieldIds.includes(cardKey)) {
+                    // Nouvelle carte jouée
+                    await animateOpponentPlayCard(card.name);
+                    addLogEntry(`🃏 L'adversaire joue ${card.name}`, 'info');
+                }
+            }
+
+            // Détecter quelle carte adverse a attaqué (has_attacked passé de false à true)
+            let attackerIndex = -1;
+            for (let i = 0; i < newOpponent.field.length; i++) {
+                const newOppCard = newOpponent.field[i];
+                const oldOppCard = oldOpponent.field.find(c => c.name === newOppCard.name && c.id === newOppCard.id);
+
+                if (oldOppCard && !oldOppCard.has_attacked && newOppCard.has_attacked) {
+                    attackerIndex = i;
+                    break;
+                }
+            }
+
+            // Détecter les attaques (cartes du joueur qui ont perdu des HP ou ont été détruites)
+            for (const oldCard of oldMy.field) {
+                const newCard = newMy.field.find(c => c.name === oldCard.name && c.id === oldCard.id);
+
+                if (newCard && newCard.current_hp < oldCard.current_hp) {
+                    // Carte encore vivante mais a perdu des HP
+                    const damage = oldCard.current_hp - newCard.current_hp;
+                    await animateOpponentAttack(oldCard.name, damage, playerCardsByName, attackerIndex);
+                    addLogEntry(`⚔️ L'adversaire attaque ${oldCard.name} (-${damage} PV)`, 'damage');
+                } else if (!newCard) {
+                    // Carte détruite - jouer l'animation d'attaque PUIS la destruction
+                    const targetCard = playerCardsByName[oldCard.name];
+                    if (targetCard && targetCard.parentNode) {
+                        // Animation d'attaque avec les HP restants comme dégâts
+                        const damage = oldCard.current_hp;
+                        await animateOpponentAttack(oldCard.name, damage, playerCardsByName, attackerIndex);
+                        addLogEntry(`⚔️ L'adversaire attaque ${oldCard.name} (-${damage} PV)`, 'damage');
+                        addLogEntry(`💀 ${oldCard.name} a été vaincu !`, 'damage');
+                        await animations.destroyCardAnimation(targetCard);
+                    }
+                }
+            }
+
+            // Détecter pioche adversaire (taille de la main augmente, deck diminue)
+            if (newOpponent.hand.length > oldOpponent.hand.length &&
+                newOpponent.deck.length < oldOpponent.deck.length) {
+                await animateOpponentDraw();
+                addLogEntry(`🎴 L'adversaire pioche une carte`, 'info');
+            }
+        }
+
+        async function animateOpponentDraw() {
+            const opponentField = document.getElementById('opponentField');
+            const rect = opponentField.getBoundingClientRect();
+
+            // Créer une carte temporaire pour l'animation
+            const tempCard = document.createElement('div');
+            tempCard.style.cssText = `
+                position: fixed;
+                width: 60px;
+                height: 80px;
+                background: linear-gradient(145deg, #EF4444, #DC2626);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 8px;
+                z-index: 1000;
+                left: ${rect.right + 50}px;
+                top: ${rect.top}px;
+                opacity: 0;
+                transform: scale(0.5);
+            `;
+            document.body.appendChild(tempCard);
+
+            // Animation d'entrée
+            await new Promise(resolve => {
+                setTimeout(() => {
+                    tempCard.style.transition = 'all 0.5s ease-out';
+                    tempCard.style.opacity = '1';
+                    tempCard.style.transform = 'scale(1)';
+                    tempCard.style.left = (rect.left + rect.width / 2 - 30) + 'px';
+                }, 50);
+
+                setTimeout(() => {
+                    tempCard.style.opacity = '0';
+                    tempCard.style.transform = 'scale(0.8)';
+                }, 400);
+
+                setTimeout(() => {
+                    tempCard.remove();
+                    resolve();
+                }, 600);
+            });
+        }
+
+        async function animateOpponentPlayCard(cardName) {
+            const tempCard = document.createElement('div');
+            tempCard.className = 'battle-card';
+            tempCard.style.position = 'fixed';
+            tempCard.style.width = '140px';
+            tempCard.style.height = '180px';
+            tempCard.style.background = 'linear-gradient(145deg, #EF4444, #DC2626)';
+            tempCard.style.border = '2px solid rgba(255, 255, 255, 0.3)';
+            tempCard.style.borderRadius = '12px';
+            tempCard.style.display = 'flex';
+            tempCard.style.alignItems = 'center';
+            tempCard.style.justifyContent = 'center';
+            tempCard.style.color = 'white';
+            tempCard.style.fontWeight = 'bold';
+            tempCard.style.fontSize = '0.9rem';
+            tempCard.style.textAlign = 'center';
+            tempCard.style.padding = '1rem';
+            tempCard.style.zIndex = '1000';
+            tempCard.textContent = cardName;
+
+            const opponentField = document.getElementById('opponentField');
+            const fieldRect = opponentField.getBoundingClientRect();
+
+            tempCard.style.left = (fieldRect.left - 100) + 'px';
+            tempCard.style.top = '50px';
+            tempCard.style.opacity = '0';
+
+            document.body.appendChild(tempCard);
+
+            await new Promise(resolve => {
+                setTimeout(() => {
+                    tempCard.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    tempCard.style.left = (fieldRect.left + fieldRect.width / 2 - 70) + 'px';
+                    tempCard.style.top = (fieldRect.top + 20) + 'px';
+                    tempCard.style.opacity = '1';
+                    tempCard.style.transform = 'rotateY(360deg) scale(1.1)';
+                }, 50);
+
+                setTimeout(() => {
+                    animations.createSparkles(
+                        fieldRect.left + fieldRect.width / 2,
+                        fieldRect.top + fieldRect.height / 2,
+                        '#EF4444'
+                    );
+                }, 500);
+
+                setTimeout(() => {
+                    tempCard.style.transition = 'all 0.3s ease-out';
+                    tempCard.style.transform = 'scale(1)';
+                }, 800);
+
+                setTimeout(() => {
+                    tempCard.remove();
+                    resolve();
+                }, 1100);
+            });
+        }
+
+        async function animateOpponentAttack(targetName, damage, playerCardsByName, attackerIndex = -1) {
+            console.log('🎯 Animation attaque adversaire sur:', targetName, 'Dégâts:', damage, 'Attaquant index:', attackerIndex);
+
+            // Trouver la carte attaquante
+            const opponentCards = document.querySelectorAll('.battle-card[data-owner="opponent"]');
+            if (opponentCards.length === 0) {
+                console.log('⚠️ Pas de cartes adverses à animer');
+                return;
+            }
+
+            // Utiliser l'index de l'attaquant si fourni, sinon prendre la première carte
+            const attackerCard = (attackerIndex >= 0 && attackerIndex < opponentCards.length)
+                ? opponentCards[attackerIndex]
+                : opponentCards[0];
+
+            // Trouver la carte cible
+            let targetCard = playerCardsByName[targetName];
+
+            // Fallback: chercher dans le DOM actuel
+            if (!targetCard) {
+                const playerCards = document.querySelectorAll('.battle-card[data-owner="player"]');
+                for (const card of playerCards) {
+                    const name = card.querySelector('.battle-card-name')?.textContent;
+                    if (name === targetName) {
+                        targetCard = card;
+                        break;
+                    }
+                }
+                // Dernier fallback: première carte du joueur
+                if (!targetCard && playerCards.length > 0) {
+                    targetCard = playerCards[0];
+                }
+            }
+
+            if (!targetCard || !targetCard.parentNode) {
+                console.log('⚠️ Pas de carte cible valide');
+                return;
+            }
+
+            // Animation d'attaque
+            await animations.attackAnimation(attackerCard, targetCard, {
+                element: 'fire',
+                damage: damage
+            });
+
+            animations.showDamage(targetCard, damage, 'damage');
+            animations.shakeElement(targetCard);
+        }
 
         // ========================================
         // INITIALISATION
@@ -1908,8 +2517,21 @@
 
                 if (data.battle_state) {
                     const wasMyTurn = isMyTurn;
-                    gameState = data.battle_state;
+                    const newState = data.battle_state;
+
+                    // Détecter si l'état a changé (pour éviter de rejouer les animations)
+                    const stateChanged = JSON.stringify(previousGameState) !== JSON.stringify(newState);
+
+                    if (stateChanged && !wasMyTurn) {
+                        // Animer les actions de l'adversaire AVANT de mettre à jour l'affichage
+                        // (utilise les éléments DOM actuels pour les animations)
+                        await detectAndAnimateOpponentActions(previousGameState, newState);
+                    }
+
+                    // Mettre à jour le state et l'affichage
+                    gameState = newState;
                     isMyTurn = data.is_my_turn;
+                    previousGameState = JSON.parse(JSON.stringify(newState));
 
                     renderAll();
                     updateTurnUI();
@@ -2020,12 +2642,45 @@
             });
         }
 
+        // Vérifie si une carte fait partie d'un combo actif sur le terrain
+        function isCardInActiveCombo(card, state) {
+            const allCombos = gameState.all_combos || [];
+            const fieldCardIds = (state.field || []).map(c => c.id);
+
+            for (const combo of allCombos) {
+                const comboCardIds = combo.card_ids || [];
+
+                // Vérifie si cette carte fait partie du combo
+                if (!comboCardIds.includes(card.id)) continue;
+
+                // Vérifie si les 3 cartes du combo sont sur le terrain
+                let matchCount = 0;
+                const usedIndices = [];
+
+                comboCardIds.forEach(comboCardId => {
+                    for (let i = 0; i < fieldCardIds.length; i++) {
+                        if (fieldCardIds[i] === comboCardId && !usedIndices.includes(i)) {
+                            matchCount++;
+                            usedIndices.push(i);
+                            break;
+                        }
+                    }
+                });
+
+                if (matchCount >= 3) {
+                    return { inCombo: true, isLeader: combo.leader_card_id === card.id, comboName: combo.name };
+                }
+            }
+
+            return { inCombo: false, isLeader: false, comboName: null };
+        }
+
         function createBattleCard(card, index, owner) {
             const div = document.createElement('div');
             div.className = 'battle-card';
             div.dataset.cardIndex = index;
             div.dataset.owner = owner;
-            
+
             if (card.faction) {
                 div.style.setProperty('--color1', card.faction.color_primary || '#333');
                 div.style.setProperty('--color2', card.faction.color_secondary || '#555');
@@ -2033,7 +2688,15 @@
 
             const hpPercent = (card.current_hp / card.max_hp) * 100;
 
+            // Vérifier si la carte fait partie d'un combo actif
+            const state = owner === 'player' ? getMyState() : getOpponentState();
+            const comboStatus = isCardInActiveCombo(card, state);
+            const comboIndicatorHtml = comboStatus.inCombo
+                ? `<div class="combo-indicator" title="${comboStatus.comboName}">${comboStatus.isLeader ? '👑⚡' : '⚡'}</div>`
+                : '';
+
             div.innerHTML = `
+                ${comboIndicatorHtml}
                 <div class="battle-card-image" style="background-image: url('${card.image || ''}'); background-color: ${card.faction?.color_primary || '#333'};"></div>
                 <div class="battle-card-info">
                     <div class="battle-card-name">${card.name}</div>
@@ -2141,6 +2804,7 @@
 
                 if (data.success) {
                     gameState = data.battle_state;
+                    previousGameState = JSON.parse(JSON.stringify(gameState));
                     addLogEntry(`🎴 Vous jouez ${data.card_played}`, 'info');
                     renderAll();
                 } else {
@@ -2168,6 +2832,40 @@
             phase = 'selectingAttack';
             showAttackPanel(card);
             renderAll();
+        }
+
+        // Détecte les combos disponibles pour une carte
+        function detectCombosForCard(card, state) {
+            const allCombos = gameState.all_combos || [];
+            const fieldCards = state.field || [];
+            const fieldCardIds = fieldCards.map(c => c.id);
+            const availableCombos = [];
+
+            allCombos.forEach(combo => {
+                // Vérifier si la carte est le leader
+                if (combo.leader_card_id !== card.id) return;
+
+                // Vérifier si les 3 cartes du combo sont sur le terrain
+                const comboCardIds = combo.card_ids || [];
+                let matchCount = 0;
+                const usedIndices = [];
+
+                comboCardIds.forEach(comboCardId => {
+                    for (let i = 0; i < fieldCardIds.length; i++) {
+                        if (fieldCardIds[i] === comboCardId && !usedIndices.includes(i)) {
+                            matchCount++;
+                            usedIndices.push(i);
+                            break;
+                        }
+                    }
+                });
+
+                if (matchCount >= 3) {
+                    availableCombos.push(combo);
+                }
+            });
+
+            return availableCombos;
         }
 
         function showAttackPanel(card) {
@@ -2239,6 +2937,62 @@
                 list.appendChild(btn);
             });
 
+            // Détecter les combos disponibles pour cette carte
+            const availableCombos = detectCombosForCard(card, state);
+
+            if (availableCombos.length > 0) {
+                // Séparateur COMBOS
+                const separator = document.createElement('div');
+                separator.className = 'combo-separator';
+                separator.innerHTML = `<span>⚡ COMBOS ⚡</span>`;
+                list.appendChild(separator);
+
+                availableCombos.forEach(combo => {
+                    const totalEndCost = (combo.attack?.endurance_cost || 0) + (combo.endurance_cost || 0);
+                    const totalCosCost = (combo.attack?.cosmos_cost || 0) + (combo.cosmos_cost || 0);
+
+                    const hasEndurance = (card.current_endurance || 0) >= totalEndCost;
+                    const hasCosmos = (state.cosmos || 0) >= totalCosCost;
+
+                    // Vérifier si le combo a déjà été utilisé (une seule fois par partie)
+                    const playerKey = playerNumber === 1 ? 'player1' : 'player2';
+                    const usedCombos = gameState.used_combos?.[playerKey] || [];
+                    const alreadyUsed = usedCombos.includes(combo.id);
+
+                    const canUse = hasEndurance && hasCosmos && !alreadyUsed;
+
+                    const btn = document.createElement('button');
+                    btn.className = 'attack-btn combo-attack';
+                    btn.disabled = !canUse;
+
+                    let costInfo = '';
+                    if (totalEndCost > 0) costInfo += `⚡${totalEndCost}`;
+                    if (totalCosCost > 0) costInfo += ` 🌟${totalCosCost}`;
+
+                    let reasonText = '';
+                    if (alreadyUsed) reasonText = '(Déjà utilisé)';
+                    else if (!hasEndurance) reasonText = '(Endurance insuffisante)';
+                    else if (!hasCosmos) reasonText = '(Cosmos insuffisant)';
+
+                    btn.innerHTML = `
+                        <div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;">
+                            <div style="display: flex; justify-content: space-between; width: 100%;">
+                                <span style="color: ${alreadyUsed ? '#6B7280' : '#FFD700'}; font-weight: bold;">${alreadyUsed ? '✓' : '⚡'} ${combo.name}</span>
+                                <span style="font-size:0.7rem;color:${alreadyUsed ? '#6B7280' : '#FFD700'};">⚔️${combo.attack?.damage || 0}</span>
+                            </div>
+                            <div style="font-size: 0.6rem; color: ${alreadyUsed ? '#6B7280' : '#FCD34D'}; margin-top: 2px;">
+                                ${combo.attack?.name || 'Attaque Combo'}
+                            </div>
+                            <div style="font-size: 0.65rem; color: #9CA3AF; margin-top: 2px;">
+                                Coût: ${costInfo || 'Aucun'} ${reasonText ? `<span style="color: ${alreadyUsed ? '#9CA3AF' : '#F87171'};">${reasonText}</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    btn.onclick = () => selectAttack(`combo_${combo.id}`);
+                    list.appendChild(btn);
+                });
+            }
+
             // Afficher l'overlay ET le panneau
             document.getElementById('actionPanelOverlay').classList.add('visible');
             panel.classList.add('visible');
@@ -2288,6 +3042,18 @@
                 damage: attackDamage
             };
 
+            // Si c'est une attaque combo, lancer l'explosion spectaculaire d'abord
+            const isComboAttack = selectedAttack && selectedAttack.startsWith('combo_');
+            if (isComboAttack) {
+                // Trouver le nom du combo pour l'afficher
+                const comboId = parseInt(selectedAttack.replace('combo_', ''));
+                const allCombos = gameState.all_combos || [];
+                const combo = allCombos.find(c => c.id === comboId);
+                const comboName = combo ? combo.name : 'COMBO';
+
+                await animations.comboExplosion(comboName);
+            }
+
             await animations.attackAnimation(attackerCard, targetCard, attackData);
 
             try {
@@ -2332,6 +3098,7 @@
 
                     // Mettre à jour gameState APRÈS l'animation
                     gameState = data.battle_state;
+                    previousGameState = JSON.parse(JSON.stringify(gameState));
 
                     // Vérifier fin de partie
                     if (data.battle_ended) {
@@ -2399,6 +3166,7 @@
 
                 if (data.success) {
                     gameState = data.battle_state;
+                    previousGameState = JSON.parse(JSON.stringify(gameState));
                     isMyTurn = false;
                     addLogEntry('⏭️ Fin de votre tour', 'turn');
                     renderAll();
