@@ -327,26 +327,69 @@
             50%, 100% { left: 100%; }
         }
 
-        /* Cartes */
+        /* ========================================
+           CARTES DE COMBAT - STYLE TCG PRO
+        ======================================== */
         .battle-card {
             width: 160px;
+            height: 230px;
             border-radius: 12px;
             overflow: hidden;
-            background: linear-gradient(145deg, var(--color1, #333), var(--color2, #555));
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(145deg, var(--color1, #1a1a2e), var(--color2, #16213e));
+            border: 3px solid transparent;
+            background-clip: padding-box;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .battle-card::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--color1, #4a5568), var(--color2, #2d3748));
+            z-index: -1;
+        }
+
+        .battle-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.1) 0%,
+                transparent 50%,
+                rgba(0, 0, 0, 0.2) 100%
+            );
+            pointer-events: none;
+            z-index: 10;
+            border-radius: 10px;
         }
 
         .battle-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(var(--color1-rgb, 100, 100, 100), 0.3);
         }
 
         .battle-card.selected {
             border-color: #FBBF24;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+            transform: translateY(-10px) scale(1.03);
+        }
+
+        .battle-card.selected::before {
+            background: linear-gradient(135deg, #FBBF24, #F59E0B, #FBBF24);
+            animation: border-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes border-glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
 
         .battle-card.targetable {
@@ -354,50 +397,206 @@
             animation: pulse-target 1s infinite;
         }
 
+        .battle-card.targetable::before {
+            background: linear-gradient(135deg, #EF4444, #DC2626, #EF4444);
+        }
+
         @keyframes pulse-target {
-            0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
-            50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.6); }
+            0%, 100% {
+                box-shadow: 0 0 15px rgba(239, 68, 68, 0.4), 0 4px 15px rgba(0, 0, 0, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(239, 68, 68, 0.7), 0 4px 15px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        .battle-card.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(0.5);
+        }
+
+        /* Rarity glow effects */
+        .battle-card[data-rarity="rare"]::before {
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8, #3B82F6);
+            animation: rare-shimmer 3s ease-in-out infinite;
+        }
+
+        .battle-card[data-rarity="epic"]::before {
+            background: linear-gradient(135deg, #A855F7, #7C3AED, #A855F7);
+            animation: epic-shimmer 2.5s ease-in-out infinite;
+        }
+
+        .battle-card[data-rarity="legendary"]::before {
+            background: linear-gradient(135deg, #FBBF24, #F59E0B, #EF4444, #FBBF24);
+            animation: legendary-shimmer 2s ease-in-out infinite;
+        }
+
+        .battle-card[data-rarity="mythic"]::before {
+            background: linear-gradient(135deg, #EC4899, #8B5CF6, #06B6D4, #EC4899);
+            animation: mythic-shimmer 1.5s ease-in-out infinite;
+        }
+
+        @keyframes rare-shimmer {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+
+        @keyframes epic-shimmer {
+            0%, 100% { filter: brightness(1) hue-rotate(0deg); }
+            50% { filter: brightness(1.3) hue-rotate(10deg); }
+        }
+
+        @keyframes legendary-shimmer {
+            0%, 100% { filter: brightness(1) hue-rotate(0deg); }
+            50% { filter: brightness(1.4) hue-rotate(15deg); }
+        }
+
+        @keyframes mythic-shimmer {
+            0% { filter: brightness(1) hue-rotate(0deg); }
+            50% { filter: brightness(1.5) hue-rotate(30deg); }
+            100% { filter: brightness(1) hue-rotate(0deg); }
         }
 
         .battle-card-image {
-            height: 115px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-size: cover;
-            background-position: top center;
+            background-position: center center;
+            z-index: 1;
+        }
+
+        .battle-card-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70%;
+            background: linear-gradient(
+                to top,
+                rgba(0, 0, 0, 0.95) 0%,
+                rgba(0, 0, 0, 0.7) 30%,
+                rgba(0, 0, 0, 0.3) 60%,
+                transparent 100%
+            );
+            z-index: 2;
         }
 
         .battle-card-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
             padding: 10px;
-            background: rgba(0, 0, 0, 0.7);
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.6));
+            backdrop-filter: blur(4px);
+            z-index: 5;
         }
 
         .battle-card-name {
-            font-size: 0.8rem;
-            font-weight: 700;
+            font-size: 0.75rem;
+            font-weight: 800;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+            letter-spacing: 0.3px;
         }
 
+        /* Barre de vie - Style PRO */
         .hp-bar-container {
-            height: 6px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 3px;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 5px;
             overflow: hidden;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .hp-bar {
             height: 100%;
-            background: linear-gradient(90deg, #EF4444, #22C55E);
-            border-radius: 3px;
+            background: linear-gradient(90deg, #22C55E 0%, #16A34A 50%, #22C55E 100%);
+            border-radius: 4px;
             transition: width 0.5s ease;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+            position: relative;
+        }
+
+        .hp-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), transparent);
+            border-radius: 4px 4px 0 0;
+        }
+
+        .hp-bar.low {
+            background: linear-gradient(90deg, #EF4444 0%, #DC2626 50%, #EF4444 100%);
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+            animation: pulse-hp 1s infinite;
+        }
+
+        @keyframes pulse-hp {
+            0%, 100% { opacity: 1; box-shadow: 0 0 12px rgba(239, 68, 68, 0.6); }
+            50% { opacity: 0.7; box-shadow: 0 0 20px rgba(239, 68, 68, 0.9); }
         }
 
         .battle-card-stats {
             display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
+            justify-content: space-around;
+            font-size: 0.65rem;
+            gap: 3px;
+        }
+
+        .battle-card-stats span,
+        .mini-stat {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Holo shimmer effect pour cartes en combat */
+        .battle-card .holo-shimmer {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                125deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 25%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0.1) 75%,
+                transparent 100%
+            );
+            background-size: 200% 200%;
+            animation: holo-move 3s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 15;
+            mix-blend-mode: overlay;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .battle-card:hover .holo-shimmer {
+            opacity: 1;
+        }
+
+        @keyframes holo-move {
+            0% { background-position: 200% 0%; }
+            100% { background-position: -200% 0%; }
         }
 
         /* Main du joueur */
@@ -434,68 +633,221 @@
             min-height: 160px;
         }
 
+        /* ========================================
+           CARTES EN MAIN - STYLE TCG PRO
+        ======================================== */
         .hand-card {
             width: 120px;
+            height: 170px;
             border-radius: 12px;
             overflow: hidden;
-            background: linear-gradient(145deg, var(--color1, #333), var(--color2, #555));
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(145deg, var(--color1, #1a1a2e), var(--color2, #16213e));
+            border: 3px solid transparent;
+            background-clip: padding-box;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .hand-card::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--color1, #4a5568), var(--color2, #2d3748));
+            z-index: -1;
+            transition: all 0.3s ease;
+        }
+
+        .hand-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.1) 0%,
+                transparent 50%,
+                rgba(0, 0, 0, 0.2) 100%
+            );
+            pointer-events: none;
+            z-index: 10;
+            border-radius: 10px;
         }
 
         .hand-card:hover {
-            transform: translateY(-10px) scale(1.05);
+            transform: translateY(-20px) scale(1.08);
             z-index: 10;
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.6),
+                0 0 40px rgba(var(--color1-rgb, 100, 100, 100), 0.4);
         }
 
-        .hand-card.playable { border-color: rgba(16, 185, 129, 0.5); }
-        .hand-card.playable:hover { border-color: #10B981; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3); }
-        .hand-card.unplayable { opacity: 0.5; }
+        .hand-card.playable {
+            border-color: transparent;
+        }
+
+        .hand-card.playable::before {
+            background: linear-gradient(135deg, #10B981, #059669, #10B981);
+            animation: playable-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes playable-pulse {
+            0%, 100% { filter: brightness(1); box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+            50% { filter: brightness(1.2); box-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
+        }
+
+        .hand-card.playable:hover {
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.6),
+                0 0 50px rgba(16, 185, 129, 0.5);
+        }
+
+        .hand-card.unplayable {
+            opacity: 0.5;
+            filter: grayscale(0.4);
+        }
+
+        .hand-card.unplayable::before {
+            background: linear-gradient(135deg, #4a5568, #2d3748);
+        }
+
+        /* Rarity effects for hand cards */
+        .hand-card[data-rarity="rare"]::before {
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8, #3B82F6) !important;
+        }
+
+        .hand-card[data-rarity="epic"]::before {
+            background: linear-gradient(135deg, #A855F7, #7C3AED, #A855F7) !important;
+        }
+
+        .hand-card[data-rarity="legendary"]::before {
+            background: linear-gradient(135deg, #FBBF24, #F59E0B, #EF4444, #FBBF24) !important;
+            animation: legendary-shimmer 2s ease-in-out infinite !important;
+        }
+
+        .hand-card[data-rarity="mythic"]::before {
+            background: linear-gradient(135deg, #EC4899, #8B5CF6, #06B6D4, #EC4899) !important;
+            animation: mythic-shimmer 1.5s ease-in-out infinite !important;
+        }
 
         .hand-card-cost {
             position: absolute;
-            top: 5px; right: 5px;
-            background: rgba(124, 58, 237, 0.9);
+            top: 6px;
+            right: 6px;
+            background: linear-gradient(135deg, #7C3AED, #5B21B6);
             color: white;
-            font-size: 0.65rem;
-            font-weight: 800;
-            padding: 2px 6px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            padding: 3px 8px;
             border-radius: 8px;
+            z-index: 20;
+            box-shadow:
+                0 2px 8px rgba(124, 58, 237, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .hand-card-image {
-            height: 80px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-size: cover;
-            background-position: top center;
+            background-position: center center;
+            z-index: 1;
+        }
+
+        .hand-card-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65%;
+            background: linear-gradient(
+                to top,
+                rgba(0, 0, 0, 0.95) 0%,
+                rgba(0, 0, 0, 0.7) 35%,
+                rgba(0, 0, 0, 0.2) 70%,
+                transparent 100%
+            );
+            z-index: 2;
         }
 
         .hand-card-info {
-            padding: 6px;
-            background: rgba(0, 0, 0, 0.8);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.5));
+            backdrop-filter: blur(4px);
+            z-index: 5;
         }
 
         .hand-card-name {
-            font-size: 0.65rem;
-            font-weight: 700;
+            font-size: 0.6rem;
+            font-weight: 800;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            margin-bottom: 4px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+            letter-spacing: 0.3px;
         }
 
         .hand-card-stats {
             display: flex;
-            justify-content: space-between;
-            font-size: 0.6rem;
-            margin-top: 4px;
-            color: #E5E7EB;
+            justify-content: space-around;
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.95);
+            gap: 2px;
         }
 
         .hand-card-stats span {
             display: flex;
             align-items: center;
             gap: 2px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 700;
+        }
+
+        /* Holo effect for hand cards */
+        .hand-card .hand-holo-shimmer {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                125deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.15) 25%,
+                rgba(255, 255, 255, 0.35) 50%,
+                rgba(255, 255, 255, 0.15) 75%,
+                transparent 100%
+            );
+            background-size: 200% 200%;
+            animation: hand-holo-move 3s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 15;
+            mix-blend-mode: overlay;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .hand-card:hover .hand-holo-shimmer {
+            opacity: 1;
+        }
+
+        @keyframes hand-holo-move {
+            0% { background-position: 200% 0%; }
+            100% { background-position: -200% 0%; }
         }
 
         /* Contrôles */
@@ -1278,18 +1630,12 @@
 
             .battle-card {
                 width: 140px;
-            }
-
-            .battle-card-image {
-                height: 100px;
+                height: 200px;
             }
 
             .hand-card {
-                width: 120px;
-            }
-
-            .hand-card-image {
-                height: 80px;
+                width: 110px;
+                height: 155px;
             }
 
             .player-hand {
@@ -1404,10 +1750,7 @@
 
             .battle-card {
                 width: 105px;
-            }
-
-            .battle-card-image {
-                height: 75px;
+                height: 150px;
             }
 
             .battle-card-info {
@@ -1415,16 +1758,22 @@
             }
 
             .battle-card-name {
-                font-size: 0.65rem;
+                font-size: 0.6rem;
             }
 
             .hp-bar-container {
-                height: 5px;
+                height: 6px;
                 margin-bottom: 3px;
             }
 
             .battle-card-stats {
-                font-size: 0.6rem;
+                font-size: 0.5rem;
+                gap: 2px;
+            }
+
+            .battle-card-stats span,
+            .mini-stat {
+                padding: 1px 3px;
             }
 
             /* Log mobile */
@@ -1470,36 +1819,35 @@
             }
 
             .hand-card {
-                width: 80px;
+                width: 85px;
+                height: 120px;
                 flex-shrink: 0;
             }
 
             .hand-card-cost {
                 font-size: 0.55rem;
-                padding: 2px 4px;
+                padding: 2px 5px;
                 top: 3px;
                 right: 3px;
             }
 
-            .hand-card-image {
-                height: 50px;
-            }
-
             .hand-card-info {
-                padding: 4px;
+                padding: 5px;
             }
 
             .hand-card-name {
-                font-size: 0.55rem;
+                font-size: 0.5rem;
+                margin-bottom: 2px;
             }
 
             .hand-card-stats {
-                font-size: 0.5rem;
-                gap: 2px;
+                font-size: 0.45rem;
+                gap: 1px;
             }
 
             .hand-card-stats span {
                 gap: 1px;
+                padding: 1px 2px;
             }
 
             .hand-card:hover {

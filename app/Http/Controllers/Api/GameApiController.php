@@ -448,6 +448,18 @@ class GameApiController extends Controller
         $destroyedCards = [];
 
         // Tour de l'IA
+        // 0. Reset has_attacked pour les cartes DÉJÀ sur le terrain (avant de jouer de nouvelles cartes)
+        $opponentFieldCount = count($state['opponent']['field']);
+        for ($i = 0; $i < $opponentFieldCount; $i++) {
+            if (isset($state['opponent']['field'][$i])) {
+                $state['opponent']['field'][$i]['has_attacked'] = false;
+                // Régénération d'endurance
+                $currentEndurance = $state['opponent']['field'][$i]['current_endurance'] ?? 0;
+                $maxEndurance = $state['opponent']['field'][$i]['endurance'] ?? 100;
+                $state['opponent']['field'][$i]['current_endurance'] = min($maxEndurance, $currentEndurance + 30);
+            }
+        }
+
         // 1. L'IA pioche
         if (!empty($state['opponent']['deck'])) {
             $drawnCard = array_shift($state['opponent']['deck']);
@@ -459,7 +471,7 @@ class GameApiController extends Controller
         $state['opponent']['max_cosmos'] = min(10, $state['opponent']['max_cosmos'] + 1);
         $state['opponent']['cosmos'] = $state['opponent']['max_cosmos'];
 
-        // 3. L'IA joue des cartes
+        // 3. L'IA joue des cartes (nouvelles cartes avec has_attacked = true, ne peuvent pas attaquer ce tour)
         $state = $this->aiPlayCards($state);
         // IMPORTANT: Copie profonde après aiPlayCards pour éliminer toute référence
         $state = json_decode(json_encode($state), true);
@@ -661,6 +673,7 @@ class GameApiController extends Controller
     {
         $actions = [];
         $destroyedCards = [];
+        $attackedThisTurn = []; // Sécurité supplémentaire pour éviter les attaques multiples
 
         if (empty($state['player']['field'])) {
             return ['state' => $state, 'actions' => $actions, 'destroyed_cards' => $destroyedCards];
@@ -674,7 +687,8 @@ class GameApiController extends Controller
                 continue;
             }
 
-            if ($state['opponent']['field'][$attackerIdx]['has_attacked']) {
+            // Double vérification : flag has_attacked ET tableau local
+            if ($state['opponent']['field'][$attackerIdx]['has_attacked'] || in_array($attackerIdx, $attackedThisTurn)) {
                 continue;
             }
 
@@ -737,6 +751,7 @@ class GameApiController extends Controller
             $state['opponent']['field'][$attackerIdx]['current_endurance'] -= $attack['endurance_cost'];
             $state['opponent']['cosmos'] -= $attack['cosmos_cost'];
             $state['opponent']['field'][$attackerIdx]['has_attacked'] = true;
+            $attackedThisTurn[] = $attackerIdx; // Tracker localement pour éviter les doubles attaques
 
             $actions[] = "{$attackerName} attaque {$targetName} (-{$damage} PV)";
 
@@ -754,16 +769,8 @@ class GameApiController extends Controller
             }
         }
 
-        // Reset pour prochain tour (sans références)
-        $opponentFieldCount = count($state['opponent']['field']);
-        for ($i = 0; $i < $opponentFieldCount; $i++) {
-            if (isset($state['opponent']['field'][$i])) {
-                $state['opponent']['field'][$i]['has_attacked'] = false;
-                $currentEndurance = $state['opponent']['field'][$i]['current_endurance'] ?? 0;
-                $maxEndurance = $state['opponent']['field'][$i]['endurance'] ?? 100;
-                $state['opponent']['field'][$i]['current_endurance'] = min($maxEndurance, $currentEndurance + 30);
-            }
-        }
+        // NOTE: Le reset de has_attacked se fait maintenant au DÉBUT du tour de l'IA dans endTurn()
+        // Cela permet au frontend de savoir quelles cartes ont attaqué ce tour
 
         return ['state' => $state, 'actions' => $actions, 'destroyed_cards' => $destroyedCards];
     }

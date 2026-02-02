@@ -66,7 +66,7 @@ class ShopController extends Controller
                 'price' => self::BOOSTER_PRICES['legendary'],
                 'icon' => '👑',
                 'color' => 'from-purple-600 to-pink-600',
-                'rates' => ['Rare: 20%', 'Épique: 69%', 'Légendaire: 10%', 'Mythique: 1%', '1 Légendaire garantie'],
+                'rates' => ['Rare: 20%', 'Épique: 65%', 'Légendaire: 10%', 'Mythique: 5%', '1 Légendaire garantie'],
             ],
         ];
 
@@ -113,19 +113,19 @@ class ShopController extends Controller
             ]);
     }
 
-/**
- * Affiche le résultat de l'ouverture
- */
-public function result(): View|RedirectResponse
-{
-    $result = session('booster_result');
+    /**
+     * Affiche le résultat de l'ouverture
+     */
+    public function result(): View|RedirectResponse
+    {
+        $result = session('booster_result');
 
-    if (!$result) {
-        return redirect()->route('shop.index');
+        if (!$result) {
+            return redirect()->route('shop.index');
+        }
+
+        return view('shop.result', ['result' => $result]);
     }
-
-    return view('shop.result', ['result' => $result]);
-}
 
     /**
      * Génère les cartes d'un booster
@@ -137,7 +137,7 @@ public function result(): View|RedirectResponse
         for ($i = 0; $i < self::CARDS_PER_BOOSTER; $i++) {
             $rarity = $this->rollRarity($type, $i);
             $card = Card::where('rarity', $rarity)->inRandomOrder()->first();
-            
+
             // Fallback si aucune carte de cette rareté
             if (!$card) {
                 $card = Card::inRandomOrder()->first();
@@ -161,30 +161,40 @@ public function result(): View|RedirectResponse
         switch ($type) {
             case 'bronze':
                 // 80% common, 18% rare, 2% epic
-                if ($roll <= 800) return 'common';
-                if ($roll <= 980) return 'rare';
+                if ($roll <= 800)
+                    return 'common';
+                if ($roll <= 980)
+                    return 'rare';
                 return 'epic';
 
             case 'silver':
                 // 50% common, 40% rare, 9.5% epic, 0.5% legendary
-                if ($roll <= 500) return 'common';
-                if ($roll <= 900) return 'rare';
-                if ($roll <= 995) return 'epic';
+                if ($roll <= 500)
+                    return 'common';
+                if ($roll <= 900)
+                    return 'rare';
+                if ($roll <= 995)
+                    return 'epic';
                 return 'legendary';
 
             case 'gold':
                 // 55% rare, 42% epic, 3% legendary
-                if ($roll <= 550) return 'rare';
-                if ($roll <= 970) return 'epic';
+                if ($roll <= 550)
+                    return 'rare';
+                if ($roll <= 970)
+                    return 'epic';
                 return 'legendary';
 
             case 'legendary':
-                // Première carte toujours légendaire
-                if ($cardIndex === 0) return 'legendary';
-                // 20% rare, 69% epic, 10% legendary, 1% mythic
-                if ($roll <= 200) return 'rare';
-                if ($roll <= 890) return 'epic';
-                if ($roll <= 990) return 'legendary';
+                if ($cardIndex === 0)
+                    return 'legendary';
+                // 20% rare, 65% epic, 10% legendary, 5% mythic
+                if ($roll <= 200)
+                    return 'rare';
+                if ($roll <= 850)
+                    return 'epic';
+                if ($roll <= 950)
+                    return 'legendary';
                 return 'mythic';
 
             default:

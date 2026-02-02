@@ -197,65 +197,36 @@
             50% { transform: translateY(-5px); }
         }
 
+        /* Face de la carte - Design TCG Pro */
         .flip-card-back {
             transform: rotateY(180deg);
-            background: linear-gradient(145deg, var(--color1), var(--color2));
+            background: #1a1a2e;
             border: 3px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
         }
 
         .card-content {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            padding: 10px;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 6px;
-        }
-
-        .card-name {
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-            line-height: 1.2;
-        }
-
-        .card-faction {
-            font-size: 0.6rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .card-cost {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 6px;
-            padding: 3px 6px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            color: white;
-        }
-
-        .card-image {
-            flex: 1;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            background: rgba(0, 0, 0, 0.3);
             position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Image de fond - pleine carte */
+        .card-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
         }
 
         .card-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: top center;
+            object-position: center top;
         }
 
         .card-image-placeholder {
@@ -264,78 +235,218 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
-            background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.5));
+            font-size: 3rem;
+            background: linear-gradient(180deg, var(--color1), var(--color2));
         }
 
-        .card-rarity-badge {
+        /* Overlay dégradé */
+        .card-overlay {
             position: absolute;
-            top: 6px;
-            right: 6px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.55rem;
-            font-weight: 700;
-            text-transform: uppercase;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                180deg,
+                rgba(0, 0, 0, 0.5) 0%,
+                transparent 20%,
+                transparent 50%,
+                rgba(0, 0, 0, 0.85) 100%
+            );
+            z-index: 2;
+            pointer-events: none;
         }
 
+        /* Badge quantité */
         .quantity-badge {
             position: absolute;
-            top: 6px;
-            left: 6px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 2px 6px;
-            border-radius: 4px;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 3px 8px;
+            border-radius: 12px;
             font-size: 0.65rem;
-            font-weight: 700;
+            font-weight: 800;
             color: #FFD700;
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            z-index: 10;
+            backdrop-filter: blur(4px);
         }
 
-        .rarity-common { background: rgba(107, 114, 128, 0.9); color: white; }
-        .rarity-rare { background: rgba(59, 130, 246, 0.9); color: white; }
-        .rarity-epic { background: rgba(139, 92, 246, 0.9); color: white; }
-        .rarity-legendary {
-            background: linear-gradient(135deg, #F59E0B, #EF4444);
+        /* Badge rareté - en haut à droite */
+        .card-rarity-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 10;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .rarity-common {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
             color: white;
+            border: 1px solid #9CA3AF;
+        }
+        .rarity-rare {
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            color: white;
+            border: 1px solid #60A5FA;
+        }
+        .rarity-epic {
+            background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+            color: white;
+            border: 1px solid #A78BFA;
+        }
+        .rarity-legendary {
+            background: linear-gradient(135deg, #FFD700, #FF8C00, #FF4500);
+            color: white;
+            border: 1px solid #FBBF24;
+            animation: legendaryBadgePulse 1.5s ease-in-out infinite;
+        }
+        .rarity-mythic {
+            background: linear-gradient(135deg, #FF006E, #8338EC, #3A86FF);
+            background-size: 200% 200%;
+            color: white;
+            border: 1px solid #FF006E;
+            animation: mythicGradient 3s ease infinite;
+        }
+
+        @keyframes legendaryBadgePulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
+            50% { box-shadow: 0 0 20px rgba(255, 215, 0, 1); }
+        }
+
+        @keyframes mythicGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Header avec nom et coût - en bas au-dessus des stats */
+        .card-header {
+            position: absolute;
+            bottom: 48px;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-name {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            line-height: 1.2;
+            max-width: 90px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-faction {
+            font-size: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-cost {
+            background: linear-gradient(145deg, var(--color1), var(--color2));
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            flex-shrink: 0;
+        }
+
+        /* Stats en overlay - en bas */
+        .card-stats-wrapper {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            padding: 6px;
         }
 
         .card-stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            display: flex;
+            justify-content: space-between;
             gap: 3px;
-            margin-top: 6px;
         }
 
         .card-stat {
+            flex: 1;
             text-align: center;
-            padding: 3px;
-            border-radius: 4px;
-            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 2px;
+            border-radius: 6px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        .card-stat.hp { background: rgba(220, 38, 38, 0.4); }
-        .card-stat.def { background: rgba(37, 99, 235, 0.4); }
-        .card-stat.pwr { background: rgba(234, 88, 12, 0.4); }
-        .card-stat.cos { background: rgba(124, 58, 237, 0.4); }
+        .card-stat.hp {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.85), rgba(153, 27, 27, 0.85));
+        }
+        .card-stat.def {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.85), rgba(29, 78, 216, 0.85));
+        }
+        .card-stat.pwr {
+            background: linear-gradient(135deg, rgba(234, 88, 12, 0.85), rgba(194, 65, 12, 0.85));
+        }
+        .card-stat.cos {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.85), rgba(91, 33, 182, 0.85));
+        }
 
         .stat-value {
-            font-size: 0.75rem;
-            font-weight: 800;
+            font-size: 0.7rem;
+            font-weight: 900;
             color: white;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            line-height: 1;
         }
 
         .stat-label {
-            font-size: 0.45rem;
-            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.4rem;
+            color: rgba(255, 255, 255, 0.9);
             text-transform: uppercase;
+            margin-top: 1px;
         }
 
+        /* Bordures par rareté */
         .flip-card-back.rarity-common { border-color: #6B7280; }
-        .flip-card-back.rarity-rare { border-color: #3B82F6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-        .flip-card-back.rarity-epic { border-color: #8B5CF6; box-shadow: 0 0 25px rgba(139, 92, 246, 0.4); }
+        .flip-card-back.rarity-rare { border-color: #3B82F6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+        .flip-card-back.rarity-epic { border-color: #8B5CF6; box-shadow: 0 0 25px rgba(139, 92, 246, 0.5); }
         .flip-card-back.rarity-legendary {
             border-color: #FFD700;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5), 0 0 60px rgba(255, 100, 0, 0.3);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 0 0 60px rgba(255, 100, 0, 0.4);
+        }
+        .flip-card-back.rarity-mythic {
+            border: 3px solid transparent;
+            background: linear-gradient(#1a1a2e, #1a1a2e) padding-box,
+                        linear-gradient(135deg, #FF006E, #8338EC, #3A86FF, #FF006E) border-box;
+            box-shadow: 0 0 40px rgba(131, 56, 236, 0.6), 0 0 80px rgba(255, 0, 110, 0.4);
         }
 
         .buttons-container {
@@ -421,7 +532,7 @@
         @media (max-width: 768px) {
             .flip-card {
                 width: 140px;
-                height: 200px;
+                height: 210px;
             }
 
             .title h1 {
@@ -435,6 +546,52 @@
             .btn {
                 padding: 0.8rem 1.2rem;
                 font-size: 0.85rem;
+            }
+
+            .card-header {
+                bottom: 40px;
+                padding: 4px 6px;
+            }
+
+            .card-name {
+                font-size: 0.6rem;
+                max-width: 70px;
+            }
+
+            .card-faction {
+                font-size: 0.4rem;
+            }
+
+            .card-cost {
+                width: 20px;
+                height: 20px;
+                font-size: 0.65rem;
+            }
+
+            .card-stats-wrapper {
+                padding: 4px;
+            }
+
+            .card-stat {
+                padding: 3px 1px;
+            }
+
+            .stat-value {
+                font-size: 0.6rem;
+            }
+
+            .stat-label {
+                font-size: 0.35rem;
+            }
+
+            .card-rarity-badge {
+                padding: 2px 5px;
+                font-size: 0.4rem;
+            }
+
+            .quantity-badge {
+                padding: 2px 5px;
+                font-size: 0.55rem;
             }
         }
     </style>
@@ -462,6 +619,36 @@
                         <div class="flip-card-back rarity-{{ $card->rarity }}"
                              style="--color1: {{ $card->faction->color_primary ?? '#667' }}; --color2: {{ $card->faction->color_secondary ?? '#445' }};">
                             <div class="card-content">
+                                <!-- Image de fond -->
+                                <div class="card-image">
+                                    @if($card->image_primary)
+                                        <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}">
+                                    @else
+                                        <div class="card-image-placeholder">🃏</div>
+                                    @endif
+                                </div>
+
+                                <!-- Overlay dégradé -->
+                                <div class="card-overlay"></div>
+
+                                <!-- Badge quantité -->
+                                @if($item['quantity'] > 1)
+                                    <div class="quantity-badge">x{{ $item['quantity'] }}</div>
+                                @endif
+
+                                <!-- Badge rareté -->
+                                <div class="card-rarity-badge rarity-{{ $card->rarity }}">
+                                    @switch($card->rarity)
+                                        @case('common') Commune @break
+                                        @case('rare') Rare @break
+                                        @case('epic') Épique @break
+                                        @case('legendary') Légendaire @break
+                                        @case('mythic') Mythique @break
+                                        @default {{ ucfirst($card->rarity) }}
+                                    @endswitch
+                                </div>
+
+                                <!-- Header avec nom et coût -->
                                 <div class="card-header">
                                     <div>
                                         <div class="card-name">{{ $card->name }}</div>
@@ -470,44 +657,25 @@
                                     <div class="card-cost">{{ $card->cost }}</div>
                                 </div>
 
-                                <div class="card-image">
-                                    @if($card->image_primary)
-                                        <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}">
-                                    @else
-                                        <div class="card-image-placeholder">🃏</div>
-                                    @endif
-
-                                    @if($item['quantity'] > 1)
-                                        <div class="quantity-badge">x{{ $item['quantity'] }}</div>
-                                    @endif
-
-                                    <div class="card-rarity-badge rarity-{{ $card->rarity }}">
-                                        @switch($card->rarity)
-                                            @case('common') Commune @break
-                                            @case('rare') Rare @break
-                                            @case('epic') Epique @break
-                                            @case('legendary') Legendaire @break
-                                            @default {{ ucfirst($card->rarity) }}
-                                        @endswitch
-                                    </div>
-                                </div>
-
-                                <div class="card-stats">
-                                    <div class="card-stat hp">
-                                        <div class="stat-value">{{ $card->health_points }}</div>
-                                        <div class="stat-label">PV</div>
-                                    </div>
-                                    <div class="card-stat def">
-                                        <div class="stat-value">{{ $card->defense }}</div>
-                                        <div class="stat-label">DEF</div>
-                                    </div>
-                                    <div class="card-stat pwr">
-                                        <div class="stat-value">{{ $card->power }}</div>
-                                        <div class="stat-label">PWR</div>
-                                    </div>
-                                    <div class="card-stat cos">
-                                        <div class="stat-value">{{ $card->cosmos }}</div>
-                                        <div class="stat-label">COS</div>
+                                <!-- Stats en overlay -->
+                                <div class="card-stats-wrapper">
+                                    <div class="card-stats">
+                                        <div class="card-stat hp">
+                                            <div class="stat-value">{{ $card->health_points }}</div>
+                                            <div class="stat-label">PV</div>
+                                        </div>
+                                        <div class="card-stat def">
+                                            <div class="stat-value">{{ $card->defense }}</div>
+                                            <div class="stat-label">DEF</div>
+                                        </div>
+                                        <div class="card-stat pwr">
+                                            <div class="stat-value">{{ $card->power }}</div>
+                                            <div class="stat-label">PWR</div>
+                                        </div>
+                                        <div class="card-stat cos">
+                                            <div class="stat-value">{{ $card->cosmos }}</div>
+                                            <div class="stat-label">COS</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
