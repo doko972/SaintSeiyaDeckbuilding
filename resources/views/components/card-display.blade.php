@@ -2,6 +2,8 @@
     'card',
     'size' => 'normal', // small, normal, large
     'interactive' => true,
+    'fusionLevel' => 1,
+    'boostedStats' => null,
 ])
 
 @php
@@ -12,6 +14,14 @@
     ];
 
     $sizes = $sizeClasses[$size] ?? $sizeClasses['normal'];
+
+    // Use boosted stats if provided, otherwise use card base stats
+    $displayHp = $boostedStats ? $boostedStats['health_points'] : $card->health_points;
+    $displayEnd = $boostedStats ? $boostedStats['endurance'] : $card->endurance;
+    $displayDef = $boostedStats ? $boostedStats['defense'] : $card->defense;
+    $displayPwr = $boostedStats ? $boostedStats['power'] : $card->power;
+    $displayCos = $card->cosmos; // Cosmos is never boosted
+    $hasFusion = $fusionLevel > 1;
 @endphp
 
 <style>
@@ -222,6 +232,46 @@
         color: white;
         border: 1px solid rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(4px);
+    }
+
+    /* Badge niveau de fusion */
+    .pro-card-fusion {
+        position: absolute;
+        top: 50px;
+        right: 12px;
+        z-index: 10;
+        padding: 5px 12px;
+        border-radius: 12px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #10B981, #059669);
+        color: white;
+        border: 1px solid rgba(16, 185, 129, 0.5);
+        backdrop-filter: blur(4px);
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+    }
+
+    .pro-card-fusion.high-level {
+        background: linear-gradient(135deg, #F59E0B, #D97706);
+        border-color: rgba(245, 158, 11, 0.5);
+        box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+    }
+
+    .pro-card-fusion.max-level {
+        background: linear-gradient(135deg, #EF4444, #DC2626);
+        border-color: rgba(239, 68, 68, 0.5);
+        box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+        animation: fusionPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes fusionPulse {
+        0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+        50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
+    }
+
+    /* Stats boostées */
+    .pro-stat.boosted .pro-stat-value {
+        color: #34D399;
     }
 
     /* Tags (armure et élément) */
@@ -534,6 +584,14 @@
                 @endswitch
             </div>
 
+            <!-- Badge Niveau de Fusion -->
+            @if($hasFusion)
+                <div class="pro-card-fusion {{ $fusionLevel >= 7 ? ($fusionLevel >= 10 ? 'max-level' : 'high-level') : '' }}"
+                     title="+{{ $boostedStats['bonus_percent'] ?? 0 }}% stats">
+                    +{{ $fusionLevel - 1 }}
+                </div>
+            @endif
+
             <!-- Tags Armure et Élément -->
             <div class="pro-card-tags">
                 <span class="pro-card-tag pro-tag-{{ $card->armor_type }}">
@@ -579,24 +637,24 @@
             <!-- Stats en overlay -->
             <div class="pro-card-stats-wrapper">
                 <div class="pro-card-stats">
-                    <div class="pro-stat stat-hp">
-                        <span class="pro-stat-value" style="font-size: {{ $sizes['stat'] }};">{{ $card->health_points }}</span>
+                    <div class="pro-stat stat-hp {{ $hasFusion ? 'boosted' : '' }}">
+                        <span class="pro-stat-value" style="font-size: {{ $sizes['stat'] }};">{{ $displayHp }}</span>
                         <span class="pro-stat-label" style="font-size: {{ $sizes['label'] }};">PV</span>
                     </div>
-                    <div class="pro-stat stat-end">
-                        <span class="pro-stat-value" style="font-size: {{ $sizes['stat'] }};">{{ $card->endurance }}</span>
+                    <div class="pro-stat stat-end {{ $hasFusion ? 'boosted' : '' }}">
+                        <span class="pro-stat-value" style="font-size: {{ $sizes['stat'] }};">{{ $displayEnd }}</span>
                         <span class="pro-stat-label" style="font-size: {{ $sizes['label'] }};">END</span>
                     </div>
-                    <div class="pro-stat stat-def">
-                        <span class="pro-stat-value" style="font-size: {{ $sizes['stat'] }};">{{ $card->defense }}</span>
+                    <div class="pro-stat stat-def {{ $hasFusion ? 'boosted' : '' }}">
+                        <span class="pro-stat-value" style="font-size: {{ $sizes['stat'] }};">{{ $displayDef }}</span>
                         <span class="pro-stat-label" style="font-size: {{ $sizes['label'] }};">DEF</span>
                     </div>
-                    <div class="pro-stat stat-pwr">
-                        <span class="pro-stat-value" style="font-size: {{ $sizes['stat'] }};">{{ $card->power }}</span>
+                    <div class="pro-stat stat-pwr {{ $hasFusion ? 'boosted' : '' }}">
+                        <span class="pro-stat-value" style="font-size: {{ $sizes['stat'] }};">{{ $displayPwr }}</span>
                         <span class="pro-stat-label" style="font-size: {{ $sizes['label'] }};">PWR</span>
                     </div>
                     <div class="pro-stat stat-cos">
-                        <span class="pro-stat-value" style="font-size: {{ $sizes['stat'] }};">{{ $card->cosmos }}</span>
+                        <span class="pro-stat-value" style="font-size: {{ $sizes['stat'] }};">{{ $displayCos }}</span>
                         <span class="pro-stat-label" style="font-size: {{ $sizes['label'] }};">COS</span>
                     </div>
                 </div>

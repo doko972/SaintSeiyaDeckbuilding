@@ -21,11 +21,53 @@
 
                 <!-- CARTE AVEC EFFET HOLO -->
                 <div class="flex justify-center">
-                    <x-card-display :card="$card" size="large" :interactive="true" />
+                    <x-card-display :card="$card" size="large" :interactive="true" :fusionLevel="$fusionLevel" :boostedStats="$boostedStats" />
                 </div>
 
                 <!-- INFOS ET ATTAQUES -->
                 <div class="space-y-6">
+
+                    <!-- Possession et Fusion (si connecté) -->
+                    @auth
+                        @if ($owned)
+                            <div class="bg-green-500/20 backdrop-blur-md border border-green-500/50 rounded-xl p-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-3xl">✅</span>
+                                    <div>
+                                        <h3 class="text-green-400 font-bold text-lg">Vous possédez cette carte</h3>
+                                        <p class="text-green-300/80">{{ $owned->pivot->quantity }} exemplaire(s)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if ($fusionLevel > 1)
+                                <div class="bg-emerald-500/20 backdrop-blur-md border border-emerald-500/50 rounded-xl p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-3xl">⚔️</span>
+                                            <div>
+                                                <h3 class="text-emerald-400 font-bold text-lg">Niveau de Fusion +{{ $fusionLevel - 1 }}</h3>
+                                                <p class="text-emerald-300/80">+{{ $boostedStats['bonus_percent'] }}% sur HP, END, DEF et PWR</p>
+                                            </div>
+                                        </div>
+                                        <div class="px-4 py-2 rounded-lg font-bold text-lg {{ $fusionLevel >= 10 ? 'bg-red-500/30 text-red-300' : ($fusionLevel >= 7 ? 'bg-amber-500/30 text-amber-300' : 'bg-emerald-500/30 text-emerald-300') }}">
+                                            {{ $fusionLevel }}/10
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @else
+                            <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-3xl">❌</span>
+                                    <div>
+                                        <h3 class="text-gray-300 font-bold text-lg">Vous ne possédez pas cette carte</h3>
+                                        <p class="text-gray-400">Achetez des boosters pour l'obtenir !</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @endauth
 
                     <!-- Attaque Principale -->
                     <div class="bg-white/10 backdrop-blur-md rounded-xl overflow-hidden border border-white/20">

@@ -14,6 +14,7 @@ use App\Http\Controllers\StarterPackController;
 use App\Http\Controllers\FirstDrawController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\ComboController;
+use App\Http\Controllers\FusionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -94,6 +95,13 @@ Route::middleware(['auth', 'ensure.starter'])->group(function () {
     // Collection
     Route::get('/collection', [CollectionController::class, 'index'])->name('collection.index');
     Route::get('/collection/{card}', [CollectionController::class, 'show'])->name('collection.show');
+
+    // Fusion de cartes
+    Route::prefix('fusion')->name('fusion.')->group(function () {
+        Route::get('/', [FusionController::class, 'index'])->name('index');
+        Route::post('/preview', [FusionController::class, 'preview'])->name('preview');
+        Route::post('/fuse', [FusionController::class, 'fuse'])->name('fuse');
+    });
 
     // Routes PvP
     Route::prefix('pvp')->name('pvp.')->group(function () {

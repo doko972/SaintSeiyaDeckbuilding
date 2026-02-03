@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Card;
 use App\Models\Faction;
 use App\Models\Attack;
+use App\Services\FusionService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -12,6 +13,13 @@ use Illuminate\Support\Facades\Storage;
 
 class CardController extends Controller
 {
+    protected FusionService $fusionService;
+
+    public function __construct(FusionService $fusionService)
+    {
+        $this->fusionService = $fusionService;
+    }
+
     /**
      * Options pour les selects
      */
@@ -144,7 +152,24 @@ class CardController extends Controller
     {
         $card->load('faction', 'mainAttack', 'secondaryAttack1', 'secondaryAttack2');
 
-        return view('cards.show', compact('card'));
+        // Vérifier si l'utilisateur connecté possède cette carte
+        $fusionLevel = 1;
+        $boostedStats = null;
+        $owned = null;
+
+        if (auth()->check()) {
+            $user = auth()->user();
+            $owned = $user->cards()->where('card_id', $card->id)->first();
+
+            if ($owned) {
+                $fusionLevel = $owned->pivot->fusion_level ?? 1;
+                if ($fusionLevel > 1) {
+                    $boostedStats = $this->fusionService->calculateBoostedStats($card, $fusionLevel);
+                }
+            }
+        }
+
+        return view('cards.show', compact('card', 'fusionLevel', 'boostedStats', 'owned'));
     }
 
     /**

@@ -240,6 +240,46 @@
             backdrop-filter: blur(4px);
         }
 
+        /* Badge niveau de fusion */
+        .card-mini-fusion-level {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            font-weight: 800;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            z-index: 11;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+        }
+
+        .card-mini-fusion-level.high-level {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            border-color: rgba(245, 158, 11, 0.5);
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+        }
+
+        .card-mini-fusion-level.max-level {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            border-color: rgba(239, 68, 68, 0.5);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+            animation: maxLevelPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes maxLevelPulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
+        }
+
+        /* Stats boostées */
+        .mini-stat-boosted .mini-stat-value {
+            color: #34D399;
+        }
+
         /* Badge rareté - en haut à droite */
         .card-mini-rarity {
             position: absolute;
@@ -695,9 +735,19 @@
                                         <div class="card-mini-holo-effect"></div>
                                     @endif
 
-                                    <!-- Badge Quantité -->
+                                    <!-- Badge Niveau de Fusion -->
+                                    @if($card->owned && $card->fusion_level > 1)
+                                        <div class="card-mini-fusion-level {{ $card->fusion_level >= 7 ? ($card->fusion_level >= 10 ? 'max-level' : 'high-level') : '' }}"
+                                             title="+{{ $card->bonus_percent }}% stats">
+                                            +{{ $card->fusion_level - 1 }}
+                                        </div>
+                                    @endif
+
+                                    <!-- Badge Quantité (déplacé si fusion level) -->
                                     @if($card->owned && $card->owned_quantity > 1)
-                                        <div class="card-mini-quantity">x{{ $card->owned_quantity }}</div>
+                                        <div class="card-mini-quantity" style="{{ $card->fusion_level > 1 ? 'top: 36px;' : '' }}">
+                                            x{{ $card->owned_quantity }}
+                                        </div>
                                     @endif
 
                                     <!-- Badge "Non obtenue" -->
@@ -733,16 +783,16 @@
                                     <!-- Stats en overlay -->
                                     <div class="card-mini-stats-wrapper">
                                         <div class="card-mini-stats">
-                                            <div class="mini-stat stat-hp">
-                                                <span class="mini-stat-value">{{ $card->health_points }}</span>
+                                            <div class="mini-stat stat-hp {{ $card->owned && $card->fusion_level > 1 ? 'mini-stat-boosted' : '' }}">
+                                                <span class="mini-stat-value">{{ $card->owned ? $card->boosted_hp : $card->health_points }}</span>
                                                 <span class="mini-stat-label">PV</span>
                                             </div>
-                                            <div class="mini-stat stat-def">
-                                                <span class="mini-stat-value">{{ $card->defense }}</span>
+                                            <div class="mini-stat stat-def {{ $card->owned && $card->fusion_level > 1 ? 'mini-stat-boosted' : '' }}">
+                                                <span class="mini-stat-value">{{ $card->owned ? $card->boosted_defense : $card->defense }}</span>
                                                 <span class="mini-stat-label">DEF</span>
                                             </div>
-                                            <div class="mini-stat stat-pwr">
-                                                <span class="mini-stat-value">{{ $card->power }}</span>
+                                            <div class="mini-stat stat-pwr {{ $card->owned && $card->fusion_level > 1 ? 'mini-stat-boosted' : '' }}">
+                                                <span class="mini-stat-value">{{ $card->owned ? $card->boosted_power : $card->power }}</span>
                                                 <span class="mini-stat-label">PWR</span>
                                             </div>
                                             <div class="mini-stat stat-cos">

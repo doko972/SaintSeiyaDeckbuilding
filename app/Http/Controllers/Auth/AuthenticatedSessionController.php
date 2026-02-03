@@ -29,9 +29,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Enregistrer l'ID de session pour empêcher les connexions multiples
+        // Enregistrer l'ID de session et l'IP pour empêcher les connexions multiples
         $request->user()->update([
             'current_session_id' => $request->session()->getId(),
+            'last_session_ip' => $request->ip(),
         ]);
 
         return redirect()->intended(RouteServiceProvider::HOME);

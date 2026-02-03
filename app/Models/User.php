@@ -27,6 +27,7 @@ class User extends Authenticatable
         'has_completed_first_draw',
         'starter_bronze_id',
         'current_session_id',
+        'last_session_ip',
     ];
 
     /**
@@ -65,7 +66,7 @@ class User extends Authenticatable
     public function cards(): BelongsToMany
     {
         return $this->belongsToMany(Card::class, 'user_cards')
-            ->withPivot('quantity', 'obtained_at')
+            ->withPivot('quantity', 'obtained_at', 'fusion_level')
             ->withTimestamps();
     }
 

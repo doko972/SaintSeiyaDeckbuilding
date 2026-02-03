@@ -692,6 +692,32 @@
             padding: 2px 6px;
             border-radius: 6px;
             z-index: 20;
+        }
+
+        /* Fusion level indicator */
+        .fusion-level-indicator {
+            position: absolute;
+            bottom: 50px;
+            right: 5px;
+            background: linear-gradient(135deg, #FFD700, #FF8C00);
+            color: #000;
+            font-size: 0.6rem;
+            font-weight: 900;
+            padding: 2px 6px;
+            border-radius: 6px;
+            z-index: 20;
+            box-shadow: 0 2px 6px rgba(255, 215, 0, 0.4);
+            animation: fusionPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes fusionPulse {
+            0%, 100% { box-shadow: 0 2px 6px rgba(255, 215, 0, 0.4); }
+            50% { box-shadow: 0 2px 12px rgba(255, 215, 0, 0.8); }
+        }
+
+        .fusion-bonus {
+            color: #FFD700 !important;
+            font-weight: bold;
             box-shadow: 0 2px 8px rgba(251, 191, 36, 0.5);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -2800,8 +2826,16 @@
                 ? `<div class="combo-indicator" title="${comboStatus.comboName}">${comboStatus.isLeader ? '👑⚡' : '⚡'}</div>`
                 : '';
 
+            // Badge de niveau de fusion (si améliorée)
+            const fusionLevel = card.fusion_level || 1;
+            const bonusPercent = card.bonus_percent || 0;
+            const fusionBadgeHtml = fusionLevel > 1
+                ? `<div class="fusion-level-indicator" title="+${bonusPercent}% stats">+${fusionLevel - 1}</div>`
+                : '';
+
             div.innerHTML = `
                 ${comboIndicatorHtml}
+                ${fusionBadgeHtml}
                 <div class="battle-card-image" style="background-image: url('${card.image || ''}'); background-color: ${card.faction?.color_primary || '#333'};"></div>
                 <div class="battle-card-info">
                     <div class="battle-card-name">${card.name}</div>
@@ -2812,6 +2846,7 @@
                         <span class="mini-stat">❤️ ${card.current_hp}/${card.max_hp}</span>
                         <span class="mini-stat">⚡ ${card.current_endurance || 0}</span>
                         <span class="mini-stat">💪 ${card.power || 0}</span>
+                        ${bonusPercent > 0 ? `<span class="mini-stat fusion-bonus">🔥 +${bonusPercent}%</span>` : ''}
                     </div>
                 </div>
             `;

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Card;
 use App\Models\Deck;
+use App\Models\User;
 use App\Services\ComboService;
+use App\Services\FusionService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -13,10 +15,12 @@ use Illuminate\Support\Facades\Storage;
 class GameApiController extends Controller
 {
     protected ComboService $comboService;
+    protected FusionService $fusionService;
 
-    public function __construct(ComboService $comboService)
+    public function __construct(ComboService $comboService, FusionService $fusionService)
     {
         $this->comboService = $comboService;
+        $this->fusionService = $fusionService;
     }
 
     /**
@@ -92,6 +96,8 @@ class GameApiController extends Controller
             'power' => $card['power'] ?? 0,
             'cosmos' => $card['cosmos'] ?? 0,
             'rarity' => $card['rarity'] ?? 'common',
+            'fusion_level' => $card['fusion_level'] ?? 1,
+            'bonus_percent' => $card['bonus_percent'] ?? 0,
             'image' => $card['image'] ?? null,
             'has_attacked' => $card['has_attacked'] ?? false,
             'faction' => isset($card['faction']) ? [
@@ -139,11 +145,11 @@ class GameApiController extends Controller
             return response()->json(['message' => 'Deck non autorisé'], 403);
         }
 
-        // Préparer les cartes du joueur
-        $playerDeck = $this->prepareDeck($deck->cards);
+        // Préparer les cartes du joueur (avec bonus de fusion)
+        $playerDeck = $this->prepareDeck($deck->cards, auth()->user());
         shuffle($playerDeck);
 
-        // Générer un deck ennemi (cartes aléatoires)
+        // Générer un deck ennemi (cartes aléatoires, sans bonus de fusion)
         $enemyCards = Card::with('faction', 'mainAttack', 'secondaryAttack1', 'secondaryAttack2')
             ->inRandomOrder()
             ->limit(10)
@@ -565,13 +571,30 @@ class GameApiController extends Controller
 
     /**
      * Préparer le deck pour le combat
+     * @param $cards Les cartes du deck
+     * @param User|null $user L'utilisateur (pour appliquer les bonus de fusion)
      */
-    private function prepareDeck($cards): array
+    private function prepareDeck($cards, ?User $user = null): array
     {
         $deck = [];
 
         foreach ($cards as $card) {
             $quantity = $card->pivot?->quantity ?? 1;
+
+            // Récupérer le niveau de fusion si l'utilisateur est fourni
+            $fusionLevel = 1;
+            $bonusPercent = 0;
+            if ($user) {
+                $fusionLevel = $this->fusionService->getCardFusionLevel($user, $card->id);
+                $bonusPercent = $this->fusionService->calculateCumulativeBonus($fusionLevel, $card->rarity);
+            }
+
+            // Calculer les stats boostées
+            $multiplier = 1 + ($bonusPercent / 100);
+            $boostedHp = (int) round($card->health_points * $multiplier);
+            $boostedEndurance = (int) round($card->endurance * $multiplier);
+            $boostedDefense = (int) round($card->defense * $multiplier);
+            $boostedPower = (int) round($card->power * $multiplier);
 
             for ($i = 0; $i < $quantity; $i++) {
                 $deck[] = [
@@ -579,15 +602,17 @@ class GameApiController extends Controller
                     'instance_id' => uniqid('card_' . $card->id . '_'),
                     'name' => $card->name,
                     'cost' => $card->cost,
-                    'health_points' => $card->health_points,
-                    'max_hp' => $card->health_points,
-                    'current_hp' => $card->health_points,
-                    'endurance' => $card->endurance,
-                    'current_endurance' => $card->endurance,
-                    'defense' => $card->defense,
-                    'power' => $card->power,
-                    'cosmos' => $card->cosmos,
+                    'health_points' => $boostedHp,
+                    'max_hp' => $boostedHp,
+                    'current_hp' => $boostedHp,
+                    'endurance' => $boostedEndurance,
+                    'current_endurance' => $boostedEndurance,
+                    'defense' => $boostedDefense,
+                    'power' => $boostedPower,
+                    'cosmos' => $card->cosmos, // Non affecté par la fusion
                     'rarity' => $card->rarity,
+                    'fusion_level' => $fusionLevel,
+                    'bonus_percent' => round($bonusPercent, 1),
                     'image' => $card->image_primary ? Storage::url($card->image_primary) : null,
                     'faction' => $card->faction ? [
                         'name' => $card->faction->name,

@@ -3,11 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Card;
+use App\Services\FusionService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CollectionController extends Controller
 {
+    protected FusionService $fusionService;
+
+    public function __construct(FusionService $fusionService)
+    {
+        $this->fusionService = $fusionService;
+    }
+
     /**
      * Affiche la collection du joueur (toutes les cartes, possédées et non possédées)
      */
@@ -26,10 +34,41 @@ class CollectionController extends Controller
             ->orderBy('name')
             ->get();
 
-        // Marquer les cartes possédées et ajouter la quantité
+        // Marquer les cartes possédées et ajouter la quantité + stats de fusion
         $allCards = $allCards->map(function ($card) use ($ownedCards) {
             $card->owned = $ownedCards->has($card->id);
             $card->owned_quantity = $card->owned ? $ownedCards->get($card->id)->pivot->quantity : 0;
+
+            // Ajouter les données de fusion pour les cartes possédées
+            if ($card->owned) {
+                $ownedCard = $ownedCards->get($card->id);
+                $fusionLevel = $ownedCard->pivot->fusion_level ?? 1;
+                $card->fusion_level = $fusionLevel;
+
+                // Calculer les stats boostées
+                if ($fusionLevel > 1) {
+                    $boostedStats = $this->fusionService->calculateBoostedStats($card, $fusionLevel);
+                    $card->boosted_hp = $boostedStats['health_points'];
+                    $card->boosted_endurance = $boostedStats['endurance'];
+                    $card->boosted_defense = $boostedStats['defense'];
+                    $card->boosted_power = $boostedStats['power'];
+                    $card->bonus_percent = $boostedStats['bonus_percent'];
+                } else {
+                    $card->boosted_hp = $card->health_points;
+                    $card->boosted_endurance = $card->endurance;
+                    $card->boosted_defense = $card->defense;
+                    $card->boosted_power = $card->power;
+                    $card->bonus_percent = 0;
+                }
+            } else {
+                $card->fusion_level = 1;
+                $card->boosted_hp = $card->health_points;
+                $card->boosted_endurance = $card->endurance;
+                $card->boosted_defense = $card->defense;
+                $card->boosted_power = $card->power;
+                $card->bonus_percent = 0;
+            }
+
             return $card;
         });
 
@@ -73,6 +112,17 @@ class CollectionController extends Controller
 
         $card->load(['faction', 'mainAttack', 'secondaryAttack1', 'secondaryAttack2']);
 
-        return view('collection.show', compact('card', 'owned'));
+        // Calculer les stats boostées si possédée
+        $fusionLevel = 1;
+        $boostedStats = null;
+
+        if ($owned) {
+            $fusionLevel = $owned->pivot->fusion_level ?? 1;
+            if ($fusionLevel > 1) {
+                $boostedStats = $this->fusionService->calculateBoostedStats($card, $fusionLevel);
+            }
+        }
+
+        return view('collection.show', compact('card', 'owned', 'fusionLevel', 'boostedStats'));
     }
 }

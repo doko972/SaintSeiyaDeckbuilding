@@ -130,6 +130,19 @@
                         Collection
                     </a>
 
+                    <!-- Fusion -->
+                    <a href="{{ route('fusion.index') }}"
+                        class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
+                       {{ request()->routeIs('fusion.*')
+                           ? 'bg-orange-500/30 text-yellow-400 shadow-lg shadow-orange-500/20'
+                           : 'text-gray-300 hover:text-white hover:bg-white/10' }}">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Fusion
+                    </a>
+
                     <!-- Mes Decks -->
                     <a href="{{ route('decks.index') }}"
                         class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
@@ -316,6 +329,13 @@
                {{ request()->routeIs('collection.*') ? 'bg-purple-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
                 <span class="text-xl">🎴</span>
                 <span class="font-medium">Collection</span>
+            </a>
+
+            <a href="{{ route('fusion.index') }}"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
+               {{ request()->routeIs('fusion.*') ? 'bg-orange-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                <span class="text-xl">⚡</span>
+                <span class="font-medium">Fusion</span>
             </a>
 
             <a href="{{ route('decks.index') }}"
