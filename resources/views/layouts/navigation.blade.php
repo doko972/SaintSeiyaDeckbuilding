@@ -1,4 +1,4 @@
-<nav x-data="{ open: false, gameMenuOpen: false }"
+<nav x-data="{ open: false, gameMenuOpen: false, cardsMenuOpen: false, commerceMenuOpen: false }"
     class="bg-gradient-to-r from-gray-900/95 via-purple-900/90 to-gray-900/95 backdrop-blur-md border-b border-purple-500/20 sticky top-0 z-50">
     <!-- Effet de brillance subtil -->
     <div class="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/5 to-transparent pointer-events-none">
@@ -18,7 +18,7 @@
                             <img src="{{ asset('images/logo.webp') }}" alt="Saint Seiya Logo"
                                 class="h-10 w-auto group-hover:scale-110 transition-transform duration-300">
                         @else
-                            <span class="text-2xl group-hover:scale-110 transition-transform duration-300">⚔️</span>
+                            <span class="text-2xl group-hover:scale-110 transition-transform duration-300">&#9876;</span>
                         @endif
                         <span
                             class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-400 group-hover:from-yellow-300 group-hover:to-amber-200 transition-all duration-300">
@@ -29,20 +29,8 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-1 sm:-my-px sm:ms-10 sm:flex items-center">
-                    <!-- Dashboard -->
-                    <a href="{{ route('dashboard') }}"
-                        class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
-                       {{ request()->routeIs('dashboard')
-                           ? 'bg-purple-500/30 text-yellow-400 shadow-lg shadow-purple-500/20'
-                           : 'text-gray-300 hover:text-white hover:bg-white/10' }}">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
-                        Dashboard
-                    </a>
 
-                    <!-- Menu déroulant "Jouer" -->
+                    <!-- Menu deroulant "Jouer" -->
                     <div class="relative" @click.away="gameMenuOpen = false">
                         <button @click="gameMenuOpen = !gameMenuOpen"
                             class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
@@ -82,7 +70,7 @@
                                        : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
                                     <span
                                         class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
-                                        🤖
+                                        &#129302;
                                     </span>
                                     <div>
                                         <div class="font-semibold">Combat PvE</div>
@@ -98,7 +86,7 @@
                                        : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
                                     <span
                                         class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
-                                        🆚
+                                        &#127942;
                                     </span>
                                     <div class="flex-1">
                                         <div class="font-semibold flex items-center gap-2">
@@ -110,63 +98,158 @@
                                                     class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                                             </span>
                                         </div>
-                                        <div class="text-xs text-gray-500">Joueurs en temps réel</div>
+                                        <div class="text-xs text-gray-500">Joueurs en temps reel</div>
                                     </div>
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Collection -->
-                    <a href="{{ route('collection.index') }}"
-                        class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
-                       {{ request()->routeIs('collection.*')
-                           ? 'bg-purple-500/30 text-yellow-400 shadow-lg shadow-purple-500/20'
-                           : 'text-gray-300 hover:text-white hover:bg-white/10' }}">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                        </svg>
-                        Collection
-                    </a>
+                    <!-- Menu deroulant "Cartes" -->
+                    <div class="relative" @click.away="cardsMenuOpen = false">
+                        <button @click="cardsMenuOpen = !cardsMenuOpen"
+                            class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
+                                {{ request()->routeIs('collection.*') || request()->routeIs('decks.*') || request()->routeIs('fusion.*')
+                                    ? 'bg-purple-500/30 text-yellow-400 shadow-lg shadow-purple-500/20'
+                                    : 'text-gray-300 hover:text-white hover:bg-white/10' }}">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                            Cartes
+                            <svg class="ml-1 h-4 w-4 transition-transform duration-200"
+                                :class="{ 'rotate-180': cardsMenuOpen }" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
 
-                    <!-- Fusion -->
-                    <a href="{{ route('fusion.index') }}"
-                        class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
-                       {{ request()->routeIs('fusion.*')
-                           ? 'bg-orange-500/30 text-yellow-400 shadow-lg shadow-orange-500/20'
-                           : 'text-gray-300 hover:text-white hover:bg-white/10' }}">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        Fusion
-                    </a>
+                        <!-- Dropdown -->
+                        <div x-show="cardsMenuOpen" x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 transform scale-95 -translate-y-2"
+                            x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 transform scale-100"
+                            x-transition:leave-end="opacity-0 transform scale-95"
+                            class="absolute left-0 top-full mt-2 w-64 rounded-xl shadow-2xl bg-gray-900/95 backdrop-blur-md border border-purple-500/30 overflow-hidden"
+                            style="display: none;">
+                            <div class="py-2">
+                                <!-- Collection -->
+                                <a href="{{ route('collection.index') }}"
+                                    class="group flex items-center gap-3 px-4 py-3 transition-all duration-200
+                                   {{ request()->routeIs('collection.*')
+                                       ? 'bg-gradient-to-r from-purple-600/30 to-indigo-600/30 text-yellow-400'
+                                       : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                                    <span
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
+                                        &#127183;
+                                    </span>
+                                    <div>
+                                        <div class="font-semibold">Collection</div>
+                                        <div class="text-xs text-gray-500">Toutes vos cartes</div>
+                                    </div>
+                                </a>
 
-                    <!-- Mes Decks -->
-                    <a href="{{ route('decks.index') }}"
-                        class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
-                       {{ request()->routeIs('decks.*')
-                           ? 'bg-indigo-500/30 text-yellow-400 shadow-lg shadow-indigo-500/20'
-                           : 'text-gray-300 hover:text-white hover:bg-white/10' }}">
-                        {{-- <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg> --}}
-                        Mes Decks
-                    </a>
+                                <!-- Mes Decks -->
+                                <a href="{{ route('decks.index') }}"
+                                    class="group flex items-center gap-3 px-4 py-3 transition-all duration-200
+                                   {{ request()->routeIs('decks.*')
+                                       ? 'bg-gradient-to-r from-indigo-600/30 to-blue-600/30 text-yellow-400'
+                                       : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                                    <span
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
+                                        &#128218;
+                                    </span>
+                                    <div>
+                                        <div class="font-semibold">Mes Decks</div>
+                                        <div class="text-xs text-gray-500">Gerez vos decks</div>
+                                    </div>
+                                </a>
 
-                    <!-- Boutique -->
-                    <a href="{{ route('shop.index') }}"
-                        class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
-                       {{ request()->routeIs('shop.*')
-                           ? 'bg-yellow-500/30 text-yellow-400 shadow-lg shadow-yellow-500/20'
-                           : 'text-gray-300 hover:text-white hover:bg-white/10' }}">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        Boutique
-                    </a>
+                                <!-- Fusion -->
+                                <a href="{{ route('fusion.index') }}"
+                                    class="group flex items-center gap-3 px-4 py-3 transition-all duration-200
+                                   {{ request()->routeIs('fusion.*')
+                                       ? 'bg-gradient-to-r from-orange-600/30 to-yellow-600/30 text-yellow-400'
+                                       : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                                    <span
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
+                                        &#9889;
+                                    </span>
+                                    <div>
+                                        <div class="font-semibold">Fusion</div>
+                                        <div class="text-xs text-gray-500">Ameliorez vos cartes</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Menu deroulant "Commerce" -->
+                    <div class="relative" @click.away="commerceMenuOpen = false">
+                        <button @click="commerceMenuOpen = !commerceMenuOpen"
+                            class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
+                                {{ request()->routeIs('shop.*') || request()->routeIs('sell.*')
+                                    ? 'bg-yellow-500/30 text-yellow-400 shadow-lg shadow-yellow-500/20'
+                                    : 'text-gray-300 hover:text-white hover:bg-white/10' }}">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            Commerce
+                            <svg class="ml-1 h-4 w-4 transition-transform duration-200"
+                                :class="{ 'rotate-180': commerceMenuOpen }" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown -->
+                        <div x-show="commerceMenuOpen" x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 transform scale-95 -translate-y-2"
+                            x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 transform scale-100"
+                            x-transition:leave-end="opacity-0 transform scale-95"
+                            class="absolute left-0 top-full mt-2 w-64 rounded-xl shadow-2xl bg-gray-900/95 backdrop-blur-md border border-purple-500/30 overflow-hidden"
+                            style="display: none;">
+                            <div class="py-2">
+                                <!-- Boutique -->
+                                <a href="{{ route('shop.index') }}"
+                                    class="group flex items-center gap-3 px-4 py-3 transition-all duration-200
+                                   {{ request()->routeIs('shop.*')
+                                       ? 'bg-gradient-to-r from-yellow-600/30 to-amber-600/30 text-yellow-400'
+                                       : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                                    <span
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-500 to-amber-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
+                                        &#128722;
+                                    </span>
+                                    <div>
+                                        <div class="font-semibold">Boutique</div>
+                                        <div class="text-xs text-gray-500">Achetez des boosters</div>
+                                    </div>
+                                </a>
+
+                                <!-- Vente -->
+                                <a href="{{ route('sell.index') }}"
+                                    class="group flex items-center gap-3 px-4 py-3 transition-all duration-200
+                                   {{ request()->routeIs('sell.*')
+                                       ? 'bg-gradient-to-r from-green-600/30 to-emerald-600/30 text-yellow-400'
+                                       : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                                    <span
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
+                                        &#128176;
+                                    </span>
+                                    <div>
+                                        <div class="font-semibold">Vente</div>
+                                        <div class="text-xs text-gray-500">Revendez vos cartes</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Factions -->
                     <a href="{{ route('factions.index') }}"
@@ -180,7 +263,6 @@
                         </svg>
                         Factions
                     </a>
-
 
                 </div>
             </div>
@@ -197,7 +279,6 @@
                     <span class="font-bold text-yellow-400">{{ number_format(auth()->user()->coins ?? 0) }}</span>
                 </div>
 
-                <!-- User Dropdown -->
                 <!-- User Dropdown -->
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
@@ -227,37 +308,37 @@
                             <!-- Profil -->
                             <a href="{{ route('profile.edit') }}"
                                 class="block px-4 py-2 text-sm text-gray-300 hover:bg-purple-500/20 hover:text-white transition">
-                                👤 Profil
+                                &#128100; Profil
                             </a>
 
                             <!-- Admin Section -->
                             @if (auth()->user()->isAdmin())
                                 <div class="border-t border-purple-500/20 mt-1 pt-1">
                                     <div class="px-4 py-1 text-xs font-semibold text-red-400 uppercase tracking-wider">
-                                        👑 Administration
+                                        &#128081; Administration
                                     </div>
                                     <a href="{{ route('cards.index') }}"
                                         class="block px-4 py-2 text-sm text-gray-300 hover:bg-red-500/20 hover:text-white transition">
-                                        🃏 Cartes (CRUD)
+                                        &#127183; Cartes (CRUD)
                                     </a>
                                     <a href="{{ route('attacks.index') }}"
                                         class="block px-4 py-2 text-sm text-gray-300 hover:bg-red-500/20 hover:text-white transition">
-                                        ⚔️ Attaques (CRUD)
+                                        &#9876; Attaques (CRUD)
                                     </a>
                                     <a href="{{ route('admin.cards.create') }}"
                                         class="block px-4 py-2 text-sm text-gray-300 hover:bg-red-500/20 hover:text-white transition">
-                                        ➕ Créer une carte
+                                        &#10133; Creer une carte
                                     </a>
                                 </div>
                             @endif
 
-                            <!-- Déconnexion -->
+                            <!-- Deconnexion -->
                             <div class="border-t border-purple-500/20 mt-1 pt-1">
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit"
                                         class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-red-500/20 hover:text-red-400 transition">
-                                        🚪 Déconnexion
+                                        &#128682; Deconnexion
                                     </button>
                                 </form>
                             </div>
@@ -271,7 +352,7 @@
                 <!-- Mobile Coins -->
                 <div
                     class="mr-2 px-3 py-1 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 rounded-full flex items-center gap-1">
-                    <span class="text-yellow-400 text-sm">🪙</span>
+                    <span class="text-yellow-400 text-sm">&#129689;</span>
                     <span class="font-bold text-yellow-400 text-sm">{{ auth()->user()->coins ?? 0 }}</span>
                 </div>
 
@@ -291,122 +372,129 @@
 
     <!-- Mobile Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }"
-        class="hidden sm:hidden bg-gray-900/98 backdrop-blur-md border-t border-purple-500/20">
+        class="hidden sm:hidden bg-gray-900/98 backdrop-blur-md border-t border-purple-500/20 max-h-[80vh] overflow-y-auto">
         <div class="pt-2 pb-3 space-y-1 px-4">
-            <a href="{{ route('dashboard') }}"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
-               {{ request()->routeIs('dashboard') ? 'bg-purple-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                <span class="text-xl">🏠</span>
-                <span class="font-medium">Dashboard</span>
-            </a>
 
-            <!-- Jouer Section -->
+            <!-- Section Jouer -->
             <div class="py-2">
-                <div class="text-xs font-semibold text-purple-400 uppercase tracking-wider mb-2 px-4">⚔️ Jouer</div>
+                <div class="text-xs font-semibold text-red-400 uppercase tracking-wider mb-2 px-2">&#9876; Jouer</div>
                 <a href="{{ route('game.index') }}"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
                    {{ request()->routeIs('game.*') ? 'bg-blue-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                    <span class="text-xl">🤖</span>
-                    <span class="font-medium">Combat PvE</span>
+                    <span class="text-lg">&#129302;</span>
+                    <span class="font-medium text-sm">Combat PvE</span>
                 </a>
                 <a href="{{ route('pvp.lobby') }}"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
                    {{ request()->routeIs('pvp.*') ? 'bg-red-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                    <span class="text-xl">🆚</span>
+                    <span class="text-lg">&#127942;</span>
                     <div class="flex items-center gap-2">
-                        <span class="font-medium">Arena PvP</span>
+                        <span class="font-medium text-sm">Arena PvP</span>
                         <span class="relative flex h-2 w-2">
-                            <span
-                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                         </span>
                     </div>
                 </a>
             </div>
 
-            <a href="{{ route('collection.index') }}"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
-               {{ request()->routeIs('collection.*') ? 'bg-purple-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                <span class="text-xl">🎴</span>
-                <span class="font-medium">Collection</span>
-            </a>
+            <!-- Section Cartes -->
+            <div class="py-2 border-t border-purple-500/20">
+                <div class="text-xs font-semibold text-purple-400 uppercase tracking-wider mb-2 px-2">&#127183; Cartes</div>
+                <a href="{{ route('collection.index') }}"
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
+                   {{ request()->routeIs('collection.*') ? 'bg-purple-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                    <span class="text-lg">&#127183;</span>
+                    <span class="font-medium text-sm">Collection</span>
+                </a>
+                <a href="{{ route('decks.index') }}"
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
+                   {{ request()->routeIs('decks.*') ? 'bg-indigo-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                    <span class="text-lg">&#128218;</span>
+                    <span class="font-medium text-sm">Mes Decks</span>
+                </a>
+                <a href="{{ route('fusion.index') }}"
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
+                   {{ request()->routeIs('fusion.*') ? 'bg-orange-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                    <span class="text-lg">&#9889;</span>
+                    <span class="font-medium text-sm">Fusion</span>
+                </a>
+            </div>
 
-            <a href="{{ route('fusion.index') }}"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
-               {{ request()->routeIs('fusion.*') ? 'bg-orange-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                <span class="text-xl">⚡</span>
-                <span class="font-medium">Fusion</span>
-            </a>
+            <!-- Section Commerce -->
+            <div class="py-2 border-t border-purple-500/20">
+                <div class="text-xs font-semibold text-yellow-400 uppercase tracking-wider mb-2 px-2">&#128176; Commerce</div>
+                <a href="{{ route('shop.index') }}"
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
+                   {{ request()->routeIs('shop.*') ? 'bg-yellow-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                    <span class="text-lg">&#128722;</span>
+                    <span class="font-medium text-sm">Boutique</span>
+                </a>
+                <a href="{{ route('sell.index') }}"
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
+                   {{ request()->routeIs('sell.*') ? 'bg-green-500/30 text-green-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                    <span class="text-lg">&#128176;</span>
+                    <span class="font-medium text-sm">Vente</span>
+                </a>
+            </div>
 
-            <a href="{{ route('decks.index') }}"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
-               {{ request()->routeIs('decks.*') ? 'bg-indigo-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                <span class="text-xl">📚</span>
-                <span class="font-medium">Mes Decks</span>
-            </a>
-
-            <a href="{{ route('shop.index') }}"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
-               {{ request()->routeIs('shop.*') ? 'bg-yellow-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                <span class="text-xl">🛒</span>
-                <span class="font-medium">Boutique</span>
-            </a>
-
-            <a href="{{ route('factions.index') }}"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
-               {{ request()->routeIs('factions.*') ? 'bg-cyan-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                <span class="text-xl">🏛️</span>
-                <span class="font-medium">Factions</span>
-            </a>
+            <!-- Factions -->
+            <div class="py-2 border-t border-purple-500/20">
+                <a href="{{ route('factions.index') }}"
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
+                   {{ request()->routeIs('factions.*') ? 'bg-cyan-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                    <span class="text-lg">&#127984;</span>
+                    <span class="font-medium text-sm">Factions</span>
+                </a>
+            </div>
 
             @if (auth()->user()->isAdmin())
-                <div class="pt-2 mt-2 border-t border-purple-500/20">
-                    <div class="text-xs font-semibold text-red-400 uppercase tracking-wider mb-2 px-4">👑
-                        Administration</div>
+                <div class="py-2 border-t border-purple-500/20">
+                    <div class="text-xs font-semibold text-red-400 uppercase tracking-wider mb-2 px-2">&#128081; Administration</div>
                     <a href="{{ route('cards.index') }}"
-                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-red-500/20 hover:text-white transition">
-                        <span class="text-xl">🃏</span>
-                        <span class="font-medium">Cartes (CRUD)</span>
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-red-500/20 hover:text-white transition">
+                        <span class="text-lg">&#127183;</span>
+                        <span class="font-medium text-sm">Cartes (CRUD)</span>
                     </a>
                     <a href="{{ route('attacks.index') }}"
-                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-red-500/20 hover:text-white transition">
-                        <span class="text-xl">⚔️</span>
-                        <span class="font-medium">Attaques (CRUD)</span>
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-red-500/20 hover:text-white transition">
+                        <span class="text-lg">&#9876;</span>
+                        <span class="font-medium text-sm">Attaques (CRUD)</span>
                     </a>
                 </div>
             @endif
         </div>
 
         <!-- Mobile User Section -->
-        <div class="pt-4 pb-3 border-t border-purple-500/20 px-4">
+        <div class="pt-3 pb-3 border-t border-purple-500/20 px-4">
             <div class="flex items-center gap-3 mb-3">
                 <div
-                    class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg">
+                    class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg">
                     {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                 </div>
                 <div>
-                    <div class="font-medium text-white flex items-center gap-2">
+                    <div class="font-medium text-white text-sm flex items-center gap-2">
                         {{ Auth::user()->name }}
                         @if (auth()->user()->isAdmin())
                             <span class="px-2 py-0.5 text-xs bg-red-500/30 text-red-400 rounded">Admin</span>
                         @endif
                     </div>
-                    <div class="text-sm text-gray-400">{{ Auth::user()->email }}</div>
+                    <div class="text-xs text-gray-400">{{ Auth::user()->email }}</div>
                 </div>
             </div>
 
-            <div class="space-y-1">
+            <div class="flex gap-2">
                 <a href="{{ route('profile.edit') }}"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition">
-                    <span class="text-xl">👤</span>
-                    <span class="font-medium">Profil</span>
+                    class="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition text-sm">
+                    <span>&#128100;</span>
+                    <span>Profil</span>
                 </a>
-                <form method="POST" action="{{ route('logout') }}">
+                <form method="POST" action="{{ route('logout') }}" class="flex-1">
                     @csrf
                     <button type="submit"
-                        class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-red-500/20 hover:text-red-400 transition">
-                        <span class="text-xl">🚪</span>
-                        <span class="font-medium">Déconnexion</span>
+                        class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:bg-red-500/20 hover:text-red-400 transition text-sm">
+                        <span>&#128682;</span>
+                        <span>Deconnexion</span>
                     </button>
                 </form>
             </div>

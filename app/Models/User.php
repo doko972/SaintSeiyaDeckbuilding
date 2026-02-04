@@ -151,6 +151,40 @@ class User extends Authenticatable
     }
 
     /**
+     * Retire une carte de la collection
+     *
+     * @param int $cardId
+     * @param int $quantity Quantité à retirer
+     * @return bool True si réussi, false sinon
+     */
+    public function removeCard(int $cardId, int $quantity = 1): bool
+    {
+        $userCard = $this->cards()->where('card_id', $cardId)->first();
+
+        if (!$userCard) {
+            return false;
+        }
+
+        $currentQuantity = $userCard->pivot->quantity;
+
+        if ($currentQuantity < $quantity) {
+            return false;
+        }
+
+        $newQuantity = $currentQuantity - $quantity;
+
+        if ($newQuantity <= 0) {
+            $this->cards()->detach($cardId);
+        } else {
+            $this->cards()->updateExistingPivot($cardId, [
+                'quantity' => $newQuantity,
+            ]);
+        }
+
+        return true;
+    }
+
+    /**
      * Nombre total de cartes dans la collection
      */
     public function getTotalCardsAttribute(): int

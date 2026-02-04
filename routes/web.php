@@ -15,6 +15,7 @@ use App\Http\Controllers\FirstDrawController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\ComboController;
 use App\Http\Controllers\FusionController;
+use App\Http\Controllers\CardSellController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -101,6 +102,13 @@ Route::middleware(['auth', 'ensure.starter'])->group(function () {
         Route::get('/', [FusionController::class, 'index'])->name('index');
         Route::post('/preview', [FusionController::class, 'preview'])->name('preview');
         Route::post('/fuse', [FusionController::class, 'fuse'])->name('fuse');
+    });
+
+    // Vente de cartes
+    Route::prefix('sell')->name('sell.')->group(function () {
+        Route::get('/', [CardSellController::class, 'index'])->name('index');
+        Route::post('/preview', [CardSellController::class, 'preview'])->name('preview');
+        Route::post('/sell', [CardSellController::class, 'sell'])->name('sell');
     });
 
     // Routes PvP
