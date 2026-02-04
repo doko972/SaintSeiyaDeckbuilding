@@ -251,6 +251,19 @@
                         </div>
                     </div>
 
+                    <!-- Recompenses -->
+                    <a href="{{ route('rewards.index') }}"
+                        class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
+                       {{ request()->routeIs('rewards.*')
+                           ? 'bg-pink-500/30 text-yellow-400 shadow-lg shadow-pink-500/20'
+                           : 'text-gray-300 hover:text-white hover:bg-white/10' }}">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                        </svg>
+                        Bonus
+                    </a>
+
                     <!-- Factions -->
                     <a href="{{ route('factions.index') }}"
                         class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
@@ -276,7 +289,7 @@
                         <path
                             d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.736 6.979C9.208 6.193 9.696 6 10 6c.304 0 .792.193 1.264.979a1 1 0 001.715-1.029C12.279 4.784 11.232 4 10 4s-2.279.784-2.979 1.95c-.285.475-.507 1-.67 1.55H6a1 1 0 000 2h.013a9.358 9.358 0 000 1H6a1 1 0 100 2h.351c.163.55.385 1.075.67 1.55C7.721 15.216 8.768 16 10 16s2.279-.784 2.979-1.95a1 1 0 10-1.715-1.029c-.472.786-.96.979-1.264.979-.304 0-.792-.193-1.264-.979a4.265 4.265 0 01-.264-.521H10a1 1 0 100-2H8.017a7.36 7.36 0 010-1H10a1 1 0 100-2H8.472c.08-.185.167-.36.264-.521z" />
                     </svg>
-                    <span class="font-bold text-yellow-400">{{ number_format(auth()->user()->coins ?? 0) }}</span>
+                    <span id="nav-coins-desktop" class="font-bold text-yellow-400">{{ number_format(auth()->user()->coins ?? 0) }}</span>
                 </div>
 
                 <!-- User Dropdown -->
@@ -353,7 +366,7 @@
                 <div
                     class="mr-2 px-3 py-1 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 rounded-full flex items-center gap-1">
                     <span class="text-yellow-400 text-sm">&#129689;</span>
-                    <span class="font-bold text-yellow-400 text-sm">{{ auth()->user()->coins ?? 0 }}</span>
+                    <span id="nav-coins-mobile" class="font-bold text-yellow-400 text-sm">{{ auth()->user()->coins ?? 0 }}</span>
                 </div>
 
                 <button @click="open = ! open"
@@ -435,6 +448,17 @@
                    {{ request()->routeIs('sell.*') ? 'bg-green-500/30 text-green-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
                     <span class="text-lg">&#128176;</span>
                     <span class="font-medium text-sm">Vente</span>
+                </a>
+            </div>
+
+            <!-- Bonus -->
+            <div class="py-2 border-t border-purple-500/20">
+                <div class="text-xs font-semibold text-pink-400 uppercase tracking-wider mb-2 px-2">&#127873; Bonus</div>
+                <a href="{{ route('rewards.index') }}"
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
+                   {{ request()->routeIs('rewards.*') ? 'bg-pink-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                    <span class="text-lg">&#127873;</span>
+                    <span class="font-medium text-sm">Recompenses</span>
                 </a>
             </div>
 

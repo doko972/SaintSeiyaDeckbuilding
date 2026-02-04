@@ -24,6 +24,10 @@ class User extends Authenticatable
         'losses',
         'current_rank',
         'last_daily_bonus_at',
+        'login_streak',
+        'last_login_date',
+        'streak_reward_claimed_today',
+        'last_wheel_spin_at',
         'has_selected_starter',
         'has_completed_first_draw',
         'starter_bronze_id',
@@ -52,6 +56,22 @@ class User extends Authenticatable
         'has_selected_starter' => 'boolean',
         'has_completed_first_draw' => 'boolean',
         'last_daily_bonus_at' => 'datetime',
+        'last_login_date' => 'date',
+        'streak_reward_claimed_today' => 'boolean',
+        'last_wheel_spin_at' => 'datetime',
+    ];
+
+    /**
+     * Recompenses de la serie de connexion (jours 1-7)
+     */
+    public const STREAK_REWARDS = [
+        1 => ['coins' => 50, 'card' => null],
+        2 => ['coins' => 75, 'card' => null],
+        3 => ['coins' => 100, 'card' => null],
+        4 => ['coins' => 150, 'card' => null],
+        5 => ['coins' => 200, 'card' => null],
+        6 => ['coins' => 300, 'card' => null],
+        7 => ['coins' => 500, 'card' => 'rare'], // Carte rare garantie
     ];
 
     /**
@@ -402,5 +422,283 @@ class User extends Authenticatable
             'hours' => floor($diffInMinutes / 60),
             'minutes' => $diffInMinutes % 60,
         ];
+    }
+
+    // ==========================================
+    // SERIE DE CONNEXION (LOGIN STREAK)
+    // ==========================================
+
+    /**
+     * Met a jour la serie de connexion
+     * A appeler a chaque connexion/visite du dashboard
+     */
+    public function updateLoginStreak(): void
+    {
+        $today = now()->toDateString();
+        $lastLogin = $this->last_login_date?->toDateString();
+
+        // Meme jour : ne rien faire
+        if ($lastLogin === $today) {
+            return;
+        }
+
+        $yesterday = now()->subDay()->toDateString();
+
+        if ($lastLogin === $yesterday) {
+            // Jour consecutif : incrementer le streak
+            $newStreak = $this->login_streak + 1;
+            // Reset a 1 apres jour 7
+            if ($newStreak > 7) {
+                $newStreak = 1;
+            }
+            $this->login_streak = $newStreak;
+        } else {
+            // Streak casse : recommencer a 1
+            $this->login_streak = 1;
+        }
+
+        $this->last_login_date = $today;
+        $this->streak_reward_claimed_today = false;
+        $this->save();
+    }
+
+    /**
+     * Verifie si la recompense de streak peut etre reclamee
+     */
+    public function canClaimStreakReward(): bool
+    {
+        return $this->login_streak > 0 && !$this->streak_reward_claimed_today;
+    }
+
+    /**
+     * Reclame la recompense de la serie de connexion
+     */
+    public function claimStreakReward(): array
+    {
+        if (!$this->canClaimStreakReward()) {
+            return [
+                'success' => false,
+                'message' => 'Recompense deja reclamee aujourd\'hui.',
+            ];
+        }
+
+        $day = $this->login_streak;
+        $reward = self::STREAK_REWARDS[$day] ?? self::STREAK_REWARDS[1];
+
+        // Donner les pieces
+        $this->addCoins($reward['coins']);
+
+        // Donner la carte si jour 7
+        $cardGiven = null;
+        if ($reward['card'] === 'rare') {
+            $rareCard = Card::where('rarity', 'rare')->inRandomOrder()->first();
+            if ($rareCard) {
+                $this->addCard($rareCard);
+                $cardGiven = $rareCard;
+            }
+        }
+
+        $this->streak_reward_claimed_today = true;
+        $this->save();
+
+        return [
+            'success' => true,
+            'day' => $day,
+            'coins_earned' => $reward['coins'],
+            'card' => $cardGiven,
+            'message' => $cardGiven
+                ? "Jour {$day} : +{$reward['coins']} pieces + carte {$cardGiven->name} !"
+                : "Jour {$day} : +{$reward['coins']} pieces !",
+        ];
+    }
+
+    /**
+     * Obtient les infos de la serie de connexion
+     */
+    public function getStreakInfo(): array
+    {
+        return [
+            'current_day' => $this->login_streak,
+            'can_claim' => $this->canClaimStreakReward(),
+            'rewards' => self::STREAK_REWARDS,
+            'today_reward' => self::STREAK_REWARDS[$this->login_streak] ?? null,
+        ];
+    }
+
+    // ==========================================
+    // ROUE DE LA FORTUNE HEBDOMADAIRE
+    // ==========================================
+
+    /**
+     * Verifie si le joueur peut tourner la roue
+     */
+    public function canSpinWheel(): bool
+    {
+        if ($this->last_wheel_spin_at === null) {
+            return true;
+        }
+
+        return $this->last_wheel_spin_at->diffInDays(now()) >= 7;
+    }
+
+    /**
+     * Obtient le temps restant avant le prochain spin
+     */
+    public function getTimeUntilNextSpin(): array
+    {
+        if ($this->canSpinWheel()) {
+            return ['days' => 0, 'hours' => 0];
+        }
+
+        $nextSpinTime = $this->last_wheel_spin_at->addDays(7);
+        $diffInHours = now()->diffInHours($nextSpinTime, false);
+
+        if ($diffInHours <= 0) {
+            return ['days' => 0, 'hours' => 0];
+        }
+
+        return [
+            'days' => floor($diffInHours / 24),
+            'hours' => $diffInHours % 24,
+        ];
+    }
+
+    /**
+     * Tourne la roue de la fortune
+     */
+    public function spinWheel(): array
+    {
+        if (!$this->canSpinWheel()) {
+            $timeLeft = $this->getTimeUntilNextSpin();
+            return [
+                'success' => false,
+                'message' => "Vous devez attendre {$timeLeft['days']}j {$timeLeft['hours']}h.",
+            ];
+        }
+
+        // Definition des segments de la roue (probabilites ponderees)
+        $segments = [
+            ['type' => 'coins', 'value' => 100, 'weight' => 25, 'label' => '100 po', 'color' => '#6B7280'],
+            ['type' => 'coins', 'value' => 200, 'weight' => 20, 'label' => '200 po', 'color' => '#3B82F6'],
+            ['type' => 'coins', 'value' => 500, 'weight' => 15, 'label' => '500 po', 'color' => '#8B5CF6'],
+            ['type' => 'coins', 'value' => 1000, 'weight' => 5, 'label' => '1000 po', 'color' => '#FFD700'],
+            ['type' => 'card', 'rarity' => 'common', 'weight' => 15, 'label' => 'Carte Commune', 'color' => '#9CA3AF'],
+            ['type' => 'card', 'rarity' => 'rare', 'weight' => 10, 'label' => 'Carte Rare', 'color' => '#3B82F6'],
+            ['type' => 'card', 'rarity' => 'epic', 'weight' => 5, 'label' => 'Carte Epique', 'color' => '#8B5CF6'],
+            ['type' => 'booster', 'booster_type' => 'bronze', 'weight' => 5, 'label' => 'Booster Bronze', 'color' => '#CD7F32'],
+        ];
+
+        // Calculer le total des poids
+        $totalWeight = array_sum(array_column($segments, 'weight'));
+
+        // Tirer un nombre aleatoire
+        $roll = rand(1, $totalWeight);
+
+        // Trouver le segment gagnant
+        $cumulative = 0;
+        $winningSegment = null;
+        $winningIndex = 0;
+
+        foreach ($segments as $index => $segment) {
+            $cumulative += $segment['weight'];
+            if ($roll <= $cumulative) {
+                $winningSegment = $segment;
+                $winningIndex = $index;
+                break;
+            }
+        }
+
+        // Appliquer la recompense
+        $reward = $this->applyWheelReward($winningSegment);
+
+        // Mettre a jour le dernier spin
+        $this->last_wheel_spin_at = now();
+        $this->save();
+
+        return [
+            'success' => true,
+            'segment_index' => $winningIndex,
+            'segment' => $winningSegment,
+            'reward' => $reward,
+            'segments' => $segments,
+            'message' => $reward['message'],
+        ];
+    }
+
+    /**
+     * Applique la recompense de la roue
+     */
+    private function applyWheelReward(array $segment): array
+    {
+        switch ($segment['type']) {
+            case 'coins':
+                $this->addCoins($segment['value']);
+                return [
+                    'type' => 'coins',
+                    'value' => $segment['value'],
+                    'message' => "Vous avez gagne {$segment['value']} pieces !",
+                ];
+
+            case 'card':
+                $card = Card::where('rarity', $segment['rarity'])->inRandomOrder()->first();
+                if ($card) {
+                    $this->addCard($card);
+                    return [
+                        'type' => 'card',
+                        'card' => $card,
+                        'message' => "Vous avez gagne la carte {$card->name} !",
+                    ];
+                }
+                // Fallback si pas de carte de cette rarete
+                $this->addCoins(100);
+                return [
+                    'type' => 'coins',
+                    'value' => 100,
+                    'message' => "Vous avez gagne 100 pieces !",
+                ];
+
+            case 'booster':
+                // Generer les cartes du booster
+                $cards = $this->generateBoosterCards($segment['booster_type']);
+                foreach ($cards as $card) {
+                    $this->addCard($card);
+                }
+                return [
+                    'type' => 'booster',
+                    'booster_type' => $segment['booster_type'],
+                    'cards' => $cards,
+                    'message' => "Vous avez gagne un Booster Bronze avec " . count($cards) . " cartes !",
+                ];
+
+            default:
+                return ['type' => 'nothing', 'message' => 'Rien gagne.'];
+        }
+    }
+
+    /**
+     * Genere les cartes d'un booster (simplifie)
+     */
+    private function generateBoosterCards(string $type): array
+    {
+        $cards = [];
+        $count = 3;
+
+        for ($i = 0; $i < $count; $i++) {
+            $roll = rand(1, 100);
+            if ($roll <= 80) {
+                $rarity = 'common';
+            } elseif ($roll <= 98) {
+                $rarity = 'rare';
+            } else {
+                $rarity = 'epic';
+            }
+
+            $card = Card::where('rarity', $rarity)->inRandomOrder()->first();
+            if ($card) {
+                $cards[] = $card;
+            }
+        }
+
+        return $cards;
     }
 }

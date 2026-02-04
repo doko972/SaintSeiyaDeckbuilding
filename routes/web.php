@@ -17,6 +17,7 @@ use App\Http\Controllers\ComboController;
 use App\Http\Controllers\FusionController;
 use App\Http\Controllers\CardSellController;
 use App\Http\Controllers\DailyBonusController;
+use App\Http\Controllers\RewardsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -116,6 +117,15 @@ Route::middleware(['auth', 'ensure.starter'])->group(function () {
     Route::prefix('daily-bonus')->name('daily-bonus.')->group(function () {
         Route::get('/check', [DailyBonusController::class, 'check'])->name('check');
         Route::post('/claim', [DailyBonusController::class, 'claim'])->name('claim');
+    });
+
+    // Recompenses (serie de connexion + roue de la fortune)
+    Route::prefix('rewards')->name('rewards.')->group(function () {
+        Route::get('/', [RewardsController::class, 'index'])->name('index');
+        Route::get('/check-streak', [RewardsController::class, 'checkStreak'])->name('check-streak');
+        Route::post('/claim-streak', [RewardsController::class, 'claimStreak'])->name('claim-streak');
+        Route::get('/check-wheel', [RewardsController::class, 'checkWheel'])->name('check-wheel');
+        Route::post('/spin-wheel', [RewardsController::class, 'spinWheel'])->name('spin-wheel');
     });
 
     // Routes PvP
