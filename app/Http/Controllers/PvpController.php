@@ -266,6 +266,18 @@ class PvpController extends Controller
 
         $battle->load('player1', 'player2', 'player1Deck', 'player2Deck');
 
+        // Safeguard: Initialize battle_state if null (can happen with old battles)
+        if ($battle->battle_state === null && $battle->isInProgress()) {
+            $battleState = $this->initializeBattleState($battle);
+            $battle->update(['battle_state' => $battleState]);
+            $battle->refresh();
+        }
+
+        // If still null, redirect to lobby
+        if ($battle->battle_state === null) {
+            return redirect()->route('pvp.lobby')->with('error', 'Erreur: combat invalide.');
+        }
+
         $playerNumber = $battle->getPlayerNumber($user);
         $opponent = $battle->getOpponent($user);
         $isMyTurn = $battle->isPlayerTurn($user);
@@ -365,7 +377,10 @@ class PvpController extends Controller
                         'endurance_cost' => $card->secondaryAttack2->endurance_cost,
                         'cosmos_cost' => $card->secondaryAttack2->cosmos_cost,
                     ] : null,
+                    'rarity' => $card->rarity,
+                    'can_attack' => false,
                     'has_attacked' => false,
+                    'instance_id' => uniqid('card_'),
                 ];
             }
         }

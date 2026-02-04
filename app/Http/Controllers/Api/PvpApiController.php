@@ -4,17 +4,21 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Battle;
+use App\Models\TournamentMatch;
 use App\Services\ComboService;
+use App\Services\TournamentService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class PvpApiController extends Controller
 {
     protected ComboService $comboService;
+    protected TournamentService $tournamentService;
 
-    public function __construct(ComboService $comboService)
+    public function __construct(ComboService $comboService, TournamentService $tournamentService)
     {
         $this->comboService = $comboService;
+        $this->tournamentService = $tournamentService;
     }
 
     public function getWaitingBattles(): JsonResponse
@@ -341,6 +345,12 @@ class PvpApiController extends Controller
                 $opponent->coins += 25;
                 $opponent->losses++;
                 $opponent->save();
+
+                // Gerer le match de tournoi si applicable
+                $tournamentMatch = TournamentMatch::where('battle_id', $battle->id)->first();
+                if ($tournamentMatch) {
+                    $this->tournamentService->processMatchResult($tournamentMatch, $user->id);
+                }
             }
         }
 

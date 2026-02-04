@@ -18,6 +18,10 @@ use App\Http\Controllers\FusionController;
 use App\Http\Controllers\CardSellController;
 use App\Http\Controllers\DailyBonusController;
 use App\Http\Controllers\RewardsController;
+use App\Http\Controllers\PvpInvitationController;
+use App\Http\Controllers\TournamentController;
+use App\Http\Controllers\Api\TournamentApiController;
+use App\Http\Controllers\Admin\TournamentController as AdminTournamentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -147,6 +151,38 @@ Route::middleware(['auth', 'ensure.starter'])->group(function () {
         Route::post('/attack', [PvpApiController::class, 'attack']);
         Route::post('/end-turn', [PvpApiController::class, 'endTurn']);
     });
+
+    // Routes API Invitations PvP
+    Route::prefix('api/v1/invitations')->group(function () {
+        Route::get('/online-players', [PvpInvitationController::class, 'getOnlinePlayers']);
+        Route::post('/send', [PvpInvitationController::class, 'send']);
+        Route::post('/cancel/{invitation}', [PvpInvitationController::class, 'cancel']);
+        Route::get('/check-received', [PvpInvitationController::class, 'checkReceived']);
+        Route::get('/check-sent', [PvpInvitationController::class, 'checkSent']);
+        Route::post('/accept/{invitation}', [PvpInvitationController::class, 'accept']);
+        Route::post('/decline/{invitation}', [PvpInvitationController::class, 'decline']);
+    });
+
+    // Routes Tournois (joueur)
+    Route::prefix('tournaments')->name('tournaments.')->group(function () {
+        Route::get('/', [TournamentController::class, 'index'])->name('index');
+        Route::get('/{tournament}', [TournamentController::class, 'show'])->name('show');
+        Route::get('/{tournament}/bracket', [TournamentController::class, 'bracket'])->name('bracket');
+        Route::get('/{tournament}/match/{match}', [TournamentController::class, 'match'])->name('match');
+    });
+
+    // Routes API Tournois
+    Route::prefix('api/v1/tournaments')->group(function () {
+        Route::get('/list', [TournamentApiController::class, 'list']);
+        Route::get('/{tournament}', [TournamentApiController::class, 'show']);
+        Route::post('/register', [TournamentApiController::class, 'register']);
+        Route::post('/withdraw', [TournamentApiController::class, 'withdraw']);
+        Route::get('/match/{match}', [TournamentApiController::class, 'getMatch']);
+        Route::post('/match/{match}/ready', [TournamentApiController::class, 'setReady']);
+        Route::get('/match/{match}/check-ready', [TournamentApiController::class, 'checkReady']);
+        Route::post('/match/{match}/start', [TournamentApiController::class, 'startMatch']);
+        Route::get('/user/participations', [TournamentApiController::class, 'getUserParticipations']);
+    });
 });
 
 /*
@@ -194,6 +230,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/combos/{combo}', [ComboController::class, 'update'])->name('combos.update');
     Route::delete('/combos/{combo}', [ComboController::class, 'destroy'])->name('combos.destroy');
     Route::patch('/combos/{combo}/toggle', [ComboController::class, 'toggle'])->name('combos.toggle');
+
+    // Gestion des Tournois
+    Route::get('/tournaments', [AdminTournamentController::class, 'index'])->name('tournaments.index');
+    Route::get('/tournaments/create', [AdminTournamentController::class, 'create'])->name('tournaments.create');
+    Route::post('/tournaments', [AdminTournamentController::class, 'store'])->name('tournaments.store');
+    Route::get('/tournaments/{tournament}', [AdminTournamentController::class, 'show'])->name('tournaments.show');
+    Route::get('/tournaments/{tournament}/edit', [AdminTournamentController::class, 'edit'])->name('tournaments.edit');
+    Route::put('/tournaments/{tournament}', [AdminTournamentController::class, 'update'])->name('tournaments.update');
+    Route::delete('/tournaments/{tournament}', [AdminTournamentController::class, 'destroy'])->name('tournaments.destroy');
+    Route::patch('/tournaments/{tournament}/open-registration', [AdminTournamentController::class, 'openRegistration'])->name('tournaments.open-registration');
+    Route::patch('/tournaments/{tournament}/start', [AdminTournamentController::class, 'start'])->name('tournaments.start');
+    Route::patch('/tournaments/{tournament}/cancel', [AdminTournamentController::class, 'cancel'])->name('tournaments.cancel');
 });
 
 require __DIR__ . '/auth.php';

@@ -28,12 +28,21 @@ class User extends Authenticatable
         'last_login_date',
         'streak_reward_claimed_today',
         'last_wheel_spin_at',
+        'last_activity_at',
         'has_selected_starter',
         'has_completed_first_draw',
         'starter_bronze_id',
         'current_session_id',
         'last_session_ip',
+        'tournament_wins',
+        'tournament_title',
+        'tournament_points',
     ];
+
+    /**
+     * Duree en minutes pour considerer un joueur comme "en ligne"
+     */
+    public const ONLINE_THRESHOLD_MINUTES = 5;
 
     /**
      * Configuration des rangs et leurs seuils de victoires
@@ -59,6 +68,7 @@ class User extends Authenticatable
         'last_login_date' => 'date',
         'streak_reward_claimed_today' => 'boolean',
         'last_wheel_spin_at' => 'datetime',
+        'last_activity_at' => 'datetime',
     ];
 
     /**
@@ -333,6 +343,37 @@ class User extends Authenticatable
     public function battlesAsPlayer2()
     {
         return $this->hasMany(Battle::class, 'player2_id');
+    }
+
+    /**
+     * Participations aux tournois
+     */
+    public function tournamentParticipations(): HasMany
+    {
+        return $this->hasMany(TournamentParticipant::class);
+    }
+
+    /**
+     * Match de tournoi actif
+     */
+    public function activeTournamentMatch(): ?TournamentMatch
+    {
+        $participation = $this->tournamentParticipations()
+            ->whereHas('tournament', fn($q) => $q->where('status', 'in_progress'))
+            ->whereIn('status', ['active', 'registered'])
+            ->first();
+
+        if (!$participation) {
+            return null;
+        }
+
+        return TournamentMatch::where('tournament_id', $participation->tournament_id)
+            ->where(function ($q) use ($participation) {
+                $q->where('participant1_id', $participation->id)
+                    ->orWhere('participant2_id', $participation->id);
+            })
+            ->whereIn('status', ['ready', 'in_progress'])
+            ->first();
     }
 
     /**
@@ -700,5 +741,128 @@ class User extends Authenticatable
         }
 
         return $cards;
+    }
+
+    // ==========================================
+    // STATUT EN LIGNE & INVITATIONS PVP
+    // ==========================================
+
+    /**
+     * Verifie si le joueur est en ligne
+     */
+    public function isOnline(): bool
+    {
+        if (!$this->last_activity_at) {
+            return false;
+        }
+
+        return $this->last_activity_at->diffInMinutes(now()) <= self::ONLINE_THRESHOLD_MINUTES;
+    }
+
+    /**
+     * Obtient tous les joueurs en ligne (sauf soi-meme)
+     */
+    public static function getOnlinePlayers(?int $excludeUserId = null): \Illuminate\Database\Eloquent\Collection
+    {
+        $query = static::where('last_activity_at', '>=', now()->subMinutes(self::ONLINE_THRESHOLD_MINUTES))
+            ->where('has_selected_starter', true);
+
+        if ($excludeUserId) {
+            $query->where('id', '!=', $excludeUserId);
+        }
+
+        return $query->orderBy('last_activity_at', 'desc')->get();
+    }
+
+    /**
+     * Invitations PvP recues
+     */
+    public function receivedInvitations(): HasMany
+    {
+        return $this->hasMany(PvpInvitation::class, 'to_user_id');
+    }
+
+    /**
+     * Invitations PvP envoyees
+     */
+    public function sentInvitations(): HasMany
+    {
+        return $this->hasMany(PvpInvitation::class, 'from_user_id');
+    }
+
+    /**
+     * Invitations en attente recues
+     */
+    public function pendingReceivedInvitations()
+    {
+        return $this->receivedInvitations()
+            ->pending()
+            ->with(['fromUser', 'deck'])
+            ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Invitation en attente envoyee (une seule a la fois)
+     */
+    public function pendingSentInvitation()
+    {
+        return $this->sentInvitations()
+            ->pending()
+            ->with(['toUser', 'deck'])
+            ->first();
+    }
+
+    /**
+     * Envoie une invitation PvP
+     */
+    public function sendPvpInvitation(User $toUser, Deck $deck): array
+    {
+        // Verifier que le destinataire est en ligne
+        if (!$toUser->isOnline()) {
+            return [
+                'success' => false,
+                'message' => 'Ce joueur n\'est plus en ligne.',
+            ];
+        }
+
+        // Verifier qu'on n'a pas deja une invitation en attente
+        $existingInvitation = $this->pendingSentInvitation();
+        if ($existingInvitation) {
+            return [
+                'success' => false,
+                'message' => 'Vous avez deja une invitation en attente.',
+            ];
+        }
+
+        // Verifier que le destinataire n'est pas en combat
+        if ($toUser->isInBattle()) {
+            return [
+                'success' => false,
+                'message' => 'Ce joueur est deja en combat.',
+            ];
+        }
+
+        // Verifier qu'on n'est pas en combat
+        if ($this->isInBattle()) {
+            return [
+                'success' => false,
+                'message' => 'Vous etes deja en combat.',
+            ];
+        }
+
+        // Creer l'invitation
+        $invitation = PvpInvitation::create([
+            'from_user_id' => $this->id,
+            'to_user_id' => $toUser->id,
+            'deck_id' => $deck->id,
+            'status' => 'pending',
+            'expires_at' => now()->addSeconds(PvpInvitation::EXPIRATION_SECONDS),
+        ]);
+
+        return [
+            'success' => true,
+            'invitation' => $invitation,
+            'message' => "Invitation envoyee a {$toUser->name} !",
+        ];
     }
 }

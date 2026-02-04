@@ -101,6 +101,22 @@
                                         <div class="text-xs text-gray-500">Joueurs en temps reel</div>
                                     </div>
                                 </a>
+
+                                <!-- Tournois -->
+                                <a href="{{ route('tournaments.index') }}"
+                                    class="group flex items-center gap-3 px-4 py-3 transition-all duration-200
+                                   {{ request()->routeIs('tournaments.*')
+                                       ? 'bg-gradient-to-r from-yellow-600/30 to-orange-600/30 text-yellow-400'
+                                       : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                                    <span
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
+                                        &#127941;
+                                    </span>
+                                    <div class="flex-1">
+                                        <div class="font-semibold">Tournois</div>
+                                        <div class="text-xs text-gray-500">Competitions et recompenses</div>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -342,6 +358,10 @@
                                         class="block px-4 py-2 text-sm text-gray-300 hover:bg-red-500/20 hover:text-white transition">
                                         &#10133; Creer une carte
                                     </a>
+                                    <a href="{{ route('admin.tournaments.index') }}"
+                                        class="block px-4 py-2 text-sm text-gray-300 hover:bg-red-500/20 hover:text-white transition">
+                                        &#127942; Gestion tournois
+                                    </a>
                                 </div>
                             @endif
 
@@ -408,6 +428,12 @@
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                         </span>
                     </div>
+                </a>
+                <a href="{{ route('tournaments.index') }}"
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
+                   {{ request()->routeIs('tournaments.*') ? 'bg-yellow-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                    <span class="text-lg">&#127941;</span>
+                    <span class="font-medium text-sm">Tournois</span>
                 </a>
             </div>
 
@@ -484,6 +510,11 @@
                         class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-red-500/20 hover:text-white transition">
                         <span class="text-lg">&#9876;</span>
                         <span class="font-medium text-sm">Attaques (CRUD)</span>
+                    </a>
+                    <a href="{{ route('admin.tournaments.index') }}"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-red-500/20 hover:text-white transition">
+                        <span class="text-lg">&#127942;</span>
+                        <span class="font-medium text-sm">Gestion tournois</span>
                     </a>
                 </div>
             @endif

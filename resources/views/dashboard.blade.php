@@ -337,6 +337,191 @@
         }
 
         /* ========================================
+           ONLINE INDICATOR IN HERO
+        ======================================== */
+        .online-stat {
+            position: relative;
+        }
+
+        .online-pulse {
+            width: 8px;
+            height: 8px;
+            background: #10B981;
+            border-radius: 50%;
+            display: inline-block;
+            animation: onlinePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes onlinePulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            50% { transform: scale(1.2); box-shadow: 0 0 10px 3px rgba(16, 185, 129, 0.4); }
+        }
+
+        /* ========================================
+           JOUEURS EN LIGNE
+        ======================================== */
+        .player-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .player-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .player-card.in-battle {
+            opacity: 0.6;
+        }
+
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .player-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .player-name {
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-stats {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .challenge-btn {
+            padding: 0.5rem 0.75rem;
+            background: linear-gradient(135deg, #10B981, #059669);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .challenge-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .challenge-btn:disabled {
+            background: #4a4a4a;
+            cursor: not-allowed;
+        }
+
+        /* ========================================
+           INVITATION MODAL
+        ======================================== */
+        .invitation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .invitation-modal.active {
+            display: flex;
+        }
+
+        .invitation-content {
+            background: linear-gradient(180deg, #1a1a3e 0%, #0f0f2a 100%);
+            border: 2px solid rgba(16, 185, 129, 0.4);
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .invitation-content.incoming {
+            border-color: rgba(245, 158, 11, 0.5);
+            animation: incomingPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes incomingPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.4); }
+        }
+
+        .invitation-timer {
+            width: 60px;
+            height: 60px;
+            margin: 1rem auto;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #10B981;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .invitation-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .invitation-buttons button {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-accept {
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+        }
+
+        .btn-decline {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+            border: 1px solid rgba(239, 68, 68, 0.3) !important;
+        }
+
+        .btn-cancel {
+            background: rgba(107, 114, 128, 0.2);
+            color: #9CA3AF;
+        }
+
+        /* ========================================
            DAILY BONUS MODAL
         ======================================== */
         .daily-bonus-modal {
@@ -516,7 +701,7 @@
                     </div>
 
                     <!-- Mini Stats -->
-                    <div class="grid grid-cols-3 gap-2 sm:gap-3">
+                    <div class="grid grid-cols-4 gap-2 sm:gap-3">
                         <div class="mini-stat" style="--stat-color: #FFD700; --stat-color-light: #FFA500;">
                             <div class="mini-stat-value">{{ number_format(auth()->user()->coins) }}</div>
                             <div class="mini-stat-label">Pieces</div>
@@ -528,6 +713,13 @@
                         <div class="mini-stat" style="--stat-color: #8B5CF6; --stat-color-light: #A78BFA;">
                             <div class="mini-stat-value">{{ auth()->user()->cards()->count() }}</div>
                             <div class="mini-stat-label">Cartes</div>
+                        </div>
+                        <div class="mini-stat online-stat" style="--stat-color: #10B981; --stat-color-light: #34D399;">
+                            <div class="mini-stat-value flex items-center justify-center gap-1">
+                                <span class="online-pulse"></span>
+                                <span id="heroOnlineCount">0</span>
+                            </div>
+                            <div class="mini-stat-label">En ligne</div>
                         </div>
                     </div>
                 </div>
@@ -820,6 +1012,39 @@
             </div>
 
             <!-- ========================================
+                 JOUEURS EN LIGNE
+            ======================================== -->
+            <div class="mb-8">
+                <div class="section-header">
+                    <div class="section-icon bg-gradient-to-br from-green-500 to-emerald-500">
+                        <span class="relative flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                        </span>
+                    </div>
+                    <div>
+                        <h2 class="section-title">Joueurs en ligne</h2>
+                        <p class="section-subtitle">Defiez-les en duel !</p>
+                    </div>
+                    <div class="ml-auto">
+                        <span id="onlineCount" class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm font-bold">
+                            0 en ligne
+                        </span>
+                    </div>
+                </div>
+
+                <div id="onlinePlayersContainer" class="bg-white/5 backdrop-blur rounded-xl border border-white/10 p-4">
+                    <div id="onlinePlayersList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <!-- Chargement -->
+                        <div class="col-span-full text-center text-gray-400 py-4">
+                            <div class="animate-spin inline-block w-6 h-6 border-2 border-gray-400 border-t-transparent rounded-full mb-2"></div>
+                            <p>Chargement des joueurs...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================
                  SECTION ADMIN
             ======================================== -->
             @if(auth()->user()->isAdmin())
@@ -891,11 +1116,98 @@
         </div>
     </div>
 
+    <!-- ========================================
+         MODAL ENVOI INVITATION
+    ======================================== -->
+    <div id="sendInviteModal" class="invitation-modal">
+        <div class="invitation-content">
+            <h2 class="text-xl font-black text-green-400 mb-2">&#9876; Defier un joueur</h2>
+            <p class="text-gray-400 text-sm mb-4">Choisissez votre deck pour le combat</p>
+
+            <div id="targetPlayerInfo" class="mb-4 p-3 bg-white/5 rounded-lg">
+                <span class="text-white font-bold" id="targetPlayerName"></span>
+            </div>
+
+            <div id="deckSelector" class="space-y-2 max-h-48 overflow-y-auto mb-4">
+                @foreach(auth()->user()->decks as $deck)
+                <label class="flex items-center gap-3 p-3 bg-white/5 rounded-lg cursor-pointer hover:bg-white/10 transition">
+                    <input type="radio" name="inviteDeck" value="{{ $deck->id }}" class="w-4 h-4">
+                    <span class="text-white">{{ $deck->name }}</span>
+                    <span class="text-gray-500 text-sm">({{ $deck->cards()->count() }} cartes)</span>
+                </label>
+                @endforeach
+            </div>
+
+            <div class="invitation-buttons">
+                <button class="btn-cancel" onclick="closeSendInviteModal()">Annuler</button>
+                <button class="btn-accept" onclick="sendInvitation()">Envoyer le defi !</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         MODAL ATTENTE REPONSE
+    ======================================== -->
+    <div id="waitingInviteModal" class="invitation-modal">
+        <div class="invitation-content">
+            <h2 class="text-xl font-black text-yellow-400 mb-2">&#9203; En attente...</h2>
+            <p class="text-gray-400 text-sm mb-4">Invitation envoyee a <span id="waitingPlayerName" class="text-white font-bold"></span></p>
+
+            <div class="invitation-timer" id="waitingTimer">60</div>
+
+            <p class="text-gray-500 text-sm">Le joueur a 60 secondes pour repondre</p>
+
+            <div class="invitation-buttons">
+                <button class="btn-cancel" onclick="cancelSentInvitation()">Annuler l'invitation</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         MODAL INVITATION RECUE
+    ======================================== -->
+    <div id="receivedInviteModal" class="invitation-modal">
+        <div class="invitation-content incoming">
+            <h2 class="text-xl font-black text-yellow-400 mb-2">&#9876; Defi recu !</h2>
+            <p class="text-gray-400 text-sm mb-2"><span id="challengerName" class="text-white font-bold"></span> vous defie !</p>
+            <p class="text-gray-500 text-xs mb-4">Rang: <span id="challengerRank"></span> | Victoires: <span id="challengerWins"></span></p>
+
+            <div class="invitation-timer" id="receivedTimer">60</div>
+
+            <div id="receivedDeckSelector" class="space-y-2 max-h-32 overflow-y-auto mb-4">
+                @foreach(auth()->user()->decks as $deck)
+                <label class="flex items-center gap-3 p-2 bg-white/5 rounded-lg cursor-pointer hover:bg-white/10 transition text-sm">
+                    <input type="radio" name="acceptDeck" value="{{ $deck->id }}" class="w-4 h-4">
+                    <span class="text-white">{{ $deck->name }}</span>
+                </label>
+                @endforeach
+            </div>
+
+            <div class="invitation-buttons">
+                <button class="btn-decline" onclick="declineInvitation()">Refuser</button>
+                <button class="btn-accept" onclick="acceptInvitation()">Accepter !</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
         const diceSymbols = ['', '&#9856;', '&#9857;', '&#9858;', '&#9859;', '&#9860;', '&#9861;'];
 
+        // ==========================================
+        // VARIABLES GLOBALES
+        // ==========================================
+        let selectedPlayerId = null;
+        let currentInvitationId = null;
+        let waitingInterval = null;
+        let receivedInterval = null;
+        let pollInterval = null;
+
+        // ==========================================
+        // INITIALISATION
+        // ==========================================
         document.addEventListener('DOMContentLoaded', async function() {
+            // Bonus quotidien
             try {
                 const response = await fetch('/daily-bonus/check', {
                     headers: { 'Accept': 'application/json' }
@@ -907,8 +1219,276 @@
             } catch (error) {
                 console.error('Erreur verification bonus:', error);
             }
+
+            // Charger les joueurs en ligne
+            loadOnlinePlayers();
+            setInterval(loadOnlinePlayers, 10000); // Rafraichir toutes les 10s
+
+            // Verifier les invitations recues
+            checkReceivedInvitations();
+            pollInterval = setInterval(checkReceivedInvitations, 3000); // Toutes les 3s
         });
 
+        // ==========================================
+        // JOUEURS EN LIGNE
+        // ==========================================
+        async function loadOnlinePlayers() {
+            try {
+                const response = await fetch('/api/v1/invitations/online-players', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await response.json();
+
+                document.getElementById('onlineCount').textContent = data.count + ' en ligne';
+                document.getElementById('heroOnlineCount').textContent = data.total_online;
+
+                const container = document.getElementById('onlinePlayersList');
+
+                if (data.count === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center text-gray-400 py-8">
+                            <div class="text-4xl mb-2">&#128564;</div>
+                            <p>Aucun autre joueur en ligne</p>
+                            <p class="text-sm">Revenez plus tard ou invitez vos amis !</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = data.players.map(player => `
+                    <div class="player-card ${player.in_battle ? 'in-battle' : ''}">
+                        <div class="player-avatar" style="background: linear-gradient(135deg, ${getRankColor(player.rank)});">
+                            ${player.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="player-info">
+                            <div class="player-name">${player.name}</div>
+                            <div class="player-stats">
+                                ${getRankIcon(player.rank)} ${player.wins}V / ${player.losses}D
+                                ${player.in_battle ? '<span class="text-red-400 ml-1">En combat</span>' : ''}
+                            </div>
+                        </div>
+                        <button class="challenge-btn" onclick="openSendInviteModal(${player.id}, '${player.name}')" ${player.in_battle ? 'disabled' : ''}>
+                            ${player.in_battle ? 'Occupe' : 'Defier'}
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Erreur chargement joueurs:', error);
+            }
+        }
+
+        function getRankColor(rank) {
+            const colors = {
+                'bronze': '#CD7F32, #8B4513',
+                'argent': '#C0C0C0, #A8A8A8',
+                'or': '#FFD700, #FFA500',
+                'divin': '#E0B0FF, #9400D3'
+            };
+            return colors[rank] || colors['bronze'];
+        }
+
+        function getRankIcon(rank) {
+            const icons = { 'bronze': '&#129353;', 'argent': '&#129352;', 'or': '&#129351;', 'divin': '&#128081;' };
+            return icons[rank] || icons['bronze'];
+        }
+
+        // ==========================================
+        // ENVOI INVITATION
+        // ==========================================
+        function openSendInviteModal(playerId, playerName) {
+            selectedPlayerId = playerId;
+            document.getElementById('targetPlayerName').textContent = playerName;
+            document.getElementById('sendInviteModal').classList.add('active');
+        }
+
+        function closeSendInviteModal() {
+            selectedPlayerId = null;
+            document.getElementById('sendInviteModal').classList.remove('active');
+        }
+
+        async function sendInvitation() {
+            const deckRadio = document.querySelector('input[name="inviteDeck"]:checked');
+            if (!deckRadio) {
+                alert('Veuillez selectionner un deck');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/v1/invitations/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        to_user_id: selectedPlayerId,
+                        deck_id: deckRadio.value
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    closeSendInviteModal();
+                    currentInvitationId = data.invitation.id;
+                    document.getElementById('waitingPlayerName').textContent = document.getElementById('targetPlayerName').textContent;
+                    document.getElementById('waitingInviteModal').classList.add('active');
+                    startWaitingTimer();
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Erreur envoi invitation:', error);
+                alert('Erreur de connexion');
+            }
+        }
+
+        function startWaitingTimer() {
+            let seconds = 60;
+            const timerEl = document.getElementById('waitingTimer');
+
+            waitingInterval = setInterval(async () => {
+                seconds--;
+                timerEl.textContent = seconds;
+
+                // Verifier le statut de l'invitation
+                try {
+                    const response = await fetch('/api/v1/invitations/check-sent', {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    const data = await response.json();
+
+                    if (data.accepted && data.battle_id) {
+                        clearInterval(waitingInterval);
+                        document.getElementById('waitingInviteModal').classList.remove('active');
+                        window.location.href = '/pvp/battle/' + data.battle_id;
+                    } else if (!data.has_pending) {
+                        clearInterval(waitingInterval);
+                        document.getElementById('waitingInviteModal').classList.remove('active');
+                        if (!data.accepted) {
+                            alert('Invitation refusee ou expiree');
+                        }
+                    }
+                } catch (e) {}
+
+                if (seconds <= 0) {
+                    clearInterval(waitingInterval);
+                    document.getElementById('waitingInviteModal').classList.remove('active');
+                }
+            }, 1000);
+        }
+
+        async function cancelSentInvitation() {
+            if (currentInvitationId) {
+                try {
+                    await fetch('/api/v1/invitations/cancel/' + currentInvitationId, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        }
+                    });
+                } catch (e) {}
+            }
+            clearInterval(waitingInterval);
+            document.getElementById('waitingInviteModal').classList.remove('active');
+            currentInvitationId = null;
+        }
+
+        // ==========================================
+        // RECEPTION INVITATION
+        // ==========================================
+        async function checkReceivedInvitations() {
+            try {
+                const response = await fetch('/api/v1/invitations/check-received', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await response.json();
+
+                if (data.count > 0 && !document.getElementById('receivedInviteModal').classList.contains('active')) {
+                    const inv = data.invitations[0];
+                    currentInvitationId = inv.id;
+                    document.getElementById('challengerName').textContent = inv.from_user.name;
+                    document.getElementById('challengerRank').textContent = inv.from_user.rank;
+                    document.getElementById('challengerWins').textContent = inv.from_user.wins;
+                    document.getElementById('receivedInviteModal').classList.add('active');
+                    startReceivedTimer(inv.expires_in);
+                }
+            } catch (e) {}
+        }
+
+        function startReceivedTimer(seconds) {
+            const timerEl = document.getElementById('receivedTimer');
+            timerEl.textContent = seconds;
+
+            receivedInterval = setInterval(() => {
+                seconds--;
+                timerEl.textContent = Math.max(0, seconds);
+
+                if (seconds <= 0) {
+                    clearInterval(receivedInterval);
+                    document.getElementById('receivedInviteModal').classList.remove('active');
+                    currentInvitationId = null;
+                }
+            }, 1000);
+        }
+
+        async function acceptInvitation() {
+            const deckRadio = document.querySelector('input[name="acceptDeck"]:checked');
+            if (!deckRadio) {
+                alert('Veuillez selectionner un deck');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/v1/invitations/accept/' + currentInvitationId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ deck_id: deckRadio.value })
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.battle_id) {
+                    clearInterval(receivedInterval);
+                    window.location.href = '/pvp/battle/' + data.battle_id;
+                } else {
+                    alert(data.message);
+                    closeReceivedInviteModal();
+                }
+            } catch (error) {
+                console.error('Erreur acceptation:', error);
+                alert('Erreur de connexion');
+            }
+        }
+
+        async function declineInvitation() {
+            try {
+                await fetch('/api/v1/invitations/decline/' + currentInvitationId, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    }
+                });
+            } catch (e) {}
+            closeReceivedInviteModal();
+        }
+
+        function closeReceivedInviteModal() {
+            clearInterval(receivedInterval);
+            document.getElementById('receivedInviteModal').classList.remove('active');
+            currentInvitationId = null;
+        }
+
+        // ==========================================
+        // BONUS QUOTIDIEN
+        // ==========================================
         async function rollDice() {
             const btn = document.getElementById('rollDiceBtn');
             const dice = document.getElementById('dice');
@@ -955,7 +1535,6 @@
 
         function closeDailyBonusModal() {
             document.getElementById('dailyBonusModal').classList.remove('active');
-            location.reload();
         }
     </script>
 </x-app-layout>
