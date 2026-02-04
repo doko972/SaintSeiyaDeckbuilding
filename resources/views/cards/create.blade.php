@@ -96,6 +96,8 @@
                                     d'armure *</label>
                                 <select name="armor_type" id="armor_type" required
                                     class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:ring-purple-500">
+                                    <option value="black" {{ old('armor_type') == 'steel' ? 'selected' : '' }}>🤖
+                                        Noir</option>
                                     <option value="bronze" {{ old('armor_type') == 'bronze' ? 'selected' : '' }}>🥉
                                         Bronze</option>
                                     <option value="silver" {{ old('armor_type') == 'silver' ? 'selected' : '' }}>🥈
@@ -104,6 +106,13 @@
                                     </option>
                                     <option value="divine" {{ old('armor_type') == 'divine' ? 'selected' : '' }}>👑
                                         Divine</option>
+                                    <option value="surplis" {{ old('armor_type') == 'surplis' ? 'selected' : '' }}>💀
+                                        Surplis</option>
+                                    <option value="god_warrior"
+                                        {{ old('armor_type') == 'god_warrior' ? 'selected' : '' }}>⚔️
+                                        Guerrier Divin</option>
+                                    <option value="steel" {{ old('armor_type') == 'steel' ? 'selected' : '' }}>🤖
+                                        Acier</option>
                                 </select>
                             </div>
 
@@ -138,8 +147,10 @@
                                     </option>
                                     <option value="epic" {{ old('rarity') == 'epic' ? 'selected' : '' }}>Épique
                                     </option>
-                                    <option value="legendary" {{ old('rarity') == 'legendary' ? 'selected' : '' }}>Légendaire</option>
-                                    <option value="mythic" {{ old('rarity') == 'mythic' ? 'selected' : '' }}>Mythique</option>
+                                    <option value="legendary" {{ old('rarity') == 'legendary' ? 'selected' : '' }}>
+                                        Légendaire</option>
+                                    <option value="mythic" {{ old('rarity') == 'mythic' ? 'selected' : '' }}>Mythique
+                                    </option>
                                 </select>
                             </div>
                         </div>

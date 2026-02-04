@@ -26,10 +26,14 @@ class CardController extends Controller
     public static function getArmorTypes(): array
     {
         return [
+            'black' => 'Noir',
             'bronze' => 'Bronze',
             'silver' => 'Argent',
             'gold' => 'Or',
             'divine' => 'Divin',
+            'surplis' => 'Surplis',
+            'god_warrior' => 'Guerrier Divin',
+            'steel' => 'Acier',
         ];
     }
 

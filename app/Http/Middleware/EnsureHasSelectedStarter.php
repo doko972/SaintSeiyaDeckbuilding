@@ -21,6 +21,10 @@ class EnsureHasSelectedStarter
         if ($user && !$user->has_selected_starter) {
             // Exception : ne pas bloquer la route de sélection du Bronze elle-même
             if (!$request->routeIs('starter-pack.*') && !$request->routeIs('logout')) {
+                // Retourner JSON pour les requêtes API/AJAX
+                if ($request->expectsJson() || $request->is('api/*')) {
+                    return response()->json(['error' => 'Starter pack non sélectionné', 'redirect' => route('starter-pack.index')], 403);
+                }
                 return redirect()->route('starter-pack.index')
                     ->with('info', 'Veuillez sélectionner votre Chevalier de Bronze de départ.');
             }
@@ -30,6 +34,10 @@ class EnsureHasSelectedStarter
         if ($user && $user->has_selected_starter && !$user->has_completed_first_draw) {
             // Exception : ne pas bloquer les routes du premier tirage
             if (!$request->routeIs('first-draw.*') && !$request->routeIs('logout')) {
+                // Retourner JSON pour les requêtes API/AJAX
+                if ($request->expectsJson() || $request->is('api/*')) {
+                    return response()->json(['error' => 'Premier tirage non effectué', 'redirect' => route('first-draw.index')], 403);
+                }
                 return redirect()->route('first-draw.index')
                     ->with('info', 'Effectuez votre premier tirage gratuit de 7 cartes !');
             }

@@ -991,6 +991,33 @@
             50% { transform: scale(1.1); box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
         }
 
+        /* Indicateur niveau de fusion sur les cartes */
+        .fusion-level-indicator {
+            position: absolute;
+            bottom: 50px;
+            right: 5px;
+            background: linear-gradient(135deg, #FFD700, #FF8C00);
+            color: #000;
+            font-size: 0.65rem;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 6px;
+            z-index: 20;
+            box-shadow: 0 2px 6px rgba(255, 215, 0, 0.4);
+            animation: fusionPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes fusionPulse {
+            0%, 100% { box-shadow: 0 2px 6px rgba(255, 215, 0, 0.4); }
+            50% { box-shadow: 0 2px 12px rgba(255, 215, 0, 0.8); }
+        }
+
+        .fusion-bonus {
+            color: #FFD700 !important;
+            font-weight: bold;
+            text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
+        }
+
         /* ========================================
            EXPLOSION COMBO - ANIMATION SPECTACULAIRE
         ======================================== */
@@ -2827,8 +2854,12 @@
 
         // Polling pour vérifier les mises à jour
         let pollingInterval = null;
+        let pollingErrorCount = 0;
+        const MAX_POLLING_ERRORS = 5;
 
         function startPolling() {
+            if (pollingInterval) return; // Eviter les doublons
+            pollingErrorCount = 0;
             pollingInterval = setInterval(checkForUpdates, 2000);
         }
 
@@ -2841,13 +2872,19 @@
 
         async function checkForUpdates() {
             try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
                 const response = await fetch(`/api/v1/pvp/battle-state/${battleId}`, {
                     headers: {
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                     },
-                    credentials: 'same-origin'
+                    credentials: 'same-origin',
+                    signal: controller.signal
                 });
+
+                clearTimeout(timeoutId);
 
                 // Rediriger vers login si non authentifié
                 if (response.status === 401) {
@@ -2858,8 +2895,16 @@
 
                 if (!response.ok) {
                     console.error('Polling error: HTTP', response.status);
+                    pollingErrorCount++;
+                    if (pollingErrorCount >= MAX_POLLING_ERRORS) {
+                        addLogEntry('⚠️ Probleme de connexion. Rechargez la page.', 'damage');
+                        stopPolling();
+                    }
                     return;
                 }
+
+                // Reset error count on success
+                pollingErrorCount = 0;
 
                 const data = await response.json();
 
@@ -2906,7 +2951,19 @@
                     }
                 }
             } catch (error) {
+                // Ignorer les erreurs d'abort (timeout)
+                if (error.name === 'AbortError') {
+                    console.warn('Polling timeout, retrying...');
+                    return;
+                }
+
                 console.error('Polling error:', error);
+                pollingErrorCount++;
+
+                if (pollingErrorCount >= MAX_POLLING_ERRORS) {
+                    addLogEntry('⚠️ Connexion perdue. Rechargez la page.', 'damage');
+                    stopPolling();
+                }
             }
         }
 
@@ -3043,8 +3100,16 @@
                 ? `<div class="combo-indicator" title="${comboStatus.comboName}">${comboStatus.isLeader ? '👑⚡' : '⚡'}</div>`
                 : '';
 
+            // Badge de niveau de fusion (si améliorée)
+            const fusionLevel = card.fusion_level || 1;
+            const bonusPercent = card.bonus_percent || 0;
+            const fusionBadgeHtml = fusionLevel > 1
+                ? `<div class="fusion-level-indicator" title="+${bonusPercent}% stats">+${fusionLevel - 1}</div>`
+                : '';
+
             div.innerHTML = `
                 ${comboIndicatorHtml}
+                ${fusionBadgeHtml}
                 <div class="battle-card-image" style="background-image: url('${card.image || ''}'); background-color: ${card.faction?.color_primary || '#333'};"></div>
                 <div class="battle-card-info">
                     <div class="battle-card-name">${card.name}</div>
@@ -3054,6 +3119,7 @@
                     <div class="battle-card-stats">
                         <span>❤️ ${card.current_hp}/${card.max_hp}</span>
                         <span>💪 ${card.power || 0}</span>
+                        ${bonusPercent > 0 ? `<span class="fusion-bonus">🔥+${bonusPercent}%</span>` : ''}
                     </div>
                 </div>
             `;
@@ -3076,10 +3142,10 @@
             const div = document.createElement('div');
             div.className = 'hand-card';
             div.dataset.cardIndex = index;
-            
+
             const state = getMyState();
             const canPlay = isMyTurn && state.cosmos >= card.cost && state.field.length < 3;
-            
+
             div.classList.add(canPlay ? 'playable' : 'unplayable');
 
             if (card.faction) {
@@ -3087,8 +3153,16 @@
                 div.style.setProperty('--color2', card.faction.color_secondary || '#555');
             }
 
+            // Badge de niveau de fusion (si améliorée)
+            const fusionLevel = card.fusion_level || 1;
+            const bonusPercent = card.bonus_percent || 0;
+            const fusionBadgeHtml = fusionLevel > 1
+                ? `<div class="fusion-level-indicator" style="bottom: auto; top: 5px;" title="+${bonusPercent}% stats">+${fusionLevel - 1}</div>`
+                : '';
+
             div.innerHTML = `
                 <div class="hand-card-cost">💎 ${card.cost}</div>
+                ${fusionBadgeHtml}
                 <div class="hand-card-image" style="background-image: url('${card.image || ''}'); background-color: ${card.faction?.color_primary || '#333'};"></div>
                 <div class="hand-card-info">
                     <div class="hand-card-name">${card.name}</div>
@@ -3096,6 +3170,7 @@
                         <span title="Points de vie">❤️ ${card.max_hp || card.health_points || '?'}</span>
                         <span title="Puissance">⚔️ ${card.power || 0}</span>
                         <span title="Défense">🛡️ ${card.defense || 0}</span>
+                        ${bonusPercent > 0 ? `<span class="fusion-bonus" title="Bonus fusion">🔥+${bonusPercent}%</span>` : ''}
                     </div>
                 </div>
             `;

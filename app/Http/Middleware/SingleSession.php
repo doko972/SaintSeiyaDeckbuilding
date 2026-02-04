@@ -53,7 +53,7 @@ class SingleSession
             $request->session()->regenerateToken();
 
             // Pour les requêtes AJAX/API, retourner du JSON
-            if ($request->expectsJson()) {
+            if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([
                     'message' => 'Votre session a été fermée car une connexion a été effectuée depuis un autre appareil.',
                     'redirect' => route('login')

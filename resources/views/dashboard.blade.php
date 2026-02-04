@@ -567,12 +567,16 @@
         }
 
         .dice.rolling {
-            animation: diceRoll 2s ease-out;
+            animation: diceRoll 2s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
         @keyframes diceRoll {
-            0% { transform: rotateX(0) rotateY(0); }
-            100% { transform: var(--final-rotation); }
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            20% { transform: rotateX(360deg) rotateY(180deg); }
+            40% { transform: rotateX(720deg) rotateY(360deg); }
+            60% { transform: rotateX(1080deg) rotateY(540deg); }
+            80% { transform: rotateX(1440deg) rotateY(720deg); }
+            100% { transform: var(--final-rotation, rotateX(1800deg) rotateY(900deg)); }
         }
 
         .dice-face {
@@ -1489,6 +1493,15 @@
         // ==========================================
         // BONUS QUOTIDIEN
         // ==========================================
+        const diceRotations = {
+            1: 'rotateX(1800deg) rotateY(900deg)',      // front face
+            2: 'rotateX(1710deg) rotateY(900deg)',     // top face (-90deg from 1800)
+            3: 'rotateX(1800deg) rotateY(810deg)',     // right face (-90deg Y)
+            4: 'rotateX(1800deg) rotateY(990deg)',     // left face (+90deg Y)
+            5: 'rotateX(1890deg) rotateY(900deg)',     // bottom face (+90deg from 1800)
+            6: 'rotateX(1980deg) rotateY(900deg)'      // back face (+180deg)
+        };
+
         async function rollDice() {
             const btn = document.getElementById('rollDiceBtn');
             const dice = document.getElementById('dice');
@@ -1496,7 +1509,6 @@
 
             btn.disabled = true;
             btn.textContent = 'Lancement...';
-            dice.classList.add('rolling');
 
             try {
                 const response = await fetch('/daily-bonus/claim', {
@@ -1511,6 +1523,11 @@
                 const data = await response.json();
 
                 if (data.success) {
+                    // Definir la rotation finale basee sur le resultat
+                    dice.style.setProperty('--final-rotation', diceRotations[data.dice_result]);
+                    dice.classList.add('rolling');
+
+                    // Attendre la fin de l'animation (2s) puis afficher le resultat
                     setTimeout(() => {
                         dice.classList.remove('rolling');
                         dice.classList.add('result-' + data.dice_result);
@@ -1522,7 +1539,7 @@
                         document.getElementById('resultCoins').textContent = '+' + data.coins_earned + ' pieces !';
                         document.getElementById('resultBalance').textContent = 'Nouveau solde: ' + data.new_balance.toLocaleString() + ' po';
                         resultContainer.style.display = 'block';
-                    }, 2000);
+                    }, 2100);
                 } else {
                     alert(data.message || 'Erreur');
                     closeDailyBonusModal();

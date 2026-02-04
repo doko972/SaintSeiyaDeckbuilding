@@ -16,13 +16,18 @@ class TrackUserActivity
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check()) {
-            // Met a jour seulement si la derniere activite date de plus de 30 secondes
-            // pour eviter les updates trop frequentes
-            $user = auth()->user();
-            $lastActivity = $user->last_activity_at;
+            try {
+                // Met a jour seulement si la derniere activite date de plus de 30 secondes
+                // pour eviter les updates trop frequentes
+                $user = auth()->user();
+                $lastActivity = $user->last_activity_at;
 
-            if (!$lastActivity || $lastActivity->diffInSeconds(now()) >= 30) {
-                $user->update(['last_activity_at' => now()]);
+                if (!$lastActivity || $lastActivity->diffInSeconds(now()) >= 30) {
+                    $user->update(['last_activity_at' => now()]);
+                }
+            } catch (\Exception $e) {
+                // Ne pas bloquer la requete si la mise a jour echoue
+                \Log::warning('TrackUserActivity error: ' . $e->getMessage());
             }
         }
 
