@@ -23,6 +23,7 @@ class User extends Authenticatable
         'wins',
         'losses',
         'current_rank',
+        'last_daily_bonus_at',
         'has_selected_starter',
         'has_completed_first_draw',
         'starter_bronze_id',
@@ -50,6 +51,7 @@ class User extends Authenticatable
         'password' => 'hashed',
         'has_selected_starter' => 'boolean',
         'has_completed_first_draw' => 'boolean',
+        'last_daily_bonus_at' => 'datetime',
     ];
 
     /**
@@ -330,5 +332,75 @@ class User extends Authenticatable
     public function isInBattle(): bool
     {
         return $this->activeBattle() !== null;
+    }
+
+    /**
+     * Vérifie si le joueur peut récupérer son bonus quotidien
+     */
+    public function canClaimDailyBonus(): bool
+    {
+        if ($this->last_daily_bonus_at === null) {
+            return true;
+        }
+
+        return $this->last_daily_bonus_at->diffInHours(now()) >= 24;
+    }
+
+    /**
+     * Réclame le bonus quotidien (lance le dé)
+     *
+     * @return array ['success' => bool, 'dice_result' => int, 'coins_earned' => int]
+     */
+    public function claimDailyBonus(): array
+    {
+        if (!$this->canClaimDailyBonus()) {
+            $hoursLeft = 24 - $this->last_daily_bonus_at->diffInHours(now());
+            return [
+                'success' => false,
+                'message' => "Vous devez attendre encore {$hoursLeft}h pour votre prochain bonus.",
+                'dice_result' => 0,
+                'coins_earned' => 0,
+            ];
+        }
+
+        // Lance le dé (1-6)
+        $diceResult = rand(1, 6);
+        $coinsEarned = $diceResult * 100;
+
+        // Met à jour le joueur
+        $this->last_daily_bonus_at = now();
+        $this->save();
+        $this->addCoins($coinsEarned);
+
+        return [
+            'success' => true,
+            'message' => "Vous avez obtenu {$coinsEarned} pièces !",
+            'dice_result' => $diceResult,
+            'coins_earned' => $coinsEarned,
+        ];
+    }
+
+    /**
+     * Obtient le temps restant avant le prochain bonus
+     *
+     * @return array ['hours' => int, 'minutes' => int]
+     */
+    public function getTimeUntilNextBonus(): array
+    {
+        if ($this->canClaimDailyBonus()) {
+            return ['hours' => 0, 'minutes' => 0];
+        }
+
+        $nextBonusTime = $this->last_daily_bonus_at->addHours(24);
+        $diffInMinutes = now()->diffInMinutes($nextBonusTime, false);
+
+        if ($diffInMinutes <= 0) {
+            return ['hours' => 0, 'minutes' => 0];
+        }
+
+        return [
+            'hours' => floor($diffInMinutes / 60),
+            'minutes' => $diffInMinutes % 60,
+        ];
     }
 }

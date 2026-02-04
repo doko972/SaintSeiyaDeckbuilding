@@ -606,12 +606,12 @@
         </div>
 
         <div class="cards-grid">
-            @foreach($drawnCards as $cardId => $item)
+            @foreach($drawnCards as $item)
                 @php $card = $item['card']; @endphp
                 <div class="flip-card" data-rarity="{{ $card->rarity }}" onclick="flipCard(this)">
                     <div class="flip-card-inner">
                         <div class="flip-card-front">
-                            <div class="card-back-logo">🎴</div>
+                            <div class="card-back-logo">&#127156;</div>
                             <div class="card-back-text">Saint Seiya</div>
                             <div class="click-hint">Cliquez pour reveler</div>
                         </div>
@@ -624,31 +624,26 @@
                                     @if($card->image_primary)
                                         <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}">
                                     @else
-                                        <div class="card-image-placeholder">🃏</div>
+                                        <div class="card-image-placeholder">&#127183;</div>
                                     @endif
                                 </div>
 
-                                <!-- Overlay dégradé -->
+                                <!-- Overlay degrade -->
                                 <div class="card-overlay"></div>
 
-                                <!-- Badge quantité -->
-                                @if($item['quantity'] > 1)
-                                    <div class="quantity-badge">x{{ $item['quantity'] }}</div>
-                                @endif
-
-                                <!-- Badge rareté -->
+                                <!-- Badge rarete -->
                                 <div class="card-rarity-badge rarity-{{ $card->rarity }}">
                                     @switch($card->rarity)
                                         @case('common') Commune @break
                                         @case('rare') Rare @break
-                                        @case('epic') Épique @break
-                                        @case('legendary') Légendaire @break
+                                        @case('epic') Epique @break
+                                        @case('legendary') Legendaire @break
                                         @case('mythic') Mythique @break
                                         @default {{ ucfirst($card->rarity) }}
                                     @endswitch
                                 </div>
 
-                                <!-- Header avec nom et coût -->
+                                <!-- Header avec nom et cout -->
                                 <div class="card-header">
                                     <div>
                                         <div class="card-name">{{ $card->name }}</div>

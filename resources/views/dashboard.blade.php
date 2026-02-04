@@ -816,6 +816,379 @@
         </div>
     </div>
 
+    <!-- ========================================
+         MODAL BONUS QUOTIDIEN
+    ======================================== -->
+    <div id="dailyBonusModal" class="daily-bonus-modal">
+        <div class="daily-bonus-content">
+            <div class="daily-bonus-header">
+                <h2>&#127922; Bonus Quotidien</h2>
+                <p>Lancez le de pour gagner des pieces !</p>
+            </div>
+
+            <div class="dice-container" id="diceContainer">
+                <div class="dice" id="dice">
+                    <div class="dice-face front">1</div>
+                    <div class="dice-face back">6</div>
+                    <div class="dice-face right">3</div>
+                    <div class="dice-face left">4</div>
+                    <div class="dice-face top">2</div>
+                    <div class="dice-face bottom">5</div>
+                </div>
+            </div>
+
+            <div class="rewards-preview">
+                <div class="reward-item"><span>&#9856;</span> = 100 po</div>
+                <div class="reward-item"><span>&#9857;</span> = 200 po</div>
+                <div class="reward-item"><span>&#9858;</span> = 300 po</div>
+                <div class="reward-item"><span>&#9859;</span> = 400 po</div>
+                <div class="reward-item"><span>&#9860;</span> = 500 po</div>
+                <div class="reward-item"><span>&#9861;</span> = 600 po</div>
+            </div>
+
+            <button id="rollDiceBtn" class="roll-dice-btn" onclick="rollDice()">
+                &#127922; Lancer le de !
+            </button>
+
+            <div id="resultContainer" class="result-container" style="display: none;">
+                <div class="result-dice" id="resultDice"></div>
+                <div class="result-coins" id="resultCoins"></div>
+                <div class="result-balance" id="resultBalance"></div>
+                <button class="close-modal-btn" onclick="closeDailyBonusModal()">
+                    Super !
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* ========================================
+           MODAL BONUS QUOTIDIEN
+        ======================================== */
+        .daily-bonus-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .daily-bonus-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .daily-bonus-content {
+            background: linear-gradient(180deg, #1a1a3e 0%, #0f0f2a 100%);
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            border-radius: 24px;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.2);
+        }
+
+        .daily-bonus-header h2 {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #FFD700;
+            margin-bottom: 0.5rem;
+        }
+
+        .daily-bonus-header p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
+        }
+
+        /* ========================================
+           DE 3D
+        ======================================== */
+        .dice-container {
+            width: 120px;
+            height: 120px;
+            margin: 2rem auto;
+            perspective: 600px;
+            cursor: pointer;
+        }
+
+        .dice {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease;
+        }
+
+        .dice.rolling {
+            animation: diceRoll 2s ease-out;
+        }
+
+        @keyframes diceRoll {
+            0% { transform: rotateX(0) rotateY(0) rotateZ(0); }
+            20% { transform: rotateX(180deg) rotateY(90deg) rotateZ(45deg); }
+            40% { transform: rotateX(360deg) rotateY(180deg) rotateZ(90deg); }
+            60% { transform: rotateX(540deg) rotateY(270deg) rotateZ(135deg); }
+            80% { transform: rotateX(720deg) rotateY(360deg) rotateZ(180deg); }
+            100% { transform: var(--final-rotation); }
+        }
+
+        .dice-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+            border: 3px solid #333;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #1a1a3e;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .dice-face.front  { transform: translateZ(60px); }
+        .dice-face.back   { transform: rotateY(180deg) translateZ(60px); }
+        .dice-face.right  { transform: rotateY(90deg) translateZ(60px); }
+        .dice-face.left   { transform: rotateY(-90deg) translateZ(60px); }
+        .dice-face.top    { transform: rotateX(90deg) translateZ(60px); }
+        .dice-face.bottom { transform: rotateX(-90deg) translateZ(60px); }
+
+        /* Rotations finales pour chaque resultat */
+        .dice.result-1 { transform: rotateX(0deg) rotateY(0deg); }
+        .dice.result-2 { transform: rotateX(-90deg) rotateY(0deg); }
+        .dice.result-3 { transform: rotateX(0deg) rotateY(-90deg); }
+        .dice.result-4 { transform: rotateX(0deg) rotateY(90deg); }
+        .dice.result-5 { transform: rotateX(90deg) rotateY(0deg); }
+        .dice.result-6 { transform: rotateX(180deg) rotateY(0deg); }
+
+        /* ========================================
+           APERCU DES RECOMPENSES
+        ======================================== */
+        .rewards-preview {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .reward-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .reward-item span {
+            font-size: 1.2rem;
+        }
+
+        /* ========================================
+           BOUTONS
+        ======================================== */
+        .roll-dice-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: none;
+            border-radius: 12px;
+            color: #1a1a3e;
+            font-size: 1.2rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .roll-dice-btn:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .roll-dice-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* ========================================
+           RESULTAT
+        ======================================== */
+        .result-container {
+            margin-top: 1.5rem;
+            animation: resultAppear 0.5s ease;
+        }
+
+        @keyframes resultAppear {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .result-dice {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-coins {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #FFD700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .result-balance {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 1.5rem;
+        }
+
+        .close-modal-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #10B981, #059669);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+        }
+
+        /* Animation confetti */
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #FFD700;
+            animation: confetti 1s ease-out forwards;
+        }
+    </style>
+
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        const diceSymbols = ['', '&#9856;', '&#9857;', '&#9858;', '&#9859;', '&#9860;', '&#9861;'];
+
+        // Verifier le bonus au chargement
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('/daily-bonus/check', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await response.json();
+
+                if (data.can_claim) {
+                    document.getElementById('dailyBonusModal').classList.add('active');
+                }
+            } catch (error) {
+                console.error('Erreur verification bonus:', error);
+            }
+        });
+
+        async function rollDice() {
+            const btn = document.getElementById('rollDiceBtn');
+            const dice = document.getElementById('dice');
+            const resultContainer = document.getElementById('resultContainer');
+            const rewardsPreview = document.querySelector('.rewards-preview');
+
+            btn.disabled = true;
+            btn.textContent = 'Lancement...';
+
+            // Animation de roulement
+            dice.classList.add('rolling');
+
+            try {
+                const response = await fetch('/daily-bonus/claim', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Attendre la fin de l'animation
+                    setTimeout(() => {
+                        dice.classList.remove('rolling');
+                        dice.classList.add('result-' + data.dice_result);
+
+                        // Cacher le bouton et afficher le resultat
+                        btn.style.display = 'none';
+                        rewardsPreview.style.display = 'none';
+
+                        document.getElementById('resultDice').innerHTML = diceSymbols[data.dice_result];
+                        document.getElementById('resultCoins').textContent = '+' + data.coins_earned + ' pieces !';
+                        document.getElementById('resultBalance').textContent = 'Nouveau solde: ' + data.new_balance.toLocaleString() + ' po';
+                        resultContainer.style.display = 'block';
+
+                        // Effet confetti
+                        createConfetti();
+                    }, 2000);
+                } else {
+                    alert(data.message || 'Erreur');
+                    closeDailyBonusModal();
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur de connexion');
+                closeDailyBonusModal();
+            }
+        }
+
+        function closeDailyBonusModal() {
+            document.getElementById('dailyBonusModal').classList.remove('active');
+            // Rafraichir la page pour mettre a jour le solde dans la navbar
+            location.reload();
+        }
+
+        function createConfetti() {
+            const container = document.querySelector('.daily-bonus-content');
+            const colors = ['#FFD700', '#FFA500', '#FF6B6B', '#4ECDC4', '#A78BFA'];
+
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = Math.random() * 100 + '%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+                container.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 1500);
+            }
+        }
+    </script>
+
     <script>
         // Drag to scroll pour les conteneurs de cartes
         document.addEventListener('DOMContentLoaded', function() {

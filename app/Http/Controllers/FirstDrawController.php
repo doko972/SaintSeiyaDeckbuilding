@@ -81,14 +81,11 @@ class FirstDrawController extends Controller
                 $card = $commonCards->random();
                 $user->addCard($card, 1);
 
-                // Compter les occurrences pour l'affichage
-                if (!isset($drawnCards[$card->id])) {
-                    $drawnCards[$card->id] = [
-                        'card' => $card,
-                        'quantity' => 0,
-                    ];
-                }
-                $drawnCards[$card->id]['quantity']++;
+                // Stocker chaque carte individuellement pour l'affichage (pas de regroupement)
+                $drawnCards[] = [
+                    'card' => $card,
+                    'index' => $i,
+                ];
             }
 
             // Marquer le premier tirage comme effectué
@@ -119,15 +116,15 @@ class FirstDrawController extends Controller
         }
 
         // Charger les relations pour l'affichage
-        $cardIds = array_keys($drawnCards);
+        $cardIds = collect($drawnCards)->pluck('card.id')->unique()->toArray();
         $cards = Card::with(['faction', 'mainAttack'])
             ->whereIn('id', $cardIds)
             ->get()
             ->keyBy('id');
 
         // Mettre à jour avec les données complètes
-        foreach ($drawnCards as $cardId => &$item) {
-            $item['card'] = $cards[$cardId];
+        foreach ($drawnCards as &$item) {
+            $item['card'] = $cards[$item['card']->id];
         }
 
         // Nettoyer la session

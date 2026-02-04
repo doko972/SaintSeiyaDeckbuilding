@@ -16,6 +16,7 @@ use App\Http\Controllers\MusicController;
 use App\Http\Controllers\ComboController;
 use App\Http\Controllers\FusionController;
 use App\Http\Controllers\CardSellController;
+use App\Http\Controllers\DailyBonusController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -109,6 +110,12 @@ Route::middleware(['auth', 'ensure.starter'])->group(function () {
         Route::get('/', [CardSellController::class, 'index'])->name('index');
         Route::post('/preview', [CardSellController::class, 'preview'])->name('preview');
         Route::post('/sell', [CardSellController::class, 'sell'])->name('sell');
+    });
+
+    // Bonus quotidien
+    Route::prefix('daily-bonus')->name('daily-bonus.')->group(function () {
+        Route::get('/check', [DailyBonusController::class, 'check'])->name('check');
+        Route::post('/claim', [DailyBonusController::class, 'claim'])->name('claim');
     });
 
     // Routes PvP
