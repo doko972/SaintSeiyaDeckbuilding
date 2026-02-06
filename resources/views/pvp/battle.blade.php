@@ -640,16 +640,69 @@
             width: 120px;
             height: 170px;
             border-radius: 12px;
-            overflow: hidden;
-            background: linear-gradient(145deg, var(--color1, #1a1a2e), var(--color2, #16213e));
-            border: 3px solid transparent;
-            background-clip: padding-box;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            perspective: 1000px;
+        }
+
+        .hand-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .hand-card.flipped .hand-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .hand-card-front,
+        .hand-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            overflow: hidden;
             box-shadow:
                 0 4px 12px rgba(0, 0, 0, 0.4),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .hand-card-front {
+            background: linear-gradient(145deg, var(--color1, #1a1a2e), var(--color2, #16213e));
+            border: 3px solid transparent;
+            background-clip: padding-box;
+            transform: rotateY(180deg);
+        }
+
+        .hand-card-front::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--color1, #4a5568), var(--color2, #2d3748));
+            z-index: -1;
+        }
+
+        .hand-card-back {
+            background: url('/images/card-back.webp') center center / cover no-repeat;
+            border: 3px solid #4a3728;
+        }
+
+        .hand-card-back::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 215, 0, 0.1) 0%,
+                transparent 50%,
+                rgba(255, 215, 0, 0.05) 100%
+            );
+            pointer-events: none;
         }
 
         .hand-card::before {
@@ -1284,6 +1337,27 @@
             margin: 0;
         }
 
+        .refresh-btn {
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: rgba(255, 165, 0, 0.2);
+            border: 1px solid rgba(255, 165, 0, 0.5);
+            border-radius: 8px;
+            color: #ffa500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(255, 165, 0, 0.4);
+            transform: scale(1.05);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.95);
+        }
+
         /* Empty slot */
         .empty-slot {
             width: 160px;
@@ -1696,6 +1770,12 @@
            RESPONSIVE - MOBILE
         ======================================== */
         @media (max-width: 768px) {
+            /* Images des cartes - montrer le haut du personnage */
+            .battle-card-image,
+            .hand-card-image {
+                background-position: top center;
+            }
+
             /* Music controls mobile */
             .music-controls {
                 top: auto;
@@ -1944,7 +2024,7 @@
             }
 
             .battle-card-image {
-                height: 60px;
+                height: 100%;
             }
 
             .battle-card-name {
@@ -1956,7 +2036,7 @@
             }
 
             .hand-card-image {
-                height: 55px;
+                height: 100%;
             }
 
             .player-hand {
@@ -2153,6 +2233,9 @@
             <div>
                 <h2>Tour de {{ $opponent->name }}</h2>
                 <p class="text-gray-400">En attente de son action...</p>
+                <button class="refresh-btn" onclick="forceRefresh()" title="Forcer le rafraichissement">
+                    🔄 Rafraichir
+                </button>
             </div>
         </div>
     </div>
@@ -2201,32 +2284,54 @@
         // SYSTÈME D'ANIMATIONS
         // ========================================
         const animations = {
-            // Animation de jeu d'une carte
+            // Animation de jeu d'une carte avec flip
             playCardAnimation: async function(cardElement, targetPos) {
                 return new Promise((resolve) => {
                     const clone = cardElement.cloneNode(true);
                     clone.style.position = 'fixed';
                     clone.style.zIndex = '1000';
+                    clone.style.perspective = '1000px';
                     const startRect = cardElement.getBoundingClientRect();
                     clone.style.left = startRect.left + 'px';
                     clone.style.top = startRect.top + 'px';
                     clone.style.width = startRect.width + 'px';
+                    clone.style.height = startRect.height + 'px';
+
+                    // Retirer la classe flipped pour montrer le dos
+                    clone.classList.remove('flipped');
+
                     document.body.appendChild(clone);
                     cardElement.style.opacity = '0';
 
+                    // Phase 1: Mouvement vers la cible + début du flip
                     setTimeout(() => {
-                        clone.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                        clone.style.transition = 'left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.5s ease';
                         clone.style.left = targetPos.x + 'px';
                         clone.style.top = targetPos.y + 'px';
-                        clone.style.transform = 'scale(1.1) rotateY(360deg)';
-                        clone.style.boxShadow = '0 0 30px rgba(16, 185, 129, 0.8)';
+                        clone.style.transform = 'scale(1.2)';
+                        clone.style.boxShadow = '0 0 40px rgba(255, 215, 0, 0.8)';
                     }, 50);
+
+                    // Phase 2: Flip pour révéler la carte
+                    setTimeout(() => {
+                        clone.classList.add('flipped');
+                        const inner = clone.querySelector('.hand-card-inner');
+                        if (inner) {
+                            inner.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                        }
+                    }, 400);
+
+                    // Phase 3: Effet de brillance finale
+                    setTimeout(() => {
+                        clone.style.transform = 'scale(1.1)';
+                        clone.style.boxShadow = '0 0 50px rgba(16, 185, 129, 0.9), 0 0 100px rgba(16, 185, 129, 0.4)';
+                    }, 700);
 
                     setTimeout(() => {
                         clone.remove();
                         cardElement.style.opacity = '1';
                         resolve();
-                    }, 800);
+                    }, 1000);
                 });
             },
 
@@ -2855,18 +2960,81 @@
         // Polling pour vérifier les mises à jour
         let pollingInterval = null;
         let pollingErrorCount = 0;
-        const MAX_POLLING_ERRORS = 5;
+        let watchdogInterval = null;
+        let isPollingActive = false;
+        let lastSuccessfulPoll = Date.now();
+        const BASE_POLLING_INTERVAL = 2000;
+        const MAX_POLLING_INTERVAL = 10000;
+        const WATCHDOG_INTERVAL = 5000;
+
+        function getPollingInterval() {
+            // Augmenter l'intervalle en cas d'erreurs (exponential backoff)
+            if (pollingErrorCount === 0) return BASE_POLLING_INTERVAL;
+            return Math.min(BASE_POLLING_INTERVAL * Math.pow(1.5, pollingErrorCount), MAX_POLLING_INTERVAL);
+        }
 
         function startPolling() {
-            if (pollingInterval) return; // Eviter les doublons
+            if (isPollingActive) return;
+            isPollingActive = true;
             pollingErrorCount = 0;
-            pollingInterval = setInterval(checkForUpdates, 2000);
+            lastSuccessfulPoll = Date.now();
+            scheduleNextPoll();
+            startWatchdog();
+            console.log('Polling started');
+        }
+
+        function scheduleNextPoll() {
+            if (!isPollingActive) return;
+            const interval = getPollingInterval();
+            pollingInterval = setTimeout(async () => {
+                await checkForUpdates();
+                if (isPollingActive) {
+                    scheduleNextPoll();
+                }
+            }, interval);
         }
 
         function stopPolling() {
+            isPollingActive = false;
             if (pollingInterval) {
-                clearInterval(pollingInterval);
+                clearTimeout(pollingInterval);
                 pollingInterval = null;
+            }
+            stopWatchdog();
+            console.log('Polling stopped');
+        }
+
+        function startWatchdog() {
+            if (watchdogInterval) return;
+            watchdogInterval = setInterval(() => {
+                // Si ce n'est pas notre tour et le polling n'est pas actif, le relancer
+                if (!isMyTurn && !isPollingActive) {
+                    console.warn('Watchdog: polling was stopped but should be active, restarting...');
+                    startPolling();
+                }
+                // Si pas de poll réussi depuis 30 secondes et ce n'est pas notre tour, forcer une vérification
+                if (!isMyTurn && Date.now() - lastSuccessfulPoll > 30000) {
+                    console.warn('Watchdog: no successful poll in 30s, forcing check...');
+                    pollingErrorCount = 0; // Reset pour permettre un nouveau cycle
+                    checkForUpdates();
+                }
+            }, WATCHDOG_INTERVAL);
+        }
+
+        function stopWatchdog() {
+            if (watchdogInterval) {
+                clearInterval(watchdogInterval);
+                watchdogInterval = null;
+            }
+        }
+
+        // Fonction pour forcer un rafraîchissement manuel
+        async function forceRefresh() {
+            console.log('Force refresh requested');
+            pollingErrorCount = 0;
+            await checkForUpdates();
+            if (!isMyTurn && !isPollingActive) {
+                startPolling();
             }
         }
 
@@ -2896,15 +3064,16 @@
                 if (!response.ok) {
                     console.error('Polling error: HTTP', response.status);
                     pollingErrorCount++;
-                    if (pollingErrorCount >= MAX_POLLING_ERRORS) {
-                        addLogEntry('⚠️ Probleme de connexion. Rechargez la page.', 'damage');
-                        stopPolling();
+                    // Ne pas arrêter complètement, juste ralentir
+                    if (pollingErrorCount >= 10) {
+                        addLogEntry('⚠️ Probleme de connexion. Cliquez ici pour rafraichir.', 'damage');
                     }
                     return;
                 }
 
                 // Reset error count on success
                 pollingErrorCount = 0;
+                lastSuccessfulPoll = Date.now();
 
                 const data = await response.json();
 
@@ -2953,17 +3122,14 @@
             } catch (error) {
                 // Ignorer les erreurs d'abort (timeout)
                 if (error.name === 'AbortError') {
-                    console.warn('Polling timeout, retrying...');
+                    console.warn('Polling timeout, will retry...');
+                    pollingErrorCount++;
                     return;
                 }
 
                 console.error('Polling error:', error);
                 pollingErrorCount++;
-
-                if (pollingErrorCount >= MAX_POLLING_ERRORS) {
-                    addLogEntry('⚠️ Connexion perdue. Rechargez la page.', 'damage');
-                    stopPolling();
-                }
+                // Ne jamais arrêter complètement - le watchdog relancera si nécessaire
             }
         }
 
@@ -3161,19 +3327,29 @@
                 : '';
 
             div.innerHTML = `
-                <div class="hand-card-cost">💎 ${card.cost}</div>
-                ${fusionBadgeHtml}
-                <div class="hand-card-image" style="background-image: url('${card.image || ''}'); background-color: ${card.faction?.color_primary || '#333'};"></div>
-                <div class="hand-card-info">
-                    <div class="hand-card-name">${card.name}</div>
-                    <div class="hand-card-stats">
-                        <span title="Points de vie">❤️ ${card.max_hp || card.health_points || '?'}</span>
-                        <span title="Puissance">⚔️ ${card.power || 0}</span>
-                        <span title="Défense">🛡️ ${card.defense || 0}</span>
-                        ${bonusPercent > 0 ? `<span class="fusion-bonus" title="Bonus fusion">🔥+${bonusPercent}%</span>` : ''}
+                <div class="hand-card-inner">
+                    <div class="hand-card-back"></div>
+                    <div class="hand-card-front">
+                        <div class="hand-card-cost">💎 ${card.cost}</div>
+                        ${fusionBadgeHtml}
+                        <div class="hand-card-image" style="background-image: url('${card.image || ''}'); background-color: ${card.faction?.color_primary || '#333'};"></div>
+                        <div class="hand-card-info">
+                            <div class="hand-card-name">${card.name}</div>
+                            <div class="hand-card-stats">
+                                <span title="Points de vie">❤️ ${card.max_hp || card.health_points || '?'}</span>
+                                <span title="Puissance">⚔️ ${card.power || 0}</span>
+                                <span title="Défense">🛡️ ${card.defense || 0}</span>
+                                ${bonusPercent > 0 ? `<span class="fusion-bonus" title="Bonus fusion">🔥+${bonusPercent}%</span>` : ''}
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
+
+            // Les cartes commencent face cachée puis se retournent avec une animation
+            setTimeout(() => {
+                div.classList.add('flipped');
+            }, 100 + index * 150); // Délai progressif pour chaque carte
 
             if (canPlay) {
                 div.onclick = () => playCard(index, div);

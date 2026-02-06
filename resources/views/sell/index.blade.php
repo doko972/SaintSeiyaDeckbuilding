@@ -439,7 +439,7 @@
                 <div class="header-stats">
                     <div class="stat-badge">
                         <span class="text-gray-400">Solde:</span>
-                        <span class="value">{{ number_format($userCoins) }} po</span>
+                        <span class="value" id="sell-coins">{{ number_format($userCoins) }} po</span>
                     </div>
                     <div class="stat-badge">
                         <span class="text-gray-400">Cartes possedees:</span>
@@ -518,6 +518,23 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
         let currentCardData = null;
         let selectedQuantity = 1;
+
+        // Mise a jour du solde (page + navigation)
+        function updateAllBalances(newBalance) {
+            const formattedBalance = newBalance.toLocaleString();
+
+            // Mettre a jour le solde sur la page
+            const sellCoins = document.getElementById('sell-coins');
+            if (sellCoins) sellCoins.textContent = formattedBalance + ' po';
+
+            // Mettre a jour le solde dans la navigation (desktop)
+            const navDesktop = document.getElementById('nav-coins-desktop');
+            if (navDesktop) navDesktop.textContent = formattedBalance;
+
+            // Mettre a jour le solde dans la navigation (mobile)
+            const navMobile = document.getElementById('nav-coins-mobile');
+            if (navMobile) navMobile.textContent = formattedBalance;
+        }
 
         async function showSellPreview(cardId) {
             const modal = document.getElementById('sellModal');
@@ -624,13 +641,16 @@
                 const data = await response.json();
 
                 if (data.success) {
+                    // Mettre a jour tous les soldes (navigation + page)
+                    updateAllBalances(data.new_balance);
+
                     const content = document.getElementById('modalContent');
                     content.innerHTML = `
                         <div class="text-center py-8">
                             <div class="text-6xl mb-4">&#127881;</div>
                             <h4 class="text-2xl font-bold text-green-400 mb-2">Vente reussie !</h4>
                             <p class="text-white">+<span class="text-green-400 font-bold">${data.coins_earned}</span> pieces d'or</p>
-                            <p class="text-gray-400 mt-2">Nouveau solde: ${data.new_balance} po</p>
+                            <p class="text-gray-400 mt-2">Nouveau solde: ${data.new_balance.toLocaleString()} po</p>
                             <button class="sell-btn mt-6" onclick="location.reload()">
                                 Continuer
                             </button>

@@ -707,7 +707,7 @@
                     <!-- Mini Stats -->
                     <div class="grid grid-cols-4 gap-2 sm:gap-3">
                         <div class="mini-stat" style="--stat-color: #FFD700; --stat-color-light: #FFA500;">
-                            <div class="mini-stat-value">{{ number_format(auth()->user()->coins) }}</div>
+                            <div class="mini-stat-value" id="dashboard-coins">{{ number_format(auth()->user()->coins) }}</div>
                             <div class="mini-stat-label">Pieces</div>
                         </div>
                         <div class="mini-stat" style="--stat-color: #10B981; --stat-color-light: #34D399;">
@@ -1199,6 +1199,25 @@
         const diceSymbols = ['', '&#9856;', '&#9857;', '&#9858;', '&#9859;', '&#9860;', '&#9861;'];
 
         // ==========================================
+        // MISE A JOUR DU SOLDE (page + navigation)
+        // ==========================================
+        function updateAllBalances(newBalance) {
+            const formattedBalance = newBalance.toLocaleString();
+
+            // Mettre a jour le solde dans le mini-stat du dashboard
+            const dashboardCoins = document.getElementById('dashboard-coins');
+            if (dashboardCoins) dashboardCoins.textContent = formattedBalance;
+
+            // Mettre a jour le solde dans la navigation (desktop)
+            const navDesktop = document.getElementById('nav-coins-desktop');
+            if (navDesktop) navDesktop.textContent = formattedBalance;
+
+            // Mettre a jour le solde dans la navigation (mobile)
+            const navMobile = document.getElementById('nav-coins-mobile');
+            if (navMobile) navMobile.textContent = formattedBalance;
+        }
+
+        // ==========================================
         // VARIABLES GLOBALES
         // ==========================================
         let selectedPlayerId = null;
@@ -1539,6 +1558,9 @@
                         document.getElementById('resultCoins').textContent = '+' + data.coins_earned + ' pieces !';
                         document.getElementById('resultBalance').textContent = 'Nouveau solde: ' + data.new_balance.toLocaleString() + ' po';
                         resultContainer.style.display = 'block';
+
+                        // Mettre a jour tous les soldes (navigation + dashboard)
+                        updateAllBalances(data.new_balance);
                     }, 2100);
                 } else {
                     alert(data.message || 'Erreur');

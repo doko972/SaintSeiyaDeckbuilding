@@ -560,11 +560,11 @@
 
                     showRewardModal(icon, title, description);
 
-                    btn.textContent = '&#10003; Recompense reclamee aujourd\'hui';
+                    btn.textContent = 'Recompense reclamee aujourd\'hui';
                 } else {
                     alert(data.message || 'Erreur');
                     btn.disabled = false;
-                    btn.innerHTML = '&#127873; Reclamer la recompense';
+                    btn.innerHTML = 'Reclamer la recompense';
                 }
             } catch (error) {
                 console.error('Erreur:', error);

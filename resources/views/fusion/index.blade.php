@@ -423,7 +423,7 @@
                 <div class="header-stats">
                     <div class="stat-badge">
                         <span class="text-gray-400">Solde:</span>
-                        <span class="value">{{ number_format($userCoins) }} po</span>
+                        <span class="value" id="fusion-coins">{{ number_format($userCoins) }} po</span>
                     </div>
                     <div class="stat-badge">
                         <span class="text-gray-400">Cartes fusionnables:</span>
@@ -546,6 +546,23 @@
 
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        // Mise a jour du solde (page + navigation)
+        function updateAllBalances(newBalance) {
+            const formattedBalance = newBalance.toLocaleString();
+
+            // Mettre a jour le solde sur la page
+            const fusionCoins = document.getElementById('fusion-coins');
+            if (fusionCoins) fusionCoins.textContent = formattedBalance + ' po';
+
+            // Mettre a jour le solde dans la navigation (desktop)
+            const navDesktop = document.getElementById('nav-coins-desktop');
+            if (navDesktop) navDesktop.textContent = formattedBalance;
+
+            // Mettre a jour le solde dans la navigation (mobile)
+            const navMobile = document.getElementById('nav-coins-mobile');
+            if (navMobile) navMobile.textContent = formattedBalance;
+        }
 
         async function showFusionPreview(cardId) {
             const modal = document.getElementById('fusionModal');
@@ -686,6 +703,9 @@
                 const data = await response.json();
 
                 if (data.success) {
+                    // Mettre a jour tous les soldes (navigation + page)
+                    updateAllBalances(data.new_balance);
+
                     // Animation de succes
                     const content = document.getElementById('modalContent');
                     content.innerHTML = `
@@ -693,7 +713,7 @@
                             <div class="text-6xl mb-4">&#127881;</div>
                             <h4 class="text-2xl font-bold text-green-400 mb-2">Fusion reussie !</h4>
                             <p class="text-white">Niveau atteint: <span class="text-yellow-400 font-bold">${data.new_level}</span></p>
-                            <p class="text-gray-400 mt-2">Nouveau solde: ${data.new_balance} po</p>
+                            <p class="text-gray-400 mt-2">Nouveau solde: ${data.new_balance.toLocaleString()} po</p>
                             <button class="fusion-btn mt-6" onclick="location.reload()">
                                 Continuer
                             </button>
