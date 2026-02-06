@@ -1374,6 +1374,87 @@
         }
 
         /* ========================================
+           PANNEAU SELECTION CIBLE
+        ======================================== */
+        .target-selection-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid rgba(251, 191, 36, 0.5);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+        }
+
+        .target-selection-panel.visible {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .target-selection-content {
+            text-align: center;
+        }
+
+        .target-selection-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #FBBF24;
+            margin-bottom: 0.5rem;
+        }
+
+        .target-selection-attack {
+            font-size: 0.85rem;
+            color: #9CA3AF;
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .target-selection-buttons {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .back-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            border-radius: 8px;
+            color: #93C5FD;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(59, 130, 246, 0.5);
+            color: white;
+        }
+
+        .target-selection-panel .cancel-btn {
+            width: auto;
+            margin-top: 0;
+            padding: 0.5rem 1rem;
+        }
+
+        /* ========================================
            BOUTONS DE CONTRÔLE
         ======================================== */
         .control-buttons {
@@ -2133,6 +2214,18 @@
         <button class="cancel-btn" onclick="cancelSelection()">Annuler</button>
         <div class="cosmos-display">🌟 {{ $battleState['player']['cosmos'] ?? 0 }} /
             {{ $battleState['player']['max_cosmos'] ?? 3 }}</div>
+    </div>
+
+    <!-- Panneau de sélection de cible -->
+    <div class="target-selection-panel" id="targetSelectionPanel">
+        <div class="target-selection-content">
+            <div class="target-selection-title">🎯 Choisissez une cible</div>
+            <div class="target-selection-attack" id="selectedAttackName">Attaque sélectionnée</div>
+            <div class="target-selection-buttons">
+                <button class="back-btn" onclick="backToAttackSelection()">← Changer d'attaque</button>
+                <button class="cancel-btn" onclick="cancelSelection()">✕ Annuler</button>
+            </div>
+        </div>
     </div>
 
     <!-- Boutons de contrôle -->
@@ -3128,12 +3221,51 @@
             selectedAttack = attackKey;
             phase = 'selectingTarget';
 
-            // ✅ Cacher l'overlay ET le panneau
+            // ✅ Cacher l'overlay ET le panneau d'attaques
             document.getElementById('actionPanelOverlay').classList.remove('visible');
             document.getElementById('actionPanel').classList.remove('visible');
 
+            // ✅ Afficher le panneau de sélection de cible avec le nom de l'attaque
+            const targetPanel = document.getElementById('targetSelectionPanel');
+            const attackNameEl = document.getElementById('selectedAttackName');
+
+            // Récupérer le nom de l'attaque sélectionnée
+            let attackName = 'Attaque';
+            const card = gameState.player.field[selectedAttacker];
+            if (attackKey === 'main') {
+                attackName = card.main_attack?.name || 'Attaque de base';
+            } else if (attackKey === 'secondary1') {
+                attackName = card.secondary_attack_1?.name || 'Attaque secondaire';
+            } else if (attackKey === 'secondary2') {
+                attackName = card.secondary_attack_2?.name || 'Attaque secondaire';
+            } else if (attackKey.startsWith('combo_')) {
+                const comboId = parseInt(attackKey.replace('combo_', ''));
+                const allCombos = gameState.all_combos || [];
+                const combo = allCombos.find(c => c.id === comboId);
+                attackName = combo ? `⚡ ${combo.name}` : 'Combo';
+            }
+
+            attackNameEl.textContent = `💥 ${attackName}`;
+            targetPanel.classList.add('visible');
+
             addLogEntry('🎯 Sélectionnez une cible adverse', 'info');
             renderAll();
+        }
+
+        // Retour au choix d'attaque
+        function backToAttackSelection() {
+            // Cacher le panneau de sélection de cible
+            document.getElementById('targetSelectionPanel').classList.remove('visible');
+
+            // Revenir à la phase de sélection d'attaque
+            selectedAttack = null;
+            phase = 'selectingAttack';
+
+            // Réafficher le panneau d'attaques
+            const card = gameState.player.field[selectedAttacker];
+            showAttackPanel(card);
+
+            addLogEntry('↩️ Retour au choix d\'attaque', 'info');
         }
 
         function cancelSelection(skipRender = false) {
@@ -3143,9 +3275,10 @@
             selectedAttack = null;
             phase = 'idle'; // ✅ Doit être AVANT renderAll
 
-            // Cacher l'overlay ET le panneau
+            // Cacher tous les panneaux
             document.getElementById('actionPanelOverlay').classList.remove('visible');
             document.getElementById('actionPanel').classList.remove('visible');
+            document.getElementById('targetSelectionPanel').classList.remove('visible');
 
             console.log('phase après:', phase);
 
