@@ -787,6 +787,9 @@
             box-shadow:
                 0 4px 12px rgba(0, 0, 0, 0.4),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
 
         .hand-card::before {
@@ -886,6 +889,7 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.2);
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
         }
 
         .hand-card-image {
@@ -897,6 +901,7 @@
             background-size: cover;
             background-position: center center;
             z-index: 1;
+            pointer-events: none;
         }
 
         .hand-card-image::after {
@@ -914,6 +919,7 @@
                 transparent 100%
             );
             z-index: 2;
+            pointer-events: none;
         }
 
         .hand-card-info {
@@ -925,6 +931,7 @@
             background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.5));
             backdrop-filter: blur(4px);
             z-index: 5;
+            pointer-events: none;
         }
 
         .hand-card-name {
@@ -1807,10 +1814,14 @@
                 min-height: 130px;
                 gap: 0.3rem;
                 flex-wrap: wrap;
+                justify-content: center;
+                align-content: flex-start;
             }
 
+            /* Portrait: cartes plus grandes pour grille 3+2 */
             .battle-card {
-                width: 95px;
+                width: calc(33% - 0.3rem);
+                max-width: 95px;
                 height: 135px;
             }
 
@@ -1959,6 +1970,93 @@
 
             .hand-card-stats {
                 font-size: 0.4rem;
+            }
+        }
+
+        /* ========================================
+           RESPONSIVE - MOBILE PAYSAGE (5 cartes côte à côte)
+        ======================================== */
+        @media (max-width: 915px) and (orientation: landscape) {
+            .battle-container {
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .battle-header {
+                padding: 0.25rem 0.5rem;
+                min-height: auto;
+            }
+
+            .battle-arena {
+                padding: 0.2rem;
+                gap: 0.2rem;
+            }
+
+            .player-field,
+            .opponent-field {
+                min-height: 95px;
+                gap: 1rem;
+                flex-wrap: nowrap;
+                justify-content: center;
+                align-items: center;
+                padding: 0.25rem;
+                width: 100%;
+            }
+
+            .battle-card {
+                width: calc(20% - 0.3rem);
+                max-width: 85px;
+                height: 120px;
+                flex-shrink: 0;
+            }
+
+            .battle-card-image {
+                height: 60%;
+            }
+
+            .battle-card-info {
+                padding: 3px;
+            }
+
+            .battle-card-name {
+                font-size: 0.5rem;
+            }
+
+            .hp-bar-container {
+                height: 5px;
+                margin-bottom: 2px;
+            }
+
+            .battle-card-stats {
+                font-size: 0.4rem;
+            }
+
+            .mini-stat {
+                padding: 1px 3px;
+            }
+
+            .player-hand-zone {
+                padding: 0.2rem;
+            }
+
+            .player-hand {
+                min-height: 80px;
+                gap: 1rem;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .hand-card {
+                width: 60px;
+                height: 85px;
+            }
+
+            .hand-card-name {
+                font-size: 0.45rem;
+            }
+
+            .hand-card-stats {
+                font-size: 0.38rem;
             }
         }
 
@@ -2990,7 +3088,7 @@
             div.dataset.index = index;
             div.dataset.instanceId = card.instance_id || `${card.id}_hand_${index}`;
 
-            const canPlay = gameState.player.cosmos >= card.cost && gameState.player.field.length < 3;
+            const canPlay = gameState.player.cosmos >= card.cost && gameState.player.field.length < 5;
             div.classList.add(canPlay ? 'playable' : 'unplayable');
 
             if (card.faction) {
@@ -3011,7 +3109,24 @@
             `;
 
             if (canPlay) {
-                div.onclick = () => playCard(index, div);
+                // Utiliser addEventListener pour meilleure compatibilité mobile
+                let touchHandled = false;
+
+                div.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    if (!touchHandled) {
+                        touchHandled = true;
+                        playCard(index, div);
+                        setTimeout(() => { touchHandled = false; }, 300);
+                    }
+                }, { passive: false });
+
+                div.addEventListener('click', function(e) {
+                    // Éviter double-fire si touch déjà traité
+                    if (!touchHandled) {
+                        playCard(index, div);
+                    }
+                });
             }
 
             return div;

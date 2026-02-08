@@ -125,6 +125,8 @@
                                     </option>
                                     <option value="water" {{ old('element') == 'water' ? 'selected' : '' }}>💧 Eau
                                     </option>
+                                    <option value="earth" {{ old('element') == 'earth' ? 'selected' : '' }}>🌍 Terre
+                                    </option>
                                     <option value="ice" {{ old('element') == 'ice' ? 'selected' : '' }}>❄️ Glace
                                     </option>
                                     <option value="thunder" {{ old('element') == 'thunder' ? 'selected' : '' }}>⚡
@@ -181,7 +183,7 @@
                                 <label for="defense" class="block text-sm font-medium text-blue-400 mb-2">🛡️ DEF
                                     *</label>
                                 <input type="number" name="defense" id="defense"
-                                    value="{{ old('defense', 30) }}" min="0" max="100" required
+                                    value="{{ old('defense', 30) }}" min="0" max="200" required
                                     class="w-full bg-white/10 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-center text-xl font-bold focus:border-blue-500 focus:ring-blue-500">
                             </div>
 
@@ -189,7 +191,7 @@
                                 <label for="power" class="block text-sm font-medium text-orange-400 mb-2">💪 PWR
                                     *</label>
                                 <input type="number" name="power" id="power" value="{{ old('power', 50) }}"
-                                    min="0" max="200" required
+                                    min="0" max="500" required
                                     class="w-full bg-white/10 border border-orange-500/30 rounded-lg px-3 py-2 text-white text-center text-xl font-bold focus:border-orange-500 focus:ring-orange-500">
                             </div>
 

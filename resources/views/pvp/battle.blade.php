@@ -644,6 +644,9 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             perspective: 1000px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
 
         .hand-card-inner {
@@ -652,6 +655,7 @@
             height: 100%;
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
+            pointer-events: none;
         }
 
         .hand-card.flipped .hand-card-inner {
@@ -669,6 +673,7 @@
             box-shadow:
                 0 4px 12px rgba(0, 0, 0, 0.4),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            pointer-events: none;
         }
 
         .hand-card-front {
@@ -685,6 +690,7 @@
             border-radius: 14px;
             background: linear-gradient(135deg, var(--color1, #4a5568), var(--color2, #2d3748));
             z-index: -1;
+            pointer-events: none;
         }
 
         .hand-card-back {
@@ -802,6 +808,7 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.2);
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
         }
 
         .hand-card-image {
@@ -813,6 +820,7 @@
             background-size: cover;
             background-position: center center;
             z-index: 1;
+            pointer-events: none;
         }
 
         .hand-card-image::after {
@@ -830,6 +838,7 @@
                 transparent 100%
             );
             z-index: 2;
+            pointer-events: none;
         }
 
         .hand-card-info {
@@ -841,6 +850,7 @@
             background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.5));
             backdrop-filter: blur(4px);
             z-index: 5;
+            pointer-events: none;
         }
 
         .hand-card-name {
@@ -1937,10 +1947,14 @@
                 padding: 0.5rem;
                 gap: 0.3rem;
                 flex-wrap: wrap;
+                justify-content: center;
+                align-content: flex-start;
             }
 
+            /* Portrait: grille 3+2 */
             .battle-card {
-                width: 105px;
+                width: calc(33% - 0.3rem);
+                max-width: 105px;
                 height: 150px;
             }
 
@@ -2007,12 +2021,15 @@
                 overflow-x: auto;
                 flex-wrap: nowrap;
                 padding-bottom: 0.5rem;
+                -webkit-overflow-scrolling: touch;
+                touch-action: pan-x;
             }
 
             .hand-card {
                 width: 85px;
                 height: 120px;
                 flex-shrink: 0;
+                touch-action: manipulation;
             }
 
             .hand-card-cost {
@@ -2144,6 +2161,92 @@
             .control-btn {
                 padding: 0.5rem 0.6rem;
                 font-size: 0.65rem;
+            }
+        }
+
+        /* ========================================
+           RESPONSIVE - MOBILE PAYSAGE (5 cartes côte à côte)
+        ======================================== */
+        @media (max-width: 915px) and (orientation: landscape) {
+            .battle-container {
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .battle-header {
+                padding: 0.25rem 0.5rem;
+                min-height: auto;
+            }
+
+            .battle-arena {
+                padding: 0.2rem;
+                gap: 0.2rem;
+            }
+
+            .field-zone {
+                min-height: 95px;
+                gap: 1rem;
+                flex-wrap: nowrap;
+                justify-content: center;
+                align-items: center;
+                padding: 0.25rem;
+                width: 100%;
+            }
+
+            .battle-card {
+                width: calc(20% - 0.3rem);
+                max-width: 85px;
+                height: 120px;
+                flex-shrink: 0;
+            }
+
+            .battle-card-image {
+                height: 60%;
+            }
+
+            .battle-card-info {
+                padding: 3px;
+            }
+
+            .battle-card-name {
+                font-size: 0.5rem;
+            }
+
+            .hp-bar-container {
+                height: 5px;
+                margin-bottom: 2px;
+            }
+
+            .battle-card-stats {
+                font-size: 0.4rem;
+            }
+
+            .mini-stat {
+                padding: 1px 3px;
+            }
+
+            .player-hand-zone {
+                padding: 0.2rem;
+            }
+
+            .player-hand {
+                min-height: 80px;
+                gap: 1rem;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .hand-card {
+                width: 60px;
+                height: 85px;
+            }
+
+            .hand-card-name {
+                font-size: 0.45rem;
+            }
+
+            .hand-card-stats {
+                font-size: 0.38rem;
             }
         }
 
@@ -3037,6 +3140,43 @@
                 cancelSelection();
             });
 
+            // Délégation d'événements pour les cartes en main (meilleure compatibilité mobile)
+            const playerHandContainer = document.getElementById('playerHand');
+            let handTouchHandled = false;
+
+            const handleHandCardInteraction = (e) => {
+                const handCard = e.target.closest('.hand-card');
+                if (!handCard) return;
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (handTouchHandled) return;
+                handTouchHandled = true;
+                setTimeout(() => { handTouchHandled = false; }, 500);
+
+                const cardIndex = parseInt(handCard.dataset.cardIndex);
+                const state = getMyState();
+                const card = state.hand[cardIndex];
+
+                if (!card) {
+                    console.log('Carte non trouvée à l\'index:', cardIndex);
+                    return;
+                }
+
+                const canPlay = isMyTurn && state.cosmos >= card.cost && state.field.length < 5;
+                if (!canPlay) {
+                    console.log('Carte non jouable:', card.name, 'isMyTurn:', isMyTurn, 'cosmos:', state.cosmos, 'cost:', card.cost);
+                    return;
+                }
+
+                console.log('Délégation - Carte jouée:', card.name);
+                playCard(cardIndex, handCard);
+            };
+
+            playerHandContainer.addEventListener('touchend', handleHandCardInteraction, { passive: false });
+            playerHandContainer.addEventListener('click', handleHandCardInteraction);
+
             // Message de démarrage
             addLogEntry('⚔️ Le combat commence !', 'turn');
 
@@ -3316,7 +3456,7 @@
                 existingCards.forEach((div, index) => {
                     const card = state.hand[index];
                     if (card) {
-                        const canPlay = isMyTurn && state.cosmos >= card.cost && state.field.length < 3;
+                        const canPlay = isMyTurn && state.cosmos >= card.cost && state.field.length < 5;
                         div.classList.remove('playable', 'unplayable');
                         div.classList.add(canPlay ? 'playable' : 'unplayable');
                     }
@@ -3430,7 +3570,7 @@
             div.dataset.cardIndex = index;
 
             const state = getMyState();
-            const canPlay = isMyTurn && state.cosmos >= card.cost && state.field.length < 3;
+            const canPlay = isMyTurn && state.cosmos >= card.cost && state.field.length < 5;
 
             div.classList.add(canPlay ? 'playable' : 'unplayable');
 
@@ -3471,9 +3611,8 @@
                 div.classList.add('flipped');
             }, 100 + index * 150); // Délai progressif pour chaque carte
 
-            if (canPlay) {
-                div.onclick = () => playCard(index, div);
-            }
+            // Les événements sont gérés par délégation sur le conteneur parent
+            // Voir le gestionnaire dans DOMContentLoaded
 
             return div;
         }

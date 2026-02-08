@@ -42,6 +42,7 @@ class CardController extends Controller
         return [
             'fire' => 'Feu',
             'water' => 'Eau',
+            'earth' => 'Terre',
             'ice' => 'Glace',
             'thunder' => 'Foudre',
             'darkness' => 'Ténèbres',
@@ -56,6 +57,7 @@ class CardController extends Controller
             'rare' => 'Rare',
             'epic' => 'Épique',
             'legendary' => 'Légendaire',
+            'mythic' => 'Mythique',
         ];
     }
 
@@ -122,8 +124,8 @@ class CardController extends Controller
             'rarity' => 'required|in:' . implode(',', array_keys(self::getRarities())),
             'health_points' => 'required|integer|min:1',
             'endurance' => 'required|integer|min:1',
-            'defense' => 'required|integer|min:0',
-            'power' => 'required|integer|min:1',
+            'defense' => 'required|integer|min:0|max:200',
+            'power' => 'required|integer|min:1|max:500',
             'cosmos' => 'required|integer|min:1',
             'cost' => 'required|integer|min:1',
             'passive_ability_name' => 'nullable|string|max:100',
@@ -131,8 +133,8 @@ class CardController extends Controller
             'main_attack_id' => 'required|exists:attacks,id',
             'secondary_attack_1_id' => 'nullable|exists:attacks,id',
             'secondary_attack_2_id' => 'nullable|exists:attacks,id',
-            'image_primary' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'image_secondary' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image_primary' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'image_secondary' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
 
         if ($request->hasFile('image_primary')) {
@@ -211,8 +213,8 @@ class CardController extends Controller
             'rarity' => 'required|in:' . implode(',', array_keys(self::getRarities())),
             'health_points' => 'required|integer|min:1',
             'endurance' => 'required|integer|min:1',
-            'defense' => 'required|integer|min:0',
-            'power' => 'required|integer|min:1',
+            'defense' => 'required|integer|min:0|max:200',
+            'power' => 'required|integer|min:1|max:500',
             'cosmos' => 'required|integer|min:1',
             'cost' => 'required|integer|min:1',
             'passive_ability_name' => 'nullable|string|max:100',

@@ -228,9 +228,9 @@ class GameApiController extends Controller
             return response()->json(['message' => 'Cosmos insuffisant'], 400);
         }
 
-        // Vérifier la limite du terrain (3 cartes max)
-        if (count($state['player']['field']) >= 3) {
-            return response()->json(['message' => 'Terrain plein (3 cartes max)'], 400);
+        // Vérifier la limite du terrain (5 cartes max)
+        if (count($state['player']['field']) >= 5) {
+            return response()->json(['message' => 'Terrain plein (5 cartes max)'], 400);
         }
 
         // Jouer la carte
@@ -654,7 +654,7 @@ class GameApiController extends Controller
     private function aiPlayCards(array $state): array
     {
         // L'IA joue des cartes tant qu'elle peut
-        while (count($state['opponent']['field']) < 3 && !empty($state['opponent']['hand'])) {
+        while (count($state['opponent']['field']) < 5 && !empty($state['opponent']['hand'])) {
             // Trouver une carte jouable - utiliser for au lieu de foreach
             $playableIndex = null;
             $handCount = count($state['opponent']['hand']);

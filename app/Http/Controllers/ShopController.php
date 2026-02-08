@@ -66,7 +66,7 @@ class ShopController extends Controller
                 'price' => self::BOOSTER_PRICES['legendary'],
                 'icon' => '👑',
                 'color' => 'from-purple-600 to-pink-600',
-                'rates' => ['Rare: 20%', 'Épique: 65%', 'Légendaire: 10%', 'Mythique: 5%', '1 Légendaire garantie'],
+                'rates' => ['Rare: 20%', 'Épique: 60%', 'Légendaire: 10%', 'Mythique: 10%', '1 Légendaire garantie'],
             ],
         ];
 
@@ -188,12 +188,12 @@ class ShopController extends Controller
             case 'legendary':
                 if ($cardIndex === 0)
                     return 'legendary';
-                // 20% rare, 65% epic, 10% legendary, 5% mythic
+                // 20% rare, 60% epic, 10% legendary, 10% mythic
                 if ($roll <= 200)
                     return 'rare';
-                if ($roll <= 850)
+                if ($roll <= 800)
                     return 'epic';
-                if ($roll <= 950)
+                if ($roll <= 900)
                     return 'legendary';
                 return 'mythic';
 

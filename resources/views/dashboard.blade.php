@@ -669,6 +669,116 @@
             font-size: 0.9rem;
             margin: 0.5rem 0;
         }
+
+        /* ========================================
+           FULLSCREEN MODAL
+        ======================================== */
+        .fullscreen-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .fullscreen-modal.active {
+            display: flex;
+        }
+
+        .fullscreen-content {
+            background: linear-gradient(180deg, #1a1a3e 0%, #0f0f2a 100%);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalPop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .fullscreen-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: floatIcon 2s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .fullscreen-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #A78BFA;
+            margin-bottom: 0.5rem;
+        }
+
+        .fullscreen-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .fullscreen-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn-fullscreen {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #8B5CF6, #6366F1);
+            color: white;
+        }
+
+        .btn-fullscreen:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+        }
+
+        .btn-skip-fullscreen {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-skip-fullscreen:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .fullscreen-note {
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
     </style>
 
     <!-- Fond Cosmos -->
@@ -1168,6 +1278,28 @@
     </div>
 
     <!-- ========================================
+         MODAL PLEIN ECRAN
+    ======================================== -->
+    <div id="fullscreenModal" class="fullscreen-modal">
+        <div class="fullscreen-content">
+            <div class="fullscreen-icon">&#128241;</div>
+            <h2 class="fullscreen-title">Mode Plein Ecran</h2>
+            <p class="fullscreen-description">
+                Pour une meilleure experience de jeu sur mobile, activez le mode plein ecran !
+            </p>
+            <div class="fullscreen-buttons">
+                <button class="btn-fullscreen" onclick="enableFullscreen()">
+                    &#128377; Activer le plein ecran
+                </button>
+                <button class="btn-skip-fullscreen" onclick="skipFullscreen()">
+                    Continuer sans plein ecran
+                </button>
+            </div>
+            <p class="fullscreen-note">Vous pourrez toujours l'activer plus tard depuis les parametres</p>
+        </div>
+    </div>
+
+    <!-- ========================================
          MODAL INVITATION RECUE
     ======================================== -->
     <div id="receivedInviteModal" class="invitation-modal">
@@ -1574,6 +1706,63 @@
 
         function closeDailyBonusModal() {
             document.getElementById('dailyBonusModal').classList.remove('active');
+            // Afficher le modal plein ecran apres le bonus
+            checkShowFullscreenModal();
         }
+
+        // ==========================================
+        // PLEIN ECRAN
+        // ==========================================
+        function checkShowFullscreenModal() {
+            // Verifier si on est sur mobile
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            // Verifier si l'utilisateur a deja fait un choix
+            const fullscreenChoice = localStorage.getItem('fullscreenChoice');
+
+            // Verifier si on est deja en plein ecran
+            const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
+
+            if (isMobile && !fullscreenChoice && !isFullscreen) {
+                // Attendre un peu avant d'afficher le modal
+                setTimeout(() => {
+                    document.getElementById('fullscreenModal').classList.add('active');
+                }, 500);
+            }
+        }
+
+        function enableFullscreen() {
+            const elem = document.documentElement;
+
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { // Safari
+                elem.webkitRequestFullscreen();
+            } else if (elem.mozRequestFullScreen) { // Firefox
+                elem.mozRequestFullScreen();
+            } else if (elem.msRequestFullscreen) { // IE/Edge
+                elem.msRequestFullscreen();
+            }
+
+            localStorage.setItem('fullscreenChoice', 'enabled');
+            document.getElementById('fullscreenModal').classList.remove('active');
+        }
+
+        function skipFullscreen() {
+            localStorage.setItem('fullscreenChoice', 'skipped');
+            document.getElementById('fullscreenModal').classList.remove('active');
+        }
+
+        // Verifier au chargement si on doit afficher le modal plein ecran
+        // (seulement si le modal bonus n'est pas affiche)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attendre un peu pour voir si le modal bonus s'affiche
+            setTimeout(() => {
+                const bonusModal = document.getElementById('dailyBonusModal');
+                if (!bonusModal.classList.contains('active')) {
+                    checkShowFullscreenModal();
+                }
+            }, 1000);
+        });
     </script>
 </x-app-layout>

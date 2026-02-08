@@ -110,7 +110,7 @@ class PvpApiController extends Controller
             return response()->json(['success' => false, 'message' => 'Cosmos insuffisant'], 400);
         }
 
-        if (count($state[$playerKey]['field']) >= 3) {
+        if (count($state[$playerKey]['field']) >= 5) {
             return response()->json(['success' => false, 'message' => 'Terrain plein'], 400);
         }
 
