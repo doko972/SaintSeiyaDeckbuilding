@@ -41,30 +41,47 @@
         ======================================== */
         .stat-card {
             position: relative;
-            background: rgba(15, 15, 35, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 1.25rem;
+            padding: 1rem 0.5rem 0.875rem;
             text-align: center;
             overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color), transparent);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            background: linear-gradient(150deg, var(--grad-from, #3b0764), var(--grad-to, #7c3aed));
+            border: 1.5px solid var(--border-color, rgba(139,92,246,0.4));
         }
 
         .stat-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent-color);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+        }
+
+        .stat-card:active {
+            transform: scale(0.97);
+        }
+
+        .stat-icon {
+            font-size: 1.4rem;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: white;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
         }
 
         /* ========================================
@@ -646,7 +663,7 @@
                         <span class="text-4xl">🎴</span>
                         Ma Collection
                     </h1>
-                    <p class="text-gray-400 mt-1">Toutes les cartes du jeu - Les cartes grisées ne sont pas encore dans votre collection</p>
+                    <p class="text-gray-400 mt-1">Les cartes grisées ne sont pas encore dans votre collection</p>
                 </div>
                 <a href="{{ route('shop.index') }}" 
                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 font-bold rounded-xl hover:from-yellow-400 hover:to-amber-400 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-yellow-500/30">
@@ -658,27 +675,43 @@
             </div>
 
             <!-- Statistiques -->
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-                <div class="stat-card" style="--accent-color: #A78BFA;">
-                    <div class="text-3xl font-bold text-purple-400">{{ $stats['unique_cards'] }}</div>
-                    <div class="text-sm text-gray-400 mt-1">Cartes uniques</div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+
+                {{-- Cartes uniques --}}
+                <div class="stat-card" style="--grad-from:#4C1D95; --grad-to:#7C3AED; --border-color:rgba(139,92,246,0.45);">
+                    <span class="stat-icon">&#127183;</span>
+                    <div class="stat-value">{{ $stats['unique_cards'] }}</div>
+                    <div class="stat-label">Uniques</div>
                 </div>
-                <div class="stat-card" style="--accent-color: #818CF8;">
-                    <div class="text-3xl font-bold text-indigo-400">{{ $stats['total_cards'] }}</div>
-                    <div class="text-sm text-gray-400 mt-1">Total de cartes</div>
+
+                {{-- Total --}}
+                <div class="stat-card" style="--grad-from:#1E3A8A; --grad-to:#2563EB; --border-color:rgba(59,130,246,0.45);">
+                    <span class="stat-icon">&#128218;</span>
+                    <div class="stat-value">{{ $stats['total_cards'] }}</div>
+                    <div class="stat-label">Total cartes</div>
                 </div>
-                <div class="stat-card" style="--accent-color: #34D399;">
-                    <div class="text-3xl font-bold text-green-400">{{ $stats['completion'] }}%</div>
-                    <div class="text-sm text-gray-400 mt-1">Complétion</div>
+
+                {{-- Complétion — pleine largeur sur mobile pour le mettre en valeur --}}
+                {{-- <div class="stat-card col-span-2 md:col-span-1" style="--grad-from:#14532D; --grad-to:#16A34A; --border-color:rgba(34,197,94,0.45);">
+                    <span class="stat-icon">&#9989;</span>
+                    <div class="stat-value">{{ $stats['completion'] }}%</div>
+                    <div class="stat-label">Complétion</div>
+                </div> --}}
+
+                {{-- Légendaires --}}
+                <div class="stat-card" style="--grad-from:#78350F; --grad-to:#D97706; --border-color:rgba(245,158,11,0.45);">
+                    <span class="stat-icon">&#11088;</span>
+                    <div class="stat-value">{{ $stats['by_rarity']['legendary'] ?? 0 }}</div>
+                    <div class="stat-label">Légendaires</div>
                 </div>
-                <div class="stat-card" style="--accent-color: #FFD700;">
-                    <div class="text-3xl font-bold text-yellow-400">{{ $stats['by_rarity']['legendary'] ?? 0 }}</div>
-                    <div class="text-sm text-gray-400 mt-1">Légendaires</div>
+
+                {{-- Épiques --}}
+                <div class="stat-card" style="--grad-from:#3B0764; --grad-to:#9333EA; --border-color:rgba(168,85,247,0.45);">
+                    <span class="stat-icon">&#128142;</span>
+                    <div class="stat-value">{{ $stats['by_rarity']['epic'] ?? 0 }}</div>
+                    <div class="stat-label">Épiques</div>
                 </div>
-                <div class="stat-card" style="--accent-color: #A78BFA;">
-                    <div class="text-3xl font-bold text-purple-500">{{ $stats['by_rarity']['epic'] ?? 0 }}</div>
-                    <div class="text-sm text-gray-400 mt-1">Épiques</div>
-                </div>
+
             </div>
 
             <!-- Barre de progression -->

@@ -1,0 +1,31 @@
+{
+    "name": "Saint Seiya Deckbuilding",
+    "short_name": "SS Deckbuilding",
+    "description": "Jeu de deckbuilding sur le theme de Saint Seiya - Brulez votre cosmos !",
+    "start_url": "/dashboard",
+    "display": "fullscreen",
+    "orientation": "portrait",
+    "background_color": "#0a0a1a",
+    "theme_color": "#8B5CF6",
+    "icons": [
+        {
+            "src": "/favicon.ico",
+            "sizes": "64x64 32x32 24x24 16x16",
+            "type": "image/x-icon"
+        },
+        {
+            "src": "/images/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["games", "entertainment"],
+    "lang": "fr-FR"
+}

@@ -220,15 +220,17 @@
         /* Notifications Toast - Position bas droite */
         .battle-log-zone {
             position: fixed;
-            top: 2%;
-            right: 40%;
+            top: 50%;
+            left: 8px;
+            transform: translateY(-50%);
             display: flex;
-            flex-direction: column-reverse;
-            gap: 0.5rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.4rem;
             z-index: 500;
             pointer-events: none;
-            max-width: 350px;
-            width: auto;
+            max-width: 200px;
+            width: max-content;
         }
 
         .log-entry {
@@ -306,7 +308,7 @@
         @keyframes toastEnter {
             0% {
                 opacity: 0;
-                transform: translateX(50px) scale(0.8);
+                transform: translateX(-60px) scale(0.85);
             }
             100% {
                 opacity: 1;
@@ -321,7 +323,7 @@
             }
             100% {
                 opacity: 0;
-                transform: translateX(100px) scale(0.8);
+                transform: translateX(-40px) scale(0.85);
             }
         }
 
@@ -1779,9 +1781,7 @@
             }
 
             .battle-log-zone {
-                max-width: 300px;
-                top: 2%;
-                right: 15px;
+                max-width: 180px;
             }
 
             .log-entry {
@@ -1893,9 +1893,8 @@
             }
 
             .battle-log-zone {
-                top: 2%;
-                right: 10px;
-                max-width: 260px;
+                max-width: 160px;
+                left: 4px;
             }
 
             .log-entry {

@@ -5,10 +5,8 @@
         ======================================== */
         .cosmos-bg {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 0;
             background:
                 radial-gradient(ellipse at 20% 80%, rgba(120, 0, 255, 0.15) 0%, transparent 50%),
@@ -16,11 +14,9 @@
                 radial-gradient(ellipse at 50% 50%, rgba(0, 100, 255, 0.1) 0%, transparent 70%),
                 linear-gradient(180deg, #0a0a1a 0%, #1a0a2a 50%, #0a1a2a 100%);
         }
-
         .stars {
             position: absolute;
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             background-image:
                 radial-gradient(2px 2px at 20px 30px, #eee, transparent),
                 radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
@@ -30,221 +26,302 @@
             background-size: 350px 200px;
             animation: twinkle 5s ease-in-out infinite;
         }
-
         @keyframes twinkle {
             0%, 100% { opacity: 0.5; }
             50% { opacity: 1; }
         }
 
         /* ========================================
-           HERO BANNER COMPACT
+           HERO COMPACT
         ======================================== */
-        .hero-banner {
-            background: linear-gradient(135deg, rgba(88, 28, 135, 0.8), rgba(124, 58, 237, 0.6));
-            border: 2px solid rgba(255, 215, 0, 0.3);
-            border-radius: 20px;
-            padding: 1.5rem;
+        .hero-compact {
+            background: linear-gradient(135deg, rgba(88, 28, 135, 0.85), rgba(124, 58, 237, 0.65));
+            border: 1.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 18px;
+            padding: 0.75rem 1rem;
             position: relative;
             overflow: hidden;
         }
-
-        .hero-banner::before {
+        .hero-compact::before {
             content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
-            animation: shimmer 3s ease-in-out infinite;
+            position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            animation: shimmer 4s ease-in-out infinite;
         }
-
         @keyframes shimmer {
             0%, 100% { transform: translateX(-100%); }
             50% { transform: translateX(100%); }
         }
-
+        .hero-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: white;
+        }
         .rank-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.25rem;
-            padding: 0.25rem 0.75rem;
+            gap: 0.2rem;
+            padding: 0.15rem 0.55rem;
             border-radius: 20px;
             font-weight: 700;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
+            margin-left: 0.4rem;
         }
-
         .rank-bronze { background: linear-gradient(135deg, #CD7F32, #8B4513); color: white; }
         .rank-argent { background: linear-gradient(135deg, #C0C0C0, #A8A8A8); color: #1a1a2e; }
-        .rank-or { background: linear-gradient(135deg, #FFD700, #FFA500); color: #1a1a2e; }
-        .rank-divin { background: linear-gradient(135deg, #E0B0FF, #9400D3); color: white; }
+        .rank-or     { background: linear-gradient(135deg, #FFD700, #FFA500); color: #1a1a2e; }
+        .rank-divin  { background: linear-gradient(135deg, #E0B0FF, #9400D3); color: white; }
 
-        /* ========================================
-           FEATURE CARDS - MOBILE FIRST
-        ======================================== */
-        .feature-card {
-            position: relative;
-            background: rgba(15, 15, 35, 0.9);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--feature-color, rgba(255, 215, 0, 0.5));
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(var(--glow-rgb, 255, 215, 0), 0.2);
-        }
-
-        .feature-image {
-            position: relative;
-            height: 140px;
-            background: linear-gradient(135deg, var(--bg-from, #333), var(--bg-to, #555));
+        .stat-pill {
             display: flex;
             align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .feature-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: top;
-            transition: transform 0.4s ease;
-        }
-
-        .feature-card:hover .feature-image img {
-            transform: scale(1.1);
-        }
-
-        .feature-image .feature-icon {
-            font-size: 4rem;
-            opacity: 0.9;
-            transition: transform 0.4s ease;
-        }
-
-        .feature-card:hover .feature-icon {
-            transform: scale(1.2);
-        }
-
-        .feature-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .feature-content {
-            padding: 1rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .feature-title {
-            font-size: 1.1rem;
-            font-weight: 800;
+            gap: 0.3rem;
+            padding: 0.3rem 0.65rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
             color: white;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .feature-description {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.6);
-            line-height: 1.4;
-            flex: 1;
-        }
-
-        .feature-cta {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            padding: 0.5rem 1rem;
-            background: linear-gradient(135deg, var(--cta-from, #8B5CF6), var(--cta-to, #6366F1));
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            justify-content: center;
-        }
-
-        .feature-cta:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 20px rgba(var(--glow-rgb, 139, 92, 246), 0.4);
-        }
-
-        /* ========================================
-           SECTION HEADERS
-        ======================================== */
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: white;
-        }
-
-        .section-subtitle {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        /* ========================================
-           STATS MINI CARDS
-        ======================================== */
-        .mini-stat {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .mini-stat:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .mini-stat-value {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--stat-color, #FFD700), var(--stat-color-light, #FFA500));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .mini-stat-label {
             font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
-            margin-top: 0.25rem;
+            font-weight: 700;
+        }
+        .stat-pill.coins { color: #FFD700; }
+        .stat-pill.online { color: #10B981; }
+        .online-dot {
+            width: 7px; height: 7px;
+            background: #10B981;
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: onlinePulse 2s ease-in-out infinite;
+        }
+        @keyframes onlinePulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16,185,129,0.7); }
+            50%       { transform: scale(1.2); box-shadow: 0 0 6px 2px rgba(16,185,129,0.4); }
+        }
+
+        /* ========================================
+           BENTO GRID PRINCIPAL
+        ======================================== */
+        .bento-main {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 10px;
+        }
+        .bento-col {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Base tile */
+        .bento-tile {
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+            display: block;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+        .bento-tile:hover  { transform: scale(1.025); box-shadow: 0 10px 35px rgba(0,0,0,0.45); }
+        .bento-tile:active { transform: scale(0.97); }
+
+        /* Tile label overlay */
+        .tile-label {
+            position: absolute;
+            top: 11px; left: 12px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+            z-index: 2;
+            line-height: 1.2;
+        }
+        .tile-label-sm {
+            position: absolute;
+            top: 10px; left: 10px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: rgba(255,255,255,0.9);
+            z-index: 2;
+            line-height: 1.2;
+        }
+
+        /* Big play tiles */
+        .tile-large { height: 170px; }
+
+        .tile-pve {
+            background: linear-gradient(150deg, #4C1D95 0%, #7C3AED 55%, #4338CA 100%);
+            border: 1.5px solid rgba(139,92,246,0.4);
+        }
+        .tile-pvp {
+            background: linear-gradient(150deg, #7F1D1D 0%, #DC2626 55%, #9F1239 100%);
+            border: 1.5px solid rgba(239,68,68,0.4);
+        }
+
+        /* Image inside tile */
+        .tile-img {
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 65%; height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            mask-image: linear-gradient(to left, rgba(0,0,0,0.9) 30%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.9) 30%, transparent 100%);
+        }
+        .tile-icon {
+            position: absolute;
+            bottom: 8px; right: 10px;
+            font-size: 3.5rem;
+            opacity: 0.85;
+            line-height: 1;
+        }
+
+        /* Online badge on PvP tile */
+        .tile-online-badge {
+            position: absolute;
+            top: 9px; right: 9px;
+            background: #10B981;
+            color: white;
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 0.15rem 0.45rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            z-index: 3;
+        }
+
+        /* Notification dot */
+        .notification-dot {
+            position: absolute;
+            top: 8px; left: 8px;
+            width: 10px; height: 10px;
+            background: #10B981;
+            border-radius: 50%;
+            border: 2px solid rgba(15,15,35,0.9);
+            animation: ndPulse 2s infinite;
+            z-index: 10;
+        }
+        @keyframes ndPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50%       { transform: scale(1.25); opacity: 0.8; }
+        }
+
+        /* Score tile (right col top) */
+        .tile-score {
+            background: linear-gradient(150deg, #78350F 0%, #D97706 60%, #F59E0B 100%);
+            border: 1.5px solid rgba(245,158,11,0.5);
+            border-radius: 18px;
+            padding: 12px 14px;
+        }
+        .score-eyebrow {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.75);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .score-big {
+            font-size: 2rem;
+            font-weight: 900;
+            color: white;
+            line-height: 1;
+            margin: 2px 0;
+        }
+        .score-sub {
+            font-size: 0.6rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Decks tile (right col middle) */
+        .tile-decks {
+            background: linear-gradient(150deg, #1E3A8A 0%, #2563EB 60%, #3B82F6 100%);
+            border: 1.5px solid rgba(59,130,246,0.4);
+            flex: 1;
+            min-height: 75px;
+        }
+
+        /* Boutique CTA (right col bottom) */
+        .tile-shop-cta {
+            background: linear-gradient(150deg, #14532D 0%, #16A34A 60%, #22C55E 100%);
+            border: 1.5px solid rgba(34,197,94,0.4);
+            border-radius: 18px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: white;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .tile-shop-cta:hover {
+            transform: scale(1.025);
+            box-shadow: 0 6px 25px rgba(34,197,94,0.4);
+            color: white;
+        }
+        .tile-shop-cta:active { transform: scale(0.97); }
+
+        /* ========================================
+           SECONDARY GRID (3 colonnes)
+        ======================================== */
+        .bento-secondary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .sec-tile {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 12px 6px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            text-decoration: none;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.2s ease;
+            min-height: 68px;
+            position: relative;
+        }
+        .sec-tile:hover {
+            background: rgba(255,255,255,0.13);
+            transform: translateY(-2px);
+            color: white;
+        }
+        .sec-tile-icon { font-size: 1.5rem; line-height: 1; }
+        .sec-tile-label { font-size: 0.62rem; color: rgba(255,255,255,0.65); }
+        .sec-tile.bonus-available {
+            border-color: rgba(16,185,129,0.5);
+            background: rgba(16,185,129,0.1);
+        }
+
+        /* ========================================
+           SECTION HEADER COMPACT
+        ======================================== */
+        .section-header-compact {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .section-title-compact {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         /* ========================================
@@ -252,110 +329,25 @@
         ======================================== */
         .cards-scroll {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.65rem;
             overflow-x: auto;
-            padding: 0.5rem;
-            margin: -0.5rem;
+            padding: 0.4rem;
+            margin: -0.4rem;
             scrollbar-width: thin;
-            scrollbar-color: rgba(139, 92, 246, 0.5) transparent;
+            scrollbar-color: rgba(139,92,246,0.5) transparent;
         }
-
-        .cards-scroll::-webkit-scrollbar {
-            height: 4px;
-        }
-
-        .cards-scroll::-webkit-scrollbar-thumb {
-            background: rgba(139, 92, 246, 0.5);
-            border-radius: 2px;
-        }
-
+        .cards-scroll::-webkit-scrollbar { height: 3px; }
+        .cards-scroll::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.5); border-radius: 2px; }
         .recent-card {
             flex-shrink: 0;
-            width: 80px;
-            height: 110px;
+            width: 68px; height: 92px;
             border-radius: 8px;
             overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.25s ease;
         }
-
-        .recent-card:hover {
-            transform: scale(1.1);
-            border-color: rgba(255, 215, 0, 0.5);
-            z-index: 10;
-        }
-
-        .recent-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* ========================================
-           NOTIFICATION DOT
-        ======================================== */
-        .notification-dot {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            width: 12px;
-            height: 12px;
-            background: #10B981;
-            border-radius: 50%;
-            border: 2px solid rgba(15, 15, 35, 0.9);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.8; }
-        }
-
-        /* ========================================
-           RESPONSIVE
-        ======================================== */
-        @media (max-width: 640px) {
-            .hero-banner {
-                padding: 1rem;
-            }
-
-            .feature-image {
-                height: 120px;
-            }
-
-            .feature-icon {
-                font-size: 3rem !important;
-            }
-
-            .section-title {
-                font-size: 1.25rem;
-            }
-
-            .mini-stat-value {
-                font-size: 1.25rem;
-            }
-        }
-
-        /* ========================================
-           ONLINE INDICATOR IN HERO
-        ======================================== */
-        .online-stat {
-            position: relative;
-        }
-
-        .online-pulse {
-            width: 8px;
-            height: 8px;
-            background: #10B981;
-            border-radius: 50%;
-            display: inline-block;
-            animation: onlinePulse 2s ease-in-out infinite;
-        }
-
-        @keyframes onlinePulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            50% { transform: scale(1.2); box-shadow: 0 0 10px 3px rgba(16, 185, 129, 0.4); }
-        }
+        .recent-card:hover { transform: scale(1.1) translateY(-3px); border-color: rgba(255,215,0,0.6); }
+        .recent-card img { width: 100%; height: 100%; object-fit: cover; }
 
         /* ========================================
            JOUEURS EN LIGNE
@@ -363,75 +355,49 @@
         .player-card {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 0.65rem;
+            padding: 0.65rem 0.75rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 12px;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
         }
-
-        .player-card:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(16, 185, 129, 0.3);
-        }
-
-        .player-card.in-battle {
-            opacity: 0.6;
-        }
-
+        .player-card:hover { background: rgba(255,255,255,0.1); border-color: rgba(16,185,129,0.3); }
+        .player-card.in-battle { opacity: 0.6; }
         .player-avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px; height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.9rem;
             flex-shrink: 0;
         }
-
-        .player-info {
-            flex: 1;
-            min-width: 0;
-        }
-
+        .player-info { flex: 1; min-width: 0; }
         .player-name {
             font-weight: 600;
             color: white;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-size: 0.85rem;
         }
-
-        .player-stats {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
+        .player-stats { font-size: 0.68rem; color: rgba(255,255,255,0.5); }
         .challenge-btn {
-            padding: 0.5rem 0.75rem;
+            padding: 0.4rem 0.7rem;
             background: linear-gradient(135deg, #10B981, #059669);
             border: none;
             border-radius: 8px;
             color: white;
-            font-weight: 600;
-            font-size: 0.8rem;
+            font-weight: 700;
+            font-size: 0.72rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
             white-space: nowrap;
         }
-
-        .challenge-btn:hover:not(:disabled) {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
-        }
-
-        .challenge-btn:disabled {
-            background: #4a4a4a;
-            cursor: not-allowed;
-        }
+        .challenge-btn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 0 15px rgba(16,185,129,0.4); }
+        .challenge-btn:disabled { background: #4a4a4a; cursor: not-allowed; }
 
         /* ========================================
            INVITATION MODAL
@@ -439,47 +405,37 @@
         .invitation-modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
             z-index: 9999;
             align-items: center;
             justify-content: center;
             backdrop-filter: blur(10px);
         }
-
-        .invitation-modal.active {
-            display: flex;
-        }
-
+        .invitation-modal.active { display: flex; }
         .invitation-content {
             background: linear-gradient(180deg, #1a1a3e 0%, #0f0f2a 100%);
-            border: 2px solid rgba(16, 185, 129, 0.4);
+            border: 2px solid rgba(16,185,129,0.4);
             border-radius: 24px;
             padding: 2rem;
             max-width: 400px;
             width: 90%;
             text-align: center;
         }
-
         .invitation-content.incoming {
-            border-color: rgba(245, 158, 11, 0.5);
+            border-color: rgba(245,158,11,0.5);
             animation: incomingPulse 2s ease-in-out infinite;
         }
-
         @keyframes incomingPulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
-            50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.4); }
+            0%, 100% { box-shadow: 0 0 20px rgba(245,158,11,0.2); }
+            50%       { box-shadow: 0 0 40px rgba(245,158,11,0.4); }
         }
-
         .invitation-timer {
-            width: 60px;
-            height: 60px;
+            width: 60px; height: 60px;
             margin: 1rem auto;
             border-radius: 50%;
-            border: 4px solid rgba(255, 255, 255, 0.2);
+            border: 4px solid rgba(255,255,255,0.2);
             border-top-color: #10B981;
             display: flex;
             align-items: center;
@@ -488,13 +444,7 @@
             font-weight: 700;
             color: white;
         }
-
-        .invitation-buttons {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-        }
-
+        .invitation-buttons { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
         .invitation-buttons button {
             flex: 1;
             padding: 0.75rem;
@@ -504,22 +454,9 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-
-        .btn-accept {
-            background: linear-gradient(135deg, #10B981, #059669);
-            color: white;
-        }
-
-        .btn-decline {
-            background: rgba(239, 68, 68, 0.2);
-            color: #EF4444;
-            border: 1px solid rgba(239, 68, 68, 0.3) !important;
-        }
-
-        .btn-cancel {
-            background: rgba(107, 114, 128, 0.2);
-            color: #9CA3AF;
-        }
+        .btn-accept  { background: linear-gradient(135deg, #10B981, #059669); color: white; }
+        .btn-decline { background: rgba(239,68,68,0.2); color: #EF4444; border: 1px solid rgba(239,68,68,0.3) !important; }
+        .btn-cancel  { background: rgba(107,114,128,0.2); color: #9CA3AF; }
 
         /* ========================================
            DAILY BONUS MODAL
@@ -527,62 +464,38 @@
         .daily-bonus-modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
             z-index: 9999;
             align-items: center;
             justify-content: center;
             backdrop-filter: blur(10px);
         }
-
-        .daily-bonus-modal.active {
-            display: flex;
-        }
-
+        .daily-bonus-modal.active { display: flex; }
         .daily-bonus-content {
             background: linear-gradient(180deg, #1a1a3e 0%, #0f0f2a 100%);
-            border: 2px solid rgba(255, 215, 0, 0.4);
+            border: 2px solid rgba(255,215,0,0.4);
             border-radius: 24px;
             padding: 2rem;
             max-width: 400px;
             width: 90%;
             text-align: center;
         }
-
-        .dice-container {
-            width: 100px;
-            height: 100px;
-            margin: 1.5rem auto;
-            perspective: 600px;
-        }
-
-        .dice {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-        }
-
-        .dice.rolling {
-            animation: diceRoll 2s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-
+        .dice-container { width: 100px; height: 100px; margin: 1.5rem auto; perspective: 600px; }
+        .dice { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; }
+        .dice.rolling { animation: diceRoll 2s cubic-bezier(0.25, 0.1, 0.25, 1); }
         @keyframes diceRoll {
-            0% { transform: rotateX(0deg) rotateY(0deg); }
-            20% { transform: rotateX(360deg) rotateY(180deg); }
-            40% { transform: rotateX(720deg) rotateY(360deg); }
-            60% { transform: rotateX(1080deg) rotateY(540deg); }
-            80% { transform: rotateX(1440deg) rotateY(720deg); }
+            0%   { transform: rotateX(0deg) rotateY(0deg); }
+            20%  { transform: rotateX(360deg) rotateY(180deg); }
+            40%  { transform: rotateX(720deg) rotateY(360deg); }
+            60%  { transform: rotateX(1080deg) rotateY(540deg); }
+            80%  { transform: rotateX(1440deg) rotateY(720deg); }
             100% { transform: var(--final-rotation, rotateX(1800deg) rotateY(900deg)); }
         }
-
         .dice-face {
             position: absolute;
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             background: linear-gradient(135deg, #fff, #e0e0e0);
             border: 3px solid #333;
             border-radius: 12px;
@@ -593,82 +506,31 @@
             font-weight: 900;
             color: #1a1a3e;
         }
-
         .dice-face.front  { transform: translateZ(50px); }
         .dice-face.back   { transform: rotateY(180deg) translateZ(50px); }
         .dice-face.right  { transform: rotateY(90deg) translateZ(50px); }
         .dice-face.left   { transform: rotateY(-90deg) translateZ(50px); }
         .dice-face.top    { transform: rotateX(90deg) translateZ(50px); }
         .dice-face.bottom { transform: rotateX(-90deg) translateZ(50px); }
-
         .dice.result-1 { transform: rotateX(0deg) rotateY(0deg); }
         .dice.result-2 { transform: rotateX(-90deg) rotateY(0deg); }
         .dice.result-3 { transform: rotateX(0deg) rotateY(-90deg); }
         .dice.result-4 { transform: rotateX(0deg) rotateY(90deg); }
         .dice.result-5 { transform: rotateX(90deg) rotateY(0deg); }
         .dice.result-6 { transform: rotateX(180deg) rotateY(0deg); }
-
-        .rewards-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            margin: 1rem 0;
-        }
-
-        .reward-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 0.4rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
+        .rewards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin: 1rem 0; }
+        .reward-item { background: rgba(255,255,255,0.05); padding: 0.4rem; border-radius: 6px; font-size: 0.75rem; color: rgba(255,255,255,0.7); }
         .roll-btn, .close-btn {
-            width: 100%;
-            padding: 0.875rem;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            width: 100%; padding: 0.875rem; border: none; border-radius: 10px;
+            font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease;
         }
-
-        .roll-btn {
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            color: #1a1a3e;
-        }
-
-        .close-btn {
-            background: linear-gradient(135deg, #10B981, #059669);
-            color: white;
-            margin-top: 1rem;
-        }
-
-        .roll-btn:hover, .close-btn:hover {
-            transform: scale(1.02);
-        }
-
-        .roll-btn:disabled {
-            background: #666;
-            cursor: not-allowed;
-        }
-
-        .result-container {
-            margin-top: 1rem;
-        }
-
-        .result-coins {
-            font-size: 1.75rem;
-            font-weight: 900;
-            color: #FFD700;
-        }
-
-        .result-balance {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-            margin: 0.5rem 0;
-        }
+        .roll-btn { background: linear-gradient(135deg, #FFD700, #FFA500); color: #1a1a3e; }
+        .close-btn { background: linear-gradient(135deg, #10B981, #059669); color: white; margin-top: 1rem; }
+        .roll-btn:hover, .close-btn:hover { transform: scale(1.02); }
+        .roll-btn:disabled { background: #666; cursor: not-allowed; }
+        .result-container { margin-top: 1rem; }
+        .result-coins { font-size: 1.75rem; font-weight: 900; color: #FFD700; }
+        .result-balance { color: rgba(255,255,255,0.6); font-size: 0.9rem; margin: 0.5rem 0; }
 
         /* ========================================
            FULLSCREEN MODAL
@@ -676,24 +538,18 @@
         .fullscreen-modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
             z-index: 10000;
             align-items: center;
             justify-content: center;
             backdrop-filter: blur(10px);
         }
-
-        .fullscreen-modal.active {
-            display: flex;
-        }
-
+        .fullscreen-modal.active { display: flex; }
         .fullscreen-content {
             background: linear-gradient(180deg, #1a1a3e 0%, #0f0f2a 100%);
-            border: 2px solid rgba(139, 92, 246, 0.5);
+            border: 2px solid rgba(139,92,246,0.5);
             border-radius: 24px;
             padding: 2rem;
             max-width: 400px;
@@ -701,371 +557,182 @@
             text-align: center;
             animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-
         @keyframes modalPop {
-            0% { transform: scale(0.8); opacity: 0; }
+            0%   { transform: scale(0.8); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-
-        .fullscreen-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            animation: floatIcon 2s ease-in-out infinite;
-        }
-
+        .fullscreen-icon { font-size: 4rem; margin-bottom: 1rem; animation: floatIcon 2s ease-in-out infinite; }
         @keyframes floatIcon {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50%       { transform: translateY(-10px); }
         }
-
-        .fullscreen-title {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #A78BFA;
-            margin-bottom: 0.5rem;
-        }
-
-        .fullscreen-description {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
-        }
-
-        .fullscreen-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
+        .fullscreen-title { font-size: 1.5rem; font-weight: 800; color: #A78BFA; margin-bottom: 0.5rem; }
+        .fullscreen-description { color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5; }
+        .fullscreen-buttons { display: flex; flex-direction: column; gap: 0.75rem; }
         .btn-fullscreen {
-            width: 100%;
-            padding: 1rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: linear-gradient(135deg, #8B5CF6, #6366F1);
-            color: white;
+            width: 100%; padding: 1rem; border: none; border-radius: 12px;
+            font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease;
+            background: linear-gradient(135deg, #8B5CF6, #6366F1); color: white;
         }
-
-        .btn-fullscreen:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
-        }
-
+        .btn-fullscreen:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(139,92,246,0.5); }
         .btn-skip-fullscreen {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: transparent;
-            color: rgba(255, 255, 255, 0.5);
+            width: 100%; padding: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px; font-size: 0.9rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s ease;
+            background: transparent; color: rgba(255,255,255,0.5);
         }
-
-        .btn-skip-fullscreen:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        .fullscreen-note {
-            margin-top: 1rem;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.4);
-        }
+        .btn-skip-fullscreen:hover { background: rgba(255,255,255,0.1); color: white; }
+        .fullscreen-note { margin-top: 1rem; font-size: 0.75rem; color: rgba(255,255,255,0.4); }
     </style>
 
     <!-- Fond Cosmos -->
-    <div class="cosmos-bg">
-        <div class="stars"></div>
-    </div>
+    <div class="cosmos-bg"><div class="stars"></div></div>
 
-    <div class="relative z-10 min-h-screen py-6 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-6xl mx-auto">
+    <div class="relative z-10 min-h-screen py-4 px-3 sm:px-5">
+        <div class="max-w-xl mx-auto">
 
-            <!-- ========================================
-                 HERO BANNER COMPACT
-            ======================================== -->
-            <div class="hero-banner mb-6">
-                <div class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <!-- Infos Joueur -->
-                    <div>
-                        <div class="flex flex-wrap items-center gap-2 mb-1">
-                            <h1 class="text-xl sm:text-2xl font-bold text-white">
-                                Salut, {{ auth()->user()->name }} !
-                            </h1>
-                            @php
-                                $wins = auth()->user()->wins;
-                                $rank = match(true) {
-                                    $wins >= 100 => ['name' => 'Divin', 'class' => 'rank-divin', 'icon' => '&#128081;'],
-                                    $wins >= 50 => ['name' => 'Or', 'class' => 'rank-or', 'icon' => '&#129351;'],
-                                    $wins >= 20 => ['name' => 'Argent', 'class' => 'rank-argent', 'icon' => '&#129352;'],
-                                    default => ['name' => 'Bronze', 'class' => 'rank-bronze', 'icon' => '&#129353;'],
-                                };
-                            @endphp
-                            <span class="rank-badge {{ $rank['class'] }}">{!! $rank['icon'] !!} {{ $rank['name'] }}</span>
-                        </div>
-                        <p class="text-purple-200 text-sm">Brule ton cosmos et deviens une legende !</p>
+            {{-- ============================================================
+                 HERO COMPACT
+            ============================================================ --}}
+            @php
+                $wins = auth()->user()->wins;
+                $rank = match(true) {
+                    $wins >= 100 => ['name' => 'Divin',  'class' => 'rank-divin',  'icon' => '&#128081;'],
+                    $wins >= 50  => ['name' => 'Or',     'class' => 'rank-or',     'icon' => '&#129351;'],
+                    $wins >= 20  => ['name' => 'Argent', 'class' => 'rank-argent', 'icon' => '&#129352;'],
+                    default      => ['name' => 'Bronze', 'class' => 'rank-bronze', 'icon' => '&#129353;'],
+                };
+            @endphp
+
+            <div class="hero-compact mb-3">
+                <div class="relative z-10 flex items-center justify-between gap-2">
+                    <div class="flex items-center flex-wrap gap-1 min-w-0">
+                        <span class="hero-name truncate">{{ auth()->user()->name }}</span>
+                        <span class="rank-badge {{ $rank['class'] }}">{!! $rank['icon'] !!} {{ $rank['name'] }}</span>
                     </div>
-
-                    <!-- Mini Stats -->
-                    <div class="grid grid-cols-4 gap-2 sm:gap-3">
-                        <div class="mini-stat" style="--stat-color: #FFD700; --stat-color-light: #FFA500;">
-                            <div class="mini-stat-value" id="dashboard-coins">{{ number_format(auth()->user()->coins) }}</div>
-                            <div class="mini-stat-label">Pieces</div>
-                        </div>
-                        <div class="mini-stat" style="--stat-color: #10B981; --stat-color-light: #34D399;">
-                            <div class="mini-stat-value">{{ auth()->user()->wins }}</div>
-                            <div class="mini-stat-label">Victoires</div>
-                        </div>
-                        <div class="mini-stat" style="--stat-color: #8B5CF6; --stat-color-light: #A78BFA;">
-                            <div class="mini-stat-value">{{ auth()->user()->cards()->count() }}</div>
-                            <div class="mini-stat-label">Cartes</div>
-                        </div>
-                        <div class="mini-stat online-stat" style="--stat-color: #10B981; --stat-color-light: #34D399;">
-                            <div class="mini-stat-value flex items-center justify-center gap-1">
-                                <span class="online-pulse"></span>
-                                <span id="heroOnlineCount">0</span>
-                            </div>
-                            <div class="mini-stat-label">En ligne</div>
-                        </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <div class="stat-pill coins">&#128176; <span id="dashboard-coins">{{ number_format(auth()->user()->coins) }}</span></div>
+                        <div class="stat-pill online"><span class="online-dot"></span><span id="heroOnlineCount">0</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- ========================================
-                 SECTION: MODES DE JEU
-            ======================================== -->
-            <div class="mb-8">
-                <div class="section-header">
-                    <div class="section-icon bg-gradient-to-br from-red-500 to-orange-500">&#9876;</div>
-                    <div>
-                        <h2 class="section-title">Modes de jeu</h2>
-                        <p class="section-subtitle">Affrontez vos adversaires</p>
-                    </div>
-                </div>
+            {{-- ============================================================
+                 BENTO GRID PRINCIPAL
+            ============================================================ --}}
+            <div class="bento-main mb-3">
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Combat PvE -->
-                    <a href="{{ route('game.index') }}" class="feature-card" style="--feature-color: rgba(59, 130, 246, 0.5); --glow-rgb: 59, 130, 246;">
-                        <div class="feature-image" style="--bg-from: #1E40AF; --bg-to: #3B82F6;">
-                            @if(file_exists(public_path('images/features/pve.webp')))
-                                <img src="{{ asset('images/features/pve.webp') }}" alt="Combat PvE">
-                            @else
-                                <span class="feature-icon">&#129302;</span>
-                            @endif
-                        </div>
-                        <div class="feature-content">
-                            <h3 class="feature-title">&#129302; Combat PvE</h3>
-                            <p class="feature-description">Affrontez l'intelligence artificielle et perfectionnez vos strategies de combat.</p>
-                            <span class="feature-cta" style="--cta-from: #2563EB; --cta-to: #1D4ED8;">
-                                Jouer &#10132;
-                            </span>
-                        </div>
-                    </a>
-
-                    <!-- Arena PvP -->
-                    <a href="{{ route('pvp.lobby') }}" class="feature-card" style="--feature-color: rgba(239, 68, 68, 0.5); --glow-rgb: 239, 68, 68;">
-                        <div class="notification-dot"></div>
-                        <div class="feature-image" style="--bg-from: #991B1B; --bg-to: #DC2626;">
-                            @if(file_exists(public_path('images/features/pvp.webp')))
-                                <img src="{{ asset('images/features/pvp.webp') }}" alt="Arena PvP">
-                            @else
-                                <span class="feature-icon">&#127942;</span>
-                            @endif
-                            <span class="feature-badge bg-green-500 text-white">En ligne</span>
-                        </div>
-                        <div class="feature-content">
-                            <h3 class="feature-title">&#127942; Arena PvP</h3>
-                            <p class="feature-description">Defiez d'autres joueurs en temps reel et grimpez dans le classement !</p>
-                            <span class="feature-cta" style="--cta-from: #DC2626; --cta-to: #B91C1C;">
-                                Defier &#10132;
-                            </span>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-            <!-- ========================================
-                 SECTION: GESTION DES CARTES
-            ======================================== -->
-            <div class="mb-8">
-                <div class="section-header">
-                    <div class="section-icon bg-gradient-to-br from-purple-500 to-indigo-500">&#127183;</div>
-                    <div>
-                        <h2 class="section-title">Gestion des cartes</h2>
-                        <p class="section-subtitle">Construisez votre collection</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <!-- Collection -->
-                    <a href="{{ route('collection.index') }}" class="feature-card" style="--feature-color: rgba(168, 85, 247, 0.5); --glow-rgb: 168, 85, 247;">
-                        <div class="feature-image" style="--bg-from: #6B21A8; --bg-to: #9333EA;">
-                            @if(file_exists(public_path('images/features/collection.webp')))
-                                <img src="{{ asset('images/features/collection.webp') }}" alt="Collection">
-                            @else
-                                <span class="feature-icon">&#128218;</span>
-                            @endif
-                        </div>
-                        <div class="feature-content">
-                            <h3 class="feature-title">Collection</h3>
-                            <p class="feature-description">Consultez toutes vos cartes et decouvrez leurs statistiques.</p>
-                            <span class="feature-cta" style="--cta-from: #9333EA; --cta-to: #7C3AED;">
-                                Voir &#10132;
-                            </span>
-                        </div>
-                    </a>
-
-                    <!-- Mes Decks -->
-                    <a href="{{ route('decks.index') }}" class="feature-card" style="--feature-color: rgba(99, 102, 241, 0.5); --glow-rgb: 99, 102, 241;">
-                        <div class="feature-image" style="--bg-from: #3730A3; --bg-to: #4F46E5;">
-                            @if(file_exists(public_path('images/features/decks.webp')))
-                                <img src="{{ asset('images/features/decks.webp') }}" alt="Mes Decks">
-                            @else
-                                <span class="feature-icon">&#127156;</span>
-                            @endif
-                        </div>
-                        <div class="feature-content">
-                            <h3 class="feature-title">Mes Decks</h3>
-                            <p class="feature-description">Creez et gerez vos decks pour dominer vos adversaires.</p>
-                            <span class="feature-cta" style="--cta-from: #4F46E5; --cta-to: #4338CA;">
-                                Gerer &#10132;
-                            </span>
-                        </div>
-                    </a>
-
-                    <!-- Fusion -->
-                    <a href="{{ route('fusion.index') }}" class="feature-card" style="--feature-color: rgba(245, 158, 11, 0.5); --glow-rgb: 245, 158, 11;">
-                        <div class="feature-image" style="--bg-from: #B45309; --bg-to: #F59E0B;">
-                            @if(file_exists(public_path('images/features/fusion.webp')))
-                                <img src="{{ asset('images/features/fusion.webp') }}" alt="Fusion">
-                            @else
-                                <span class="feature-icon">&#9889;</span>
-                            @endif
-                        </div>
-                        <div class="feature-content">
-                            <h3 class="feature-title">Fusion</h3>
-                            <p class="feature-description">Fusionnez vos doublons pour ameliorer vos cartes.</p>
-                            <span class="feature-cta" style="--cta-from: #F59E0B; --cta-to: #D97706;">
-                                Fusionner &#10132;
-                            </span>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-            <!-- ========================================
-                 SECTION: ECONOMIE
-            ======================================== -->
-            <div class="mb-8">
-                <div class="section-header">
-                    <div class="section-icon bg-gradient-to-br from-yellow-500 to-amber-500">&#129689;</div>
-                    <div>
-                        <h2 class="section-title">Economie</h2>
-                        <p class="section-subtitle">Gagnez et depensez vos pieces</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <!-- Boutique -->
-                    <a href="{{ route('shop.index') }}" class="feature-card" style="--feature-color: rgba(251, 191, 36, 0.5); --glow-rgb: 251, 191, 36;">
-                        <div class="feature-image" style="--bg-from: #B45309; --bg-to: #FBBF24;">
-                            @if(file_exists(public_path('images/features/shop.webp')))
-                                <img src="{{ asset('images/features/shop.webp') }}" alt="Boutique">
-                            @else
-                                <span class="feature-icon">&#128722;</span>
-                            @endif
-                        </div>
-                        <div class="feature-content">
-                            <h3 class="feature-title">&#128722; Boutique</h3>
-                            <p class="feature-description">Achetez des boosters pour obtenir de nouvelles cartes.</p>
-                            <span class="feature-cta" style="--cta-from: #FBBF24; --cta-to: #F59E0B; color: #1a1a2e;">
-                                Acheter &#10132;
-                            </span>
-                        </div>
-                    </a>
-
-                    <!-- Vente -->
-                    <a href="{{ route('sell.index') }}" class="feature-card" style="--feature-color: rgba(16, 185, 129, 0.5); --glow-rgb: 16, 185, 129;">
-                        <div class="feature-image" style="--bg-from: #065F46; --bg-to: #10B981;">
-                            @if(file_exists(public_path('images/features/sell.webp')))
-                                <img src="{{ asset('images/features/sell.webp') }}" alt="Vente">
-                            @else
-                                <span class="feature-icon">&#128176;</span>
-                            @endif
-                        </div>
-                        <div class="feature-content">
-                            <h3 class="feature-title">&#128176; Vente</h3>
-                            <p class="feature-description">Revendez vos cartes en double pour recuperer des pieces.</p>
-                            <span class="feature-cta" style="--cta-from: #10B981; --cta-to: #059669;">
-                                Vendre &#10132;
-                            </span>
-                        </div>
-                    </a>
-
-                    <!-- Bonus & Recompenses -->
-                    <a href="{{ route('rewards.index') }}" class="feature-card" style="--feature-color: rgba(236, 72, 153, 0.5); --glow-rgb: 236, 72, 153;">
-                        @php
-                            $user = auth()->user();
-                            $streakInfo = $user->getStreakInfo();
-                            $canSpin = $user->canSpinWheel();
-                            $hasReward = $streakInfo['can_claim'] || $canSpin;
-                        @endphp
-                        @if($hasReward)
-                            <div class="notification-dot"></div>
+                {{-- Colonne gauche : PvE + PvP (grandes tuiles) --}}
+                <div class="bento-col">
+                    {{-- Combat PvE --}}
+                    <a href="{{ route('game.index') }}" class="bento-tile tile-pve tile-large">
+                        <span class="tile-label">&#129302; Combat<br>PvE</span>
+                        @if(file_exists(public_path('images/features/pve.webp')))
+                            <img class="tile-img" src="{{ asset('images/features/pve.webp') }}" alt="PvE">
+                        @else
+                            <span class="tile-icon">&#129302;</span>
                         @endif
-                        <div class="feature-image" style="--bg-from: #9D174D; --bg-to: #EC4899;">
-                            @if(file_exists(public_path('images/features/bonus.webp')))
-                                <img src="{{ asset('images/features/bonus.webp') }}" alt="Bonus">
-                            @else
-                                <span class="feature-icon">&#127873;</span>
-                            @endif
-                            @if($hasReward)
-                                <span class="feature-badge bg-green-500 text-white">Disponible !</span>
-                            @endif
-                        </div>
-                        <div class="feature-content">
-                            <h3 class="feature-title">&#127873; Bonus</h3>
-                            <p class="feature-description">Serie de connexion et roue de la fortune pour gagner des recompenses.</p>
-                            <span class="feature-cta" style="--cta-from: #EC4899; --cta-to: #DB2777;">
-                                Reclamer &#10132;
-                            </span>
-                        </div>
+                    </a>
+
+                    {{-- Arena PvP --}}
+                    <a href="{{ route('pvp.lobby') }}" class="bento-tile tile-pvp tile-large">
+                        <div class="notification-dot"></div>
+                        <span class="tile-online-badge">En ligne</span>
+                        <span class="tile-label">&#127942; Arena<br>PvP</span>
+                        @if(file_exists(public_path('images/features/pvp.webp')))
+                            <img class="tile-img" src="{{ asset('images/features/pvp.webp') }}" alt="PvP">
+                        @else
+                            <span class="tile-icon">&#127942;</span>
+                        @endif
                     </a>
                 </div>
+
+                {{-- Colonne droite : Score + Decks + Boutique --}}
+                <div class="bento-col">
+                    {{-- Score --}}
+                    <div class="tile-score">
+                        <div class="score-eyebrow">&#127942; Score</div>
+                        <div class="score-big">{{ auth()->user()->wins }}</div>
+                        <div class="score-sub">victoires &bull; {{ auth()->user()->cards()->count() }} cartes</div>
+                    </div>
+
+                    {{-- Mes Decks --}}
+                    <a href="{{ route('decks.index') }}" class="bento-tile tile-decks" style="flex:1; min-height:75px;">
+                        <span class="tile-label-sm">&#127156; Mes<br>Decks</span>
+                        @if(file_exists(public_path('images/features/decks.webp')))
+                            <img class="tile-img" src="{{ asset('images/features/decks.webp') }}" alt="Decks">
+                        @else
+                            <span class="tile-icon">&#127156;</span>
+                        @endif
+                    </a>
+
+                    {{-- Boutique --}}
+                    <a href="{{ route('shop.index') }}" class="tile-shop-cta">
+                        &#128722; BOUTIQUE
+                    </a>
+                </div>
+
             </div>
 
-            <!-- ========================================
+            {{-- ============================================================
+                 TUILES SECONDAIRES (3 colonnes)
+            ============================================================ --}}
+            @php
+                $user = auth()->user();
+                $streakInfo = $user->getStreakInfo();
+                $canSpin = $user->canSpinWheel();
+                $hasReward = $streakInfo['can_claim'] || $canSpin;
+            @endphp
+
+            <div class="bento-secondary mb-3">
+                <a href="{{ route('collection.index') }}" class="sec-tile">
+                    <span class="sec-tile-icon">&#128218;</span>
+                    <span class="sec-tile-label">Collection</span>
+                </a>
+                <a href="{{ route('fusion.index') }}" class="sec-tile">
+                    <span class="sec-tile-icon">&#9889;</span>
+                    <span class="sec-tile-label">Fusion</span>
+                </a>
+                <a href="{{ route('sell.index') }}" class="sec-tile">
+                    <span class="sec-tile-icon">&#128176;</span>
+                    <span class="sec-tile-label">Vente</span>
+                </a>
+                <a href="{{ route('rewards.index') }}" class="sec-tile {{ $hasReward ? 'bonus-available' : '' }}">
+                    @if($hasReward)<div class="notification-dot" style="top:6px;left:6px;width:8px;height:8px;"></div>@endif
+                    <span class="sec-tile-icon">&#127873;</span>
+                    <span class="sec-tile-label">Bonus{{ $hasReward ? ' !' : '' }}</span>
+                </a>
+                <a href="{{ route('factions.index') }}" class="sec-tile">
+                    <span class="sec-tile-icon">&#127984;</span>
+                    <span class="sec-tile-label">Factions</span>
+                </a>
+                <a href="{{ route('cards.index') }}" class="sec-tile">
+                    <span class="sec-tile-icon">&#128270;</span>
+                    <span class="sec-tile-label">Encyclop.</span>
+                </a>
+            </div>
+
+            {{-- ============================================================
                  DERNIERES CARTES OBTENUES
-            ======================================== -->
+            ============================================================ --}}
             @php
                 $recentCards = auth()->user()->cards()->with('faction')->latest('user_cards.created_at')->take(8)->get();
             @endphp
             @if($recentCards->count() > 0)
-            <div class="mb-8">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                        Dernieres cartes obtenues
-                    </h3>
-                    <a href="{{ route('collection.index') }}" class="text-purple-400 hover:text-purple-300 text-sm">
-                        Voir tout &#10132;
-                    </a>
+            <div class="mb-3">
+                <div class="section-header-compact">
+                    <span class="section-title-compact">Dernieres cartes</span>
+                    <a href="{{ route('collection.index') }}" class="text-purple-400 hover:text-purple-300 text-xs">Voir tout &#10132;</a>
                 </div>
-                <div class="bg-white/5 backdrop-blur rounded-xl border border-white/10 p-4">
+                <div class="bg-white/5 backdrop-blur rounded-xl border border-white/10 p-3">
                     <div class="cards-scroll">
                         @foreach($recentCards as $card)
                         <div class="recent-card" style="background: linear-gradient(135deg, {{ $card->faction->color_primary ?? '#333' }}, {{ $card->faction->color_secondary ?? '#555' }});">
                             @if($card->image_primary)
                                 <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}">
                             @else
-                                <div class="w-full h-full flex items-center justify-center text-3xl">&#127183;</div>
+                                <div class="w-full h-full flex items-center justify-center text-2xl">&#127183;</div>
                             @endif
                         </div>
                         @endforeach
@@ -1074,114 +741,42 @@
             </div>
             @endif
 
-            <!-- ========================================
-                 EXPLORER
-            ======================================== -->
-            <div class="mb-8">
-                <div class="section-header">
-                    <div class="section-icon bg-gradient-to-br from-cyan-500 to-teal-500">&#128270;</div>
-                    <div>
-                        <h2 class="section-title">Explorer</h2>
-                        <p class="section-subtitle">Decouvrez l'univers du jeu</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 sm:grid-cols-2 gap-4">
-                    <!-- Factions -->
-                    <a href="{{ route('factions.index') }}" class="feature-card" style="--feature-color: rgba(6, 182, 212, 0.5); --glow-rgb: 6, 182, 212;">
-                        <div class="feature-image" style="--bg-from: #155E75; --bg-to: #06B6D4;">
-                            @if(file_exists(public_path('images/features/factions.webp')))
-                                <img src="{{ asset('images/features/factions.webp') }}" alt="Factions">
-                            @else
-                                <span class="feature-icon">&#127984;</span>
-                            @endif
-                        </div>
-                        <div class="feature-content">
-                            <h3 class="feature-title">Factions</h3>
-                            <p class="feature-description">Explorez les differentes factions et leurs chevaliers.</p>
-                            <span class="feature-cta" style="--cta-from: #06B6D4; --cta-to: #0891B2;">
-                                Explorer &#10132;
-                            </span>
-                        </div>
-                    </a>
-
-                    <!-- Toutes les cartes -->
-                    <a href="{{ route('cards.index') }}" class="feature-card" style="--feature-color: rgba(139, 92, 246, 0.5); --glow-rgb: 139, 92, 246;">
-                        <div class="feature-image" style="--bg-from: #5B21B6; --bg-to: #8B5CF6;">
-                            @if(file_exists(public_path('images/features/cards.webp')))
-                                <img src="{{ asset('images/features/cards.webp') }}" alt="Cartes">
-                            @else
-                                <span class="feature-icon">&#127183;</span>
-                            @endif
-                        </div>
-                        <div class="feature-content">
-                            <h3 class="feature-title">Encyclopedie</h3>
-                            <p class="feature-description">Consultez toutes les cartes existantes dans le jeu.</p>
-                            <span class="feature-cta" style="--cta-from: #8B5CF6; --cta-to: #7C3AED;">
-                                Consulter &#10132;
-                            </span>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-            <!-- ========================================
+            {{-- ============================================================
                  JOUEURS EN LIGNE
-            ======================================== -->
-            <div class="mb-8">
-                <div class="section-header">
-                    <div class="section-icon bg-gradient-to-br from-green-500 to-emerald-500">
-                        <span class="relative flex h-3 w-3">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+            ============================================================ --}}
+            <div class="mb-3">
+                <div class="section-header-compact">
+                    <span class="section-title-compact">
+                        <span class="relative inline-flex">
+                            <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-green-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                         </span>
-                    </div>
-                    <div>
-                        <h2 class="section-title">Joueurs en ligne</h2>
-                        <p class="section-subtitle">Defiez-les en duel !</p>
-                    </div>
-                    <div class="ml-auto">
-                        <span id="onlineCount" class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm font-bold">
-                            0 en ligne
-                        </span>
-                    </div>
+                        Joueurs en ligne
+                    </span>
+                    <span id="onlineCount" class="text-green-400 text-xs font-bold">0 en ligne</span>
                 </div>
-
-                <div id="onlinePlayersContainer" class="bg-white/5 backdrop-blur rounded-xl border border-white/10 p-4">
-                    <div id="onlinePlayersList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        <!-- Chargement -->
+                <div id="onlinePlayersContainer" class="bg-white/5 backdrop-blur rounded-xl border border-white/10 p-3">
+                    <div id="onlinePlayersList" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div class="col-span-full text-center text-gray-400 py-4">
-                            <div class="animate-spin inline-block w-6 h-6 border-2 border-gray-400 border-t-transparent rounded-full mb-2"></div>
-                            <p>Chargement des joueurs...</p>
+                            <div class="animate-spin inline-block w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full mb-2"></div>
+                            <p class="text-sm">Chargement des joueurs...</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ========================================
+            {{-- ============================================================
                  SECTION ADMIN
-            ======================================== -->
+            ============================================================ --}}
             @if(auth()->user()->isAdmin())
-            <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
-                <h4 class="text-lg font-bold text-red-400 mb-3 flex items-center gap-2">
-                    &#9881; Administration
-                </h4>
+            <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-3">
+                <h4 class="text-sm font-bold text-red-400 mb-3 flex items-center gap-2">&#9881; Administration</h4>
                 <div class="flex flex-wrap gap-2">
-                    <a href="{{ route('admin.cards.create') }}" class="px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white text-sm hover:bg-red-500/20 transition">
-                        &#10133; Carte
-                    </a>
-                    <a href="{{ route('admin.factions.create') }}" class="px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white text-sm hover:bg-red-500/20 transition">
-                        &#10133; Faction
-                    </a>
-                    <a href="{{ route('admin.attacks.create') }}" class="px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white text-sm hover:bg-red-500/20 transition">
-                        &#10133; Attaque
-                    </a>
-                    <a href="{{ route('admin.musics.index') }}" class="px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white text-sm hover:bg-red-500/20 transition">
-                        &#127925; Musiques
-                    </a>
-                    <a href="{{ route('admin.combos.index') }}" class="px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white text-sm hover:bg-red-500/20 transition">
-                        &#9889; Combos
-                    </a>
+                    <a href="{{ route('admin.cards.create') }}"    class="px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white text-sm hover:bg-red-500/20 transition">&#10133; Carte</a>
+                    <a href="{{ route('admin.factions.create') }}" class="px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white text-sm hover:bg-red-500/20 transition">&#10133; Faction</a>
+                    <a href="{{ route('admin.attacks.create') }}"  class="px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white text-sm hover:bg-red-500/20 transition">&#10133; Attaque</a>
+                    <a href="{{ route('admin.musics.index') }}"    class="px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white text-sm hover:bg-red-500/20 transition">&#127925; Musiques</a>
+                    <a href="{{ route('admin.combos.index') }}"    class="px-3 py-6 bg-white/5 border border-white/20 rounded-lg text-white text-sm hover:bg-red-500/20 transition">&#9889; Combos</a>
                 </div>
             </div>
             @endif
@@ -1190,7 +785,7 @@
     </div>
 
     <!-- ========================================
-         MODAL BONUS QUOTIDIEN (de)
+         MODAL BONUS QUOTIDIEN
     ======================================== -->
     <div id="dailyBonusModal" class="daily-bonus-modal">
         <div class="daily-bonus-content">
@@ -1645,12 +1240,12 @@
         // BONUS QUOTIDIEN
         // ==========================================
         const diceRotations = {
-            1: 'rotateX(1800deg) rotateY(900deg)',      // front face
-            2: 'rotateX(1710deg) rotateY(900deg)',     // top face (-90deg from 1800)
-            3: 'rotateX(1800deg) rotateY(810deg)',     // right face (-90deg Y)
-            4: 'rotateX(1800deg) rotateY(990deg)',     // left face (+90deg Y)
-            5: 'rotateX(1890deg) rotateY(900deg)',     // bottom face (+90deg from 1800)
-            6: 'rotateX(1980deg) rotateY(900deg)'      // back face (+180deg)
+            1: 'rotateX(1800deg) rotateY(900deg)',
+            2: 'rotateX(1710deg) rotateY(900deg)',
+            3: 'rotateX(1800deg) rotateY(810deg)',
+            4: 'rotateX(1800deg) rotateY(990deg)',
+            5: 'rotateX(1890deg) rotateY(900deg)',
+            6: 'rotateX(1980deg) rotateY(900deg)'
         };
 
         async function rollDice() {
@@ -1674,11 +1269,9 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    // Definir la rotation finale basee sur le resultat
                     dice.style.setProperty('--final-rotation', diceRotations[data.dice_result]);
                     dice.classList.add('rolling');
 
-                    // Attendre la fin de l'animation (2s) puis afficher le resultat
                     setTimeout(() => {
                         dice.classList.remove('rolling');
                         dice.classList.add('result-' + data.dice_result);
@@ -1691,7 +1284,6 @@
                         document.getElementById('resultBalance').textContent = 'Nouveau solde: ' + data.new_balance.toLocaleString() + ' po';
                         resultContainer.style.display = 'block';
 
-                        // Mettre a jour tous les soldes (navigation + dashboard)
                         updateAllBalances(data.new_balance);
                     }, 2100);
                 } else {
@@ -1706,25 +1298,18 @@
 
         function closeDailyBonusModal() {
             document.getElementById('dailyBonusModal').classList.remove('active');
-            // Afficher le modal plein ecran apres le bonus
             checkShowFullscreenModal();
         }
 
         // ==========================================
-        // PLEIN ECRAN
+        // PLEIN ECRAN (Modal initial uniquement)
         // ==========================================
         function checkShowFullscreenModal() {
-            // Verifier si on est sur mobile
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-            // Verifier si l'utilisateur a deja fait un choix
             const fullscreenChoice = localStorage.getItem('fullscreenChoice');
-
-            // Verifier si on est deja en plein ecran
             const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
 
             if (isMobile && !fullscreenChoice && !isFullscreen) {
-                // Attendre un peu avant d'afficher le modal
                 setTimeout(() => {
                     document.getElementById('fullscreenModal').classList.add('active');
                 }, 500);
@@ -1736,11 +1321,11 @@
 
             if (elem.requestFullscreen) {
                 elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) { // Safari
+            } else if (elem.webkitRequestFullscreen) {
                 elem.webkitRequestFullscreen();
-            } else if (elem.mozRequestFullScreen) { // Firefox
+            } else if (elem.mozRequestFullScreen) {
                 elem.mozRequestFullScreen();
-            } else if (elem.msRequestFullscreen) { // IE/Edge
+            } else if (elem.msRequestFullscreen) {
                 elem.msRequestFullscreen();
             }
 
@@ -1753,10 +1338,7 @@
             document.getElementById('fullscreenModal').classList.remove('active');
         }
 
-        // Verifier au chargement si on doit afficher le modal plein ecran
-        // (seulement si le modal bonus n'est pas affiche)
         document.addEventListener('DOMContentLoaded', function() {
-            // Attendre un peu pour voir si le modal bonus s'affiche
             setTimeout(() => {
                 const bonusModal = document.getElementById('dailyBonusModal');
                 if (!bonusModal.classList.contains('active')) {

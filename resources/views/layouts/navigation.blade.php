@@ -404,155 +404,163 @@
     </div>
 
     <!-- Mobile Navigation Menu -->
+    <style>
+        .mob-nav-tile {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 10px 4px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.65);
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.18s ease;
+        }
+        .mob-nav-tile:hover { background: rgba(255,255,255,0.13); color: white; }
+        .mob-nav-tile.is-active { border-color: rgba(255,215,0,0.5); background: rgba(255,215,0,0.08); color: #FFD700; }
+        .mob-nav-tile span:first-child { font-size: 1.4rem; line-height: 1; }
+
+        .mob-nav-section-label {
+            grid-column: 1 / -1;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 8px 0 4px;
+        }
+        .mob-nav-section-label:not(:first-child) {
+            border-top: 1px solid rgba(139,92,246,0.2);
+        }
+    </style>
+
     <div :class="{ 'block': open, 'hidden': !open }"
-        class="hidden sm:hidden bg-gray-900/98 backdrop-blur-md border-t border-purple-500/20 max-h-[80vh] overflow-y-auto">
-        <div class="pt-2 pb-3 space-y-1 px-4">
+        class="hidden sm:hidden bg-gray-900/98 backdrop-blur-md border-t border-purple-500/20">
 
-            <!-- Section Jouer -->
-            <div class="py-2">
-                <div class="text-xs font-semibold text-red-400 uppercase tracking-wider mb-2 px-2">&#9876; Jouer</div>
-                <a href="{{ route('game.index') }}"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
-                   {{ request()->routeIs('game.*') ? 'bg-blue-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                    <span class="text-lg">&#129302;</span>
-                    <span class="font-medium text-sm">Combat PvE</span>
-                </a>
-                <a href="{{ route('pvp.lobby') }}"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
-                   {{ request()->routeIs('pvp.*') ? 'bg-red-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                    <span class="text-lg">&#127942;</span>
-                    <div class="flex items-center gap-2">
-                        <span class="font-medium text-sm">Arena PvP</span>
-                        <span class="relative flex h-2 w-2">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                        </span>
-                    </div>
-                </a>
-                <a href="{{ route('tournaments.index') }}"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
-                   {{ request()->routeIs('tournaments.*') ? 'bg-yellow-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                    <span class="text-lg">&#127941;</span>
-                    <span class="font-medium text-sm">Tournois</span>
-                </a>
-            </div>
-
-            <!-- Section Cartes -->
-            <div class="py-2 border-t border-purple-500/20">
-                <div class="text-xs font-semibold text-purple-400 uppercase tracking-wider mb-2 px-2">&#127183; Cartes</div>
-                <a href="{{ route('collection.index') }}"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
-                   {{ request()->routeIs('collection.*') ? 'bg-purple-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                    <span class="text-lg">&#127183;</span>
-                    <span class="font-medium text-sm">Collection</span>
-                </a>
-                <a href="{{ route('decks.index') }}"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
-                   {{ request()->routeIs('decks.*') ? 'bg-indigo-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                    <span class="text-lg">&#128218;</span>
-                    <span class="font-medium text-sm">Mes Decks</span>
-                </a>
-                <a href="{{ route('fusion.index') }}"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
-                   {{ request()->routeIs('fusion.*') ? 'bg-orange-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                    <span class="text-lg">&#9889;</span>
-                    <span class="font-medium text-sm">Fusion</span>
-                </a>
-            </div>
-
-            <!-- Section Commerce -->
-            <div class="py-2 border-t border-purple-500/20">
-                <div class="text-xs font-semibold text-yellow-400 uppercase tracking-wider mb-2 px-2">&#128176; Commerce</div>
-                <a href="{{ route('shop.index') }}"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
-                   {{ request()->routeIs('shop.*') ? 'bg-yellow-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                    <span class="text-lg">&#128722;</span>
-                    <span class="font-medium text-sm">Boutique</span>
-                </a>
-                <a href="{{ route('sell.index') }}"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
-                   {{ request()->routeIs('sell.*') ? 'bg-green-500/30 text-green-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                    <span class="text-lg">&#128176;</span>
-                    <span class="font-medium text-sm">Vente</span>
-                </a>
-            </div>
-
-            <!-- Bonus -->
-            <div class="py-2 border-t border-purple-500/20">
-                <div class="text-xs font-semibold text-pink-400 uppercase tracking-wider mb-2 px-2">&#127873; Bonus</div>
-                <a href="{{ route('rewards.index') }}"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
-                   {{ request()->routeIs('rewards.*') ? 'bg-pink-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                    <span class="text-lg">&#127873;</span>
-                    <span class="font-medium text-sm">Recompenses</span>
-                </a>
-            </div>
-
-            <!-- Factions -->
-            <div class="py-2 border-t border-purple-500/20">
-                <a href="{{ route('factions.index') }}"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200
-                   {{ request()->routeIs('factions.*') ? 'bg-cyan-500/30 text-yellow-400' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
-                    <span class="text-lg">&#127984;</span>
-                    <span class="font-medium text-sm">Factions</span>
-                </a>
-            </div>
-
-            @if (auth()->user()->isAdmin())
-                <div class="py-2 border-t border-purple-500/20">
-                    <div class="text-xs font-semibold text-red-400 uppercase tracking-wider mb-2 px-2">&#128081; Administration</div>
-                    <a href="{{ route('cards.index') }}"
-                        class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-red-500/20 hover:text-white transition">
-                        <span class="text-lg">&#127183;</span>
-                        <span class="font-medium text-sm">Cartes (CRUD)</span>
-                    </a>
-                    <a href="{{ route('attacks.index') }}"
-                        class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-red-500/20 hover:text-white transition">
-                        <span class="text-lg">&#9876;</span>
-                        <span class="font-medium text-sm">Attaques (CRUD)</span>
-                    </a>
-                    <a href="{{ route('admin.tournaments.index') }}"
-                        class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-red-500/20 hover:text-white transition">
-                        <span class="text-lg">&#127942;</span>
-                        <span class="font-medium text-sm">Gestion tournois</span>
-                    </a>
-                </div>
-            @endif
-        </div>
-
-        <!-- Mobile User Section -->
-        <div class="pt-3 pb-3 border-t border-purple-500/20 px-4">
-            <div class="flex items-center gap-3 mb-3">
-                <div
-                    class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg">
+        {{-- ── USER CARD (en haut) ── --}}
+        <div class="px-4 pt-3 pb-3 flex items-center justify-between border-b border-purple-500/20">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 shrink-0 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
                     {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                 </div>
-                <div>
-                    <div class="font-medium text-white text-sm flex items-center gap-2">
+                <div class="min-w-0">
+                    <div class="font-semibold text-white text-sm truncate flex items-center gap-1">
                         {{ Auth::user()->name }}
                         @if (auth()->user()->isAdmin())
-                            <span class="px-2 py-0.5 text-xs bg-red-500/30 text-red-400 rounded">Admin</span>
+                            <span class="px-1.5 py-0.5 text-xs bg-red-500/30 text-red-400 rounded shrink-0">Admin</span>
                         @endif
                     </div>
-                    <div class="text-xs text-gray-400">{{ Auth::user()->email }}</div>
+                    <div class="text-xs text-gray-500 truncate">{{ Auth::user()->email }}</div>
                 </div>
             </div>
-
-            <div class="flex gap-2">
+            <div class="flex items-center gap-2 shrink-0 ml-3">
                 <a href="{{ route('profile.edit') }}"
-                    class="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition text-sm">
-                    <span>&#128100;</span>
-                    <span>Profil</span>
+                   class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-white/15 hover:text-white transition text-base">
+                    &#128100;
                 </a>
-                <form method="POST" action="{{ route('logout') }}" class="flex-1">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit"
-                        class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:bg-red-500/20 hover:text-red-400 transition text-sm">
-                        <span>&#128682;</span>
-                        <span>Deconnexion</span>
+                        class="w-9 h-9 flex items-center justify-center rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/25 transition text-base">
+                        &#128682;
                     </button>
                 </form>
             </div>
         </div>
+
+        {{-- ── GRILLE DE NAVIGATION ── --}}
+        <div class="px-4 pt-2 pb-4 grid grid-cols-4 gap-2">
+
+            {{-- Jouer --}}
+            <div class="mob-nav-section-label text-red-400">&#9876; Jouer</div>
+
+            <a href="{{ route('game.index') }}"
+               class="mob-nav-tile {{ request()->routeIs('game.*') ? 'is-active' : '' }}">
+                <span>&#129302;</span><span>PvE</span>
+            </a>
+            <a href="{{ route('pvp.lobby') }}"
+               class="mob-nav-tile {{ request()->routeIs('pvp.*') ? 'is-active' : '' }}">
+                <span>&#127942;</span>
+                <span class="flex items-center gap-1">PvP
+                    <span class="relative flex h-1.5 w-1.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+                    </span>
+                </span>
+            </a>
+            <a href="{{ route('tournaments.index') }}"
+               class="mob-nav-tile {{ request()->routeIs('tournaments.*') ? 'is-active' : '' }}">
+                <span>&#127941;</span><span>Tournois</span>
+            </a>
+            {{-- Case vide pour conserver la grille à 4 colonnes --}}
+            <div></div>
+
+            {{-- Cartes --}}
+            <div class="mob-nav-section-label text-purple-400">&#127183; Cartes</div>
+
+            <a href="{{ route('collection.index') }}"
+               class="mob-nav-tile {{ request()->routeIs('collection.*') ? 'is-active' : '' }}">
+                <span>&#127183;</span><span>Collection</span>
+            </a>
+            <a href="{{ route('decks.index') }}"
+               class="mob-nav-tile {{ request()->routeIs('decks.*') ? 'is-active' : '' }}">
+                <span>&#128218;</span><span>Decks</span>
+            </a>
+            <a href="{{ route('fusion.index') }}"
+               class="mob-nav-tile {{ request()->routeIs('fusion.*') ? 'is-active' : '' }}">
+                <span>&#9889;</span><span>Fusion</span>
+            </a>
+            <a href="{{ route('cards.index') }}"
+               class="mob-nav-tile {{ request()->routeIs('cards.index') ? 'is-active' : '' }}">
+                <span>&#128270;</span><span>Encyclop.</span>
+            </a>
+
+            {{-- Commerce & Bonus --}}
+            <div class="mob-nav-section-label text-yellow-400">&#128176; Commerce</div>
+
+            <a href="{{ route('shop.index') }}"
+               class="mob-nav-tile {{ request()->routeIs('shop.*') ? 'is-active' : '' }}">
+                <span>&#128722;</span><span>Boutique</span>
+            </a>
+            <a href="{{ route('sell.index') }}"
+               class="mob-nav-tile {{ request()->routeIs('sell.*') ? 'is-active' : '' }}">
+                <span>&#128176;</span><span>Vente</span>
+            </a>
+            <a href="{{ route('rewards.index') }}"
+               class="mob-nav-tile {{ request()->routeIs('rewards.*') ? 'is-active' : '' }}">
+                <span>&#127873;</span><span>Bonus</span>
+            </a>
+            <a href="{{ route('factions.index') }}"
+               class="mob-nav-tile {{ request()->routeIs('factions.*') ? 'is-active' : '' }}">
+                <span>&#127984;</span><span>Factions</span>
+            </a>
+
+        </div>
+
+        {{-- ── ADMIN (si applicable) ── --}}
+        @if (auth()->user()->isAdmin())
+        <div class="px-4 pb-4 border-t border-red-500/20 pt-3">
+            <div class="text-xs font-bold text-red-400 uppercase tracking-wider mb-2">&#128081; Admin</div>
+            <div class="grid grid-cols-3 gap-2">
+                <a href="{{ route('cards.index') }}"
+                   class="mob-nav-tile" style="border-color:rgba(239,68,68,0.2);">
+                    <span>&#127183;</span><span>Cartes</span>
+                </a>
+                <a href="{{ route('attacks.index') }}"
+                   class="mob-nav-tile" style="border-color:rgba(239,68,68,0.2);">
+                    <span>&#9876;</span><span>Attaques</span>
+                </a>
+                <a href="{{ route('admin.tournaments.index') }}"
+                   class="mob-nav-tile" style="border-color:rgba(239,68,68,0.2);">
+                    <span>&#127942;</span><span>Tournois</span>
+                </a>
+            </div>
+        </div>
+        @endif
+
     </div>
 </nav>

@@ -146,19 +146,22 @@
            ROUE DE LA FORTUNE
         ======================================== */
         .wheel-container {
-            background: rgba(15, 15, 35, 0.9);
-            border: 2px solid rgba(139, 92, 246, 0.3);
+            background: linear-gradient(160deg, rgba(20, 10, 40, 0.95), rgba(10, 5, 25, 0.95));
+            border: 2px solid rgba(255, 215, 0, 0.35);
             border-radius: 20px;
-            padding: 2rem;
+            padding: 1.5rem 1.25rem 1.75rem;
             backdrop-filter: blur(10px);
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .wheel-wrapper {
             position: relative;
-            width: 300px;
-            height: 300px;
-            margin: 1.5rem auto;
+            width: min(300px, 88vw);
+            height: min(300px, 88vw);
+            margin: 1rem auto;
         }
 
         .wheel {
@@ -238,7 +241,8 @@
 
         .spin-wheel-btn {
             width: 100%;
-            padding: 1rem;
+            max-width: 320px;
+            padding: 0.875rem 1rem;
             background: linear-gradient(135deg, #8B5CF6, #6366F1);
             border: none;
             border-radius: 12px;
@@ -262,9 +266,17 @@
         }
 
         .wheel-cooldown {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.75rem;
+            padding: 0.4rem 0.9rem;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 0.78rem;
+            text-align: center;
         }
 
         /* ========================================
@@ -351,8 +363,8 @@
                 flex: 0 0 100%;
             }
             .wheel-wrapper {
-                width: 250px;
-                height: 250px;
+                width: min(260px, 82vw);
+                height: min(260px, 82vw);
             }
         }
     </style>
@@ -450,8 +462,10 @@
                                 ];
                             @endphp
                             @foreach($segments as $segment)
-                                <div style="position: absolute; top: 50%; left: 50%; transform: rotate({{ $segment['angle'] }}deg) translateY(-115px); transform-origin: center center;">
-                                    <span style="display: block; transform: rotate(-{{ $segment['angle'] }}deg); font-size: 0.65rem; font-weight: 700; color: white; text-shadow: 1px 1px 3px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.5); white-space: nowrap;">
+                                {{-- Ancre zéro-taille au centre exact de la roue --}}
+                                <div style="position:absolute;top:50%;left:50%;width:0;height:0;transform:rotate({{ $segment['angle'] }}deg);">
+                                    {{-- Span positionné à 95px du centre, re-centré horizontalement, contre-rotation pour rendre le texte lisible --}}
+                                    <span style="position:absolute;top:-95px;left:-55px;width:110px;text-align:center;transform:rotate(-{{ $segment['angle'] }}deg);font-size:0.68rem;font-weight:800;color:white;text-shadow:0 1px 3px rgba(0,0,0,0.9),0 0 6px rgba(0,0,0,0.6);line-height:1.2;pointer-events:none;">
                                         {{ $segment['label'] }}
                                     </span>
                                 </div>
@@ -474,7 +488,7 @@
 
                     @if(!$canSpinWheel)
                         <p class="wheel-cooldown">
-                            Prochaine rotation disponible dans {{ $timeUntilSpin['days'] }} jour(s) et {{ $timeUntilSpin['hours'] }} heure(s)
+                            &#9203; Prochaine rotation : {{ $timeUntilSpin['days'] }}j {{ $timeUntilSpin['hours'] }}h
                         </p>
                     @endif
                 </div>
