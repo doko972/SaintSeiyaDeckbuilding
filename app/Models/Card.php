@@ -26,6 +26,8 @@ class Card extends Model
         'cost',
         'passive_ability_name',
         'passive_ability_description',
+        'passive_effect_type',
+        'passive_effect_value',
         'main_attack_id',
         'secondary_attack_1_id',
         'secondary_attack_2_id',

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Card;
 use App\Models\Deck;
 use App\Models\User;
+use App\Services\BattleEffectService;
 use App\Services\ComboService;
 use App\Services\FusionService;
 use Illuminate\Http\Request;
@@ -242,14 +243,21 @@ class GameApiController extends Controller
         $card['current_hp'] = $card['max_hp'];
         $card['current_endurance'] = $card['endurance'];
         $card['has_attacked'] = false;
+        if (!isset($card['status_effects'])) {
+            $card['status_effects'] = [];
+        }
 
         $state['player']['cosmos'] -= $card['cost'];
         $state['player']['field'][] = $card;
         array_splice($state['player']['hand'], $cardIndex, 1);
 
+        // Déclencher la capacité passive au déploiement
+        $passiveMessages = BattleEffectService::applyPassiveOnDeploy($state['player']['field'], $card);
+
         return response()->json([
             'success' => true,
             'card_played' => $card['name'],
+            'passive_messages' => $passiveMessages,
             'battle_state' => $this->normalizeState($state),
         ]);
     }
@@ -405,9 +413,20 @@ class GameApiController extends Controller
             $state['used_combos'][] = $usedComboId;
         }
 
+        // Appliquer l'effet de l'attaque
+        $effectMessages = BattleEffectService::applyAttackEffect(
+            $state, 'player', $attackerIndex, 'opponent', $targetIndex,
+            $attack, $damage, $targetWillDie
+        );
+        // L'effet drain peut avoir réduit la cible à 0 PV supplémentaires
+        $targetWillDie = $state['opponent']['field'][$targetIndex]['current_hp'] <= 0;
+
         $message = $isComboAttack
             ? "⚡ COMBO {$comboName} ! {$attackerName} utilise {$attack['name']} sur {$targetName} (-{$damage} PV)"
             : "{$attackerName} utilise {$attack['name']} sur {$targetName} (-{$damage} PV)";
+        if ($effectMessages) {
+            $message .= ' | ' . implode(' | ', $effectMessages);
+        }
         $battleEnded = false;
         $winner = null;
 
@@ -459,11 +478,29 @@ class GameApiController extends Controller
         $destroyedCards = [];
 
         // Tour de l'IA
-        // 0. Reset has_attacked pour les cartes DÉJÀ sur le terrain (avant de jouer de nouvelles cartes)
+        // 0a. Traiter les status_effects des cartes adverses (début de leur tour)
+        $burnEvents = BattleEffectService::processStatusEffectsAtTurnStart($state['opponent']['field']);
+        foreach (BattleEffectService::burnEventsToMessages($burnEvents) as $msg) {
+            $aiActions[] = $msg;
+        }
+        // Vérifier si une carte ennemie est morte de brûlure
+        $state['opponent']['field'] = array_values(array_filter(
+            $state['opponent']['field'],
+            fn($c) => ($c['current_hp'] ?? 0) > 0
+        ));
+
+        // 0b. Reset has_attacked pour les cartes DÉJÀ sur le terrain (avant de jouer de nouvelles cartes)
         $opponentFieldCount = count($state['opponent']['field']);
         for ($i = 0; $i < $opponentFieldCount; $i++) {
             if (isset($state['opponent']['field'][$i])) {
-                $state['opponent']['field'][$i]['has_attacked'] = false;
+                // Reset seulement si non gelé/étourdi
+                $stillFrozen = false;
+                foreach ($state['opponent']['field'][$i]['status_effects'] ?? [] as $eff) {
+                    if (in_array($eff['type'], ['freeze', 'stun']) && $eff['turns'] > 0) {
+                        $stillFrozen = true; break;
+                    }
+                }
+                $state['opponent']['field'][$i]['has_attacked'] = $stillFrozen;
                 // Régénération d'endurance
                 $currentEndurance = $state['opponent']['field'][$i]['current_endurance'] ?? 0;
                 $maxEndurance = $state['opponent']['field'][$i]['endurance'] ?? 100;
@@ -519,11 +556,29 @@ class GameApiController extends Controller
         $state['player']['max_cosmos'] = min(10, $state['player']['max_cosmos'] + 1);
         $state['player']['cosmos'] = $state['player']['max_cosmos'];
 
+        // Traiter les status_effects des cartes du joueur (début de leur nouveau tour)
+        $playerBurnEvents = BattleEffectService::processStatusEffectsAtTurnStart($state['player']['field']);
+        foreach (BattleEffectService::burnEventsToMessages($playerBurnEvents) as $msg) {
+            $aiActions[] = $msg;
+        }
+        // Vérifier si une carte joueur est morte de brûlure
+        $state['player']['field'] = array_values(array_filter(
+            $state['player']['field'],
+            fn($c) => ($c['current_hp'] ?? 0) > 0
+        ));
+
         // Reset attaques et endurance des cartes du joueur (SANS références)
         $playerFieldCount = count($state['player']['field']);
         for ($i = 0; $i < $playerFieldCount; $i++) {
             if (isset($state['player']['field'][$i])) {
-                $state['player']['field'][$i]['has_attacked'] = false;
+                // Reset seulement si non gelé/étourdi
+                $stillFrozen = false;
+                foreach ($state['player']['field'][$i]['status_effects'] ?? [] as $eff) {
+                    if (in_array($eff['type'], ['freeze', 'stun']) && $eff['turns'] > 0) {
+                        $stillFrozen = true; break;
+                    }
+                }
+                $state['player']['field'][$i]['has_attacked'] = $stillFrozen;
                 $currentEndurance = $state['player']['field'][$i]['current_endurance'] ?? 0;
                 $maxEndurance = $state['player']['field'][$i]['endurance'] ?? 100;
                 $state['player']['field'][$i]['current_endurance'] = min($maxEndurance, $currentEndurance + 30);
@@ -625,6 +680,9 @@ class GameApiController extends Controller
                     'fusion_level' => $fusionLevel,
                     'bonus_percent' => round($bonusPercent, 1),
                     'faction_bonus_active' => $factionBonus && $factionBonus['active'],
+                    'passive_effect_type'  => $card->passive_effect_type  ?? 'none',
+                    'passive_effect_value' => $card->passive_effect_value ?? 0,
+                    'status_effects' => [],
                     'image' => $card->image_primary ? Storage::url($card->image_primary) : null,
                     'faction' => $card->faction ? [
                         'name' => $card->faction->name,

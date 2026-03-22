@@ -706,6 +706,26 @@
             50% { box-shadow: 0 2px 12px rgba(255, 215, 0, 0.8); }
         }
 
+        .status-effects-bar {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            display: flex;
+            gap: 2px;
+            z-index: 25;
+            flex-wrap: wrap;
+            max-width: 80%;
+        }
+
+        .status-effect-icon {
+            font-size: 0.75rem;
+            background: rgba(0,0,0,0.6);
+            border-radius: 4px;
+            padding: 1px 3px;
+            line-height: 1.2;
+            cursor: default;
+        }
+
         .fusion-bonus {
             color: #FFD700 !important;
             font-weight: bold;
@@ -3032,9 +3052,16 @@
                 ? `<div class="fusion-level-indicator" title="+${bonusPercent}% stats">+${fusionLevel - 1}</div>`
                 : '';
 
+            // Icônes d'effets de statut
+            const statusEffectIcons = { burn: '🔥', freeze: '❄️', stun: '💤', buff_attack: '⬆️', buff_defense: '🛡️', debuff: '⬇️', drain: '🩸' };
+            const statusEffectsHtml = (card.status_effects || []).map(e =>
+                `<span class="status-effect-icon" title="${e.type} (${e.turns} tour${e.turns > 1 ? 's' : ''})">${statusEffectIcons[e.type] || '?'}</span>`
+            ).join('');
+
             div.innerHTML = `
                 ${comboIndicatorHtml}
                 ${fusionBadgeHtml}
+                ${statusEffectsHtml ? `<div class="status-effects-bar">${statusEffectsHtml}</div>` : ''}
                 <div class="battle-card-image" style="background-image: url('${card.image || ''}'); background-color: ${card.faction?.color_primary || '#333'};"></div>
                 <div class="battle-card-info">
                     <div class="battle-card-name">${card.name}</div>
@@ -3162,6 +3189,9 @@
 
                 gameState = data.battle_state;
                 addLogEntry(`🎴 Vous jouez ${data.card_played}`, 'info');
+                if (data.passive_messages && data.passive_messages.length > 0) {
+                    data.passive_messages.forEach(msg => addLogEntry(msg, 'heal'));
+                }
                 renderAll();
             } catch (error) {
                 console.error('Play card failed:', error);
@@ -3540,6 +3570,9 @@
                 // On garde l'ancien state pour les animations
 
                 addLogEntry('⏭️ Fin de votre tour', 'turn');
+                if (data.burn_messages && data.burn_messages.length > 0) {
+                    data.burn_messages.forEach(msg => addLogEntry(msg, 'damage'));
+                }
 
                 // Animer les actions IA
                 if (data.ai_actions && data.ai_actions.length > 0) {

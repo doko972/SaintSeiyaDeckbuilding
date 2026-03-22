@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Battle;
 use App\Models\TournamentMatch;
+use App\Services\BattleEffectService;
 use App\Services\ComboService;
 use App\Services\TournamentService;
 use Illuminate\Http\Request;
@@ -118,10 +119,16 @@ class PvpApiController extends Controller
         $card['current_hp'] = $card['max_hp'];
         $card['current_endurance'] = $card['endurance'];
         $card['has_attacked'] = false;
+        if (!isset($card['status_effects'])) {
+            $card['status_effects'] = [];
+        }
 
         $state[$playerKey]['cosmos'] -= $card['cost'];
         $state[$playerKey]['field'][] = $card;
         array_splice($state[$playerKey]['hand'], $cardIndex, 1);
+
+        // Déclencher la capacité passive au déploiement
+        $passiveMessages = BattleEffectService::applyPassiveOnDeploy($state[$playerKey]['field'], $card);
 
         $battle->update([
             'battle_state' => $state,
@@ -131,6 +138,7 @@ class PvpApiController extends Controller
         return response()->json([
             'success' => true,
             'card_played' => $card['name'],
+            'passive_messages' => $passiveMessages,
             'battle_state' => $state,
         ]);
     }
@@ -305,9 +313,21 @@ class PvpApiController extends Controller
             $state['used_combos'][$playerKey][] = $usedComboId;
         }
 
+        // Appliquer l'effet de l'attaque (avec références encore actives)
+        $targetWillDie = $target['current_hp'] <= 0;
+        $effectMessages = BattleEffectService::applyAttackEffect(
+            $state, $playerKey, $attackerIndex, $opponentKey, $targetIndex,
+            $attack, $damage, $targetWillDie
+        );
+        // Drain peut avoir tué la cible
+        $targetWillDie = $state[$opponentKey]['field'][$targetIndex]['current_hp'] <= 0;
+
         $message = $isComboAttack
             ? "⚡ COMBO {$comboName} ! {$attackerName} inflige {$damage} dégâts à {$targetName}"
             : "{$attackerName} inflige {$damage} dégâts à {$targetName}";
+        if ($effectMessages) {
+            $message .= ' | ' . implode(' | ', $effectMessages);
+        }
         $battleEnded = false;
         $winner = null;
         $targetDestroyed = false;
@@ -317,7 +337,7 @@ class PvpApiController extends Controller
         unset($attacker);
         unset($target);
 
-        if ($state[$opponentKey]['field'][$targetIndex]['current_hp'] <= 0) {
+        if ($targetWillDie) {
             $targetDestroyed = true;
             array_splice($state[$opponentKey]['field'], $targetIndex, 1);
             $message .= " - {$targetName} vaincu !";
@@ -399,6 +419,16 @@ class PvpApiController extends Controller
 
         $state = $battle->battle_state;
 
+        // Traiter les status_effects des cartes adverses (début de leur tour)
+        $burnMessages = BattleEffectService::burnEventsToMessages(
+            BattleEffectService::processStatusEffectsAtTurnStart($state[$opponentKey]['field'])
+        );
+        // Retirer les cartes mortes de brûlure
+        $state[$opponentKey]['field'] = array_values(array_filter(
+            $state[$opponentKey]['field'],
+            fn($c) => ($c['current_hp'] ?? 0) > 0
+        ));
+
         // Pioche pour l'adversaire
         if (!empty($state[$opponentKey]['deck'])) {
             $drawnCard = array_shift($state[$opponentKey]['deck']);
@@ -409,12 +439,18 @@ class PvpApiController extends Controller
         $state[$opponentKey]['max_cosmos'] = min(10, $state[$opponentKey]['max_cosmos'] + 1);
         $state[$opponentKey]['cosmos'] = $state[$opponentKey]['max_cosmos'];
 
-        // Reset des cartes adverses
+        // Reset des cartes adverses (respecte gel/étourdissement)
         foreach ($state[$opponentKey]['field'] as &$card) {
-            $card['has_attacked'] = false;
+            $stillFrozen = false;
+            foreach ($card['status_effects'] ?? [] as $eff) {
+                if (in_array($eff['type'], ['freeze', 'stun']) && $eff['turns'] > 0) {
+                    $stillFrozen = true; break;
+                }
+            }
+            $card['has_attacked'] = $stillFrozen;
             $card['current_endurance'] = min($card['endurance'], ($card['current_endurance'] ?? 0) + 30);
         }
-        unset($card); // IMPORTANT: libérer la référence pour éviter le bug de dédoublement
+        unset($card);
 
         $battle->update([
             'battle_state' => $state,
@@ -426,6 +462,7 @@ class PvpApiController extends Controller
         return response()->json([
             'success' => true,
             'battle_state' => $state,
+            'burn_messages' => $burnMessages,
         ]);
     }
 }

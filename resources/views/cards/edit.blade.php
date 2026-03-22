@@ -300,6 +300,29 @@
                                     class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-yellow-500 focus:ring-yellow-500">
                             </div>
                         </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                            <div>
+                                <label for="passive_effect_type"
+                                    class="block text-sm font-medium text-gray-300 mb-2">Effet passif (mécanique)</label>
+                                <select name="passive_effect_type" id="passive_effect_type"
+                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-yellow-500 focus:ring-yellow-500">
+                                    <option value="none" {{ old('passive_effect_type', $card->passive_effect_type ?? 'none') === 'none' ? 'selected' : '' }}>Aucun</option>
+                                    <option value="heal_allies" {{ old('passive_effect_type', $card->passive_effect_type) === 'heal_allies' ? 'selected' : '' }}>💚 Soin des alliés au déploiement</option>
+                                    <option value="shield_self" {{ old('passive_effect_type', $card->passive_effect_type) === 'shield_self' ? 'selected' : '' }}>🛡️ Bouclier personnel au déploiement</option>
+                                    <option value="boost_allies" {{ old('passive_effect_type', $card->passive_effect_type) === 'boost_allies' ? 'selected' : '' }}>⬆️ Boost des alliés au déploiement</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="passive_effect_value"
+                                    class="block text-sm font-medium text-gray-300 mb-2">Valeur de l'effet passif</label>
+                                <input type="number" name="passive_effect_value" id="passive_effect_value"
+                                    value="{{ old('passive_effect_value', $card->passive_effect_value ?? 0) }}" min="0" step="1"
+                                    placeholder="Ex: 20 (PV soignés, bonus défense...)"
+                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-yellow-500 focus:ring-yellow-500">
+                            </div>
+                        </div>
                     </div>
 
                     <!-- SECTION 5: Images -->
