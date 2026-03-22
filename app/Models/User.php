@@ -28,6 +28,7 @@ class User extends Authenticatable
         'last_login_date',
         'streak_reward_claimed_today',
         'last_wheel_spin_at',
+        'last_weekly_card_at',
         'last_activity_at',
         'has_selected_starter',
         'has_completed_first_draw',
@@ -68,6 +69,7 @@ class User extends Authenticatable
         'last_login_date' => 'date',
         'streak_reward_claimed_today' => 'boolean',
         'last_wheel_spin_at' => 'datetime',
+        'last_weekly_card_at' => 'datetime',
         'last_activity_at' => 'datetime',
     ];
 
@@ -741,6 +743,79 @@ class User extends Authenticatable
         }
 
         return $cards;
+    }
+
+    // ==========================================
+    // CARTE MYTHIQUE HEBDOMADAIRE
+    // ==========================================
+
+    /**
+     * Verifie si le joueur peut recevoir sa carte mythique hebdomadaire
+     */
+    public function canClaimWeeklyCard(): bool
+    {
+        if ($this->last_weekly_card_at === null) {
+            return true;
+        }
+
+        return $this->last_weekly_card_at->diffInDays(now()) >= 7;
+    }
+
+    /**
+     * Donne la carte mythique hebdomadaire au joueur
+     */
+    public function claimWeeklyCard(): array
+    {
+        if (!$this->canClaimWeeklyCard()) {
+            $days = 7 - $this->last_weekly_card_at->diffInDays(now());
+            return [
+                'success' => false,
+                'message' => "Carte hebdomadaire deja reclamee. Revenez dans {$days} jour(s).",
+            ];
+        }
+
+        $card = Card::where('rarity', 'mythic')->inRandomOrder()->first();
+
+        if (!$card) {
+            // Fallback vers epic si pas de carte mythique disponible
+            $card = Card::where('rarity', 'epic')->inRandomOrder()->first();
+        }
+
+        if (!$card) {
+            return [
+                'success' => false,
+                'message' => 'Aucune carte disponible pour le moment.',
+            ];
+        }
+
+        $this->addCard($card);
+        $this->last_weekly_card_at = now();
+        $this->save();
+
+        return [
+            'success' => true,
+            'card' => $card,
+            'message' => "Carte mythique de la semaine : {$card->name} !",
+        ];
+    }
+
+    /**
+     * Retourne les infos de la carte hebdomadaire pour l'affichage
+     */
+    public function getWeeklyCardInfo(): array
+    {
+        $canClaim = $this->canClaimWeeklyCard();
+        $daysUntilNext = 0;
+
+        if (!$canClaim && $this->last_weekly_card_at) {
+            $daysUntilNext = max(0, 7 - (int) $this->last_weekly_card_at->diffInDays(now()));
+        }
+
+        return [
+            'can_claim' => $canClaim,
+            'days_until_next' => $daysUntilNext,
+            'last_claimed_at' => $this->last_weekly_card_at?->toDateString(),
+        ];
     }
 
     // ==========================================

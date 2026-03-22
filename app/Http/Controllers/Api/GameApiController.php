@@ -145,8 +145,11 @@ class GameApiController extends Controller
             return response()->json(['message' => 'Deck non autorisé'], 403);
         }
 
-        // Préparer les cartes du joueur (avec bonus de fusion)
-        $playerDeck = $this->prepareDeck($deck->cards, auth()->user());
+        // Détecter le bonus de faction mono-deck joueur
+        $playerFactionBonus = $this->calculateFactionBonus($deck->cards);
+
+        // Préparer les cartes du joueur (avec bonus de fusion + bonus de faction)
+        $playerDeck = $this->prepareDeck($deck->cards, auth()->user(), $playerFactionBonus);
         shuffle($playerDeck);
 
         // Générer un deck ennemi (cartes aléatoires, sans bonus de fusion)
@@ -185,6 +188,8 @@ class GameApiController extends Controller
             'all_combos' => $this->comboService->getAllActiveCombos(),
             // Tracker les combos utilisés (une seule utilisation par partie)
             'used_combos' => [],
+            // Bonus de faction (mono-faction deck)
+            'faction_bonus' => $playerFactionBonus,
         ];
 
         // IA joue des cartes au début
@@ -546,7 +551,7 @@ class GameApiController extends Controller
 
         /** @var \App\Models\User $user */
         $user = auth()->user();
-        $reward = $request->victory ? 100 : 25;
+        $reward = $request->victory ? 300 : 100;
         $rankPromotion = null;
 
         $user->coins += $reward;
@@ -574,7 +579,7 @@ class GameApiController extends Controller
      * @param $cards Les cartes du deck
      * @param User|null $user L'utilisateur (pour appliquer les bonus de fusion)
      */
-    private function prepareDeck($cards, ?User $user = null): array
+    private function prepareDeck($cards, ?User $user = null, ?array $factionBonus = null): array
     {
         $deck = [];
 
@@ -589,12 +594,18 @@ class GameApiController extends Controller
                 $bonusPercent = $this->fusionService->calculateCumulativeBonus($fusionLevel, $card->rarity);
             }
 
-            // Calculer les stats boostées
+            // Calculer les stats boostées (fusion)
             $multiplier = 1 + ($bonusPercent / 100);
             $boostedHp = (int) round($card->health_points * $multiplier);
             $boostedEndurance = (int) round($card->endurance * $multiplier);
             $boostedDefense = (int) round($card->defense * $multiplier);
             $boostedPower = (int) round($card->power * $multiplier);
+
+            // Appliquer le bonus de faction mono-deck
+            if ($factionBonus && $factionBonus['active']) {
+                $boostedHp    = (int) round($boostedHp    * (1 + $factionBonus['hp_bonus'] / 100));
+                $boostedPower = (int) round($boostedPower * (1 + $factionBonus['power_bonus'] / 100));
+            }
 
             for ($i = 0; $i < $quantity; $i++) {
                 $deck[] = [
@@ -613,6 +624,7 @@ class GameApiController extends Controller
                     'rarity' => $card->rarity,
                     'fusion_level' => $fusionLevel,
                     'bonus_percent' => round($bonusPercent, 1),
+                    'faction_bonus_active' => $factionBonus && $factionBonus['active'],
                     'image' => $card->image_primary ? Storage::url($card->image_primary) : null,
                     'faction' => $card->faction ? [
                         'name' => $card->faction->name,
@@ -798,5 +810,26 @@ class GameApiController extends Controller
         // Cela permet au frontend de savoir quelles cartes ont attaqué ce tour
 
         return ['state' => $state, 'actions' => $actions, 'destroyed_cards' => $destroyedCards];
+    }
+
+    /**
+     * Calcule le bonus de faction mono-deck.
+     * Retourne un tableau avec les bonus applicables si toutes les cartes sont de la même faction.
+     */
+    private function calculateFactionBonus($cards): array
+    {
+        $factionIds = $cards->map(fn($c) => $c->faction_id)->filter()->unique();
+
+        if ($factionIds->count() === 1 && $cards->count() > 0) {
+            $factionName = $cards->first()->faction?->name ?? 'Inconnue';
+            return [
+                'active'      => true,
+                'faction'     => $factionName,
+                'power_bonus' => 20, // +20% puissance
+                'hp_bonus'    => 10, // +10% HP
+            ];
+        }
+
+        return ['active' => false, 'faction' => null, 'power_bonus' => 0, 'hp_bonus' => 0];
     }
 }

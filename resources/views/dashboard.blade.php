@@ -921,6 +921,207 @@
         </div>
     </div>
 
+    <!-- ========================================
+         MODAL CARTE MYTHIQUE HEBDOMADAIRE
+    ======================================== -->
+    <style>
+        .weekly-card-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+        }
+        .weekly-card-modal.active { display: flex; animation: wcFadeIn 0.4s ease; }
+        @keyframes wcFadeIn { from { opacity:0; } to { opacity:1; } }
+
+        .weekly-card-box {
+            background: linear-gradient(160deg, #1a0a3a, #0d0620, #1a0a2a);
+            border: 2px solid #FFD700;
+            border-radius: 24px;
+            padding: 2rem 1.5rem;
+            max-width: 340px;
+            width: 92%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: wcPop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes wcPop { 0%{transform:scale(0.7);opacity:0;} 100%{transform:scale(1);opacity:1;} }
+
+        .weekly-card-box::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(255,215,0,0.18) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        /* Aureole dorée animée */
+        .wc-aura {
+            position: absolute;
+            top: -30px; left: 50%;
+            transform: translateX(-50%);
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, transparent 70%);
+            animation: wcPulse 2s ease-in-out infinite;
+        }
+        @keyframes wcPulse {
+            0%,100% { transform: translateX(-50%) scale(1); opacity:0.6; }
+            50% { transform: translateX(-50%) scale(1.3); opacity:1; }
+        }
+
+        .wc-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #1a0a00;
+            font-size: 0.65rem; font-weight: 900;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            margin-bottom: 0.75rem;
+        }
+
+        .wc-title {
+            font-size: 1.5rem; font-weight: 900;
+            background: linear-gradient(to right, #FFD700, #FFA500, #FFD700);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.25rem;
+        }
+        .wc-subtitle {
+            font-size: 0.8rem; color: rgba(255,255,255,0.5);
+            margin-bottom: 1.2rem;
+        }
+
+        /* Zone carte (avant révélation) */
+        .wc-card-wrap {
+            perspective: 800px;
+            width: 130px; height: 190px;
+            margin: 0 auto 1.2rem;
+        }
+        .wc-card-inner {
+            width: 100%; height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.4,0,0.2,1);
+        }
+        .wc-card-inner.revealed { transform: rotateY(180deg); }
+
+        .wc-card-face {
+            position: absolute; inset: 0;
+            border-radius: 14px;
+            backface-visibility: hidden;
+        }
+        .wc-card-back {
+            background: linear-gradient(135deg, #2d0a5e, #4a0080);
+            border: 2px solid #FFD700;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3.5rem;
+            box-shadow: 0 0 30px rgba(255,215,0,0.5), inset 0 0 20px rgba(255,215,0,0.1);
+        }
+        .wc-card-front {
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #1a0a3a, #2d1060);
+            border: 2px solid #FFD700;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(255,215,0,0.6);
+        }
+        .wc-card-front img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+        .wc-card-front .wc-card-placeholder {
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 4rem;
+        }
+
+        /* Particules dorées */
+        .wc-particles {
+            position: absolute; inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .wc-particle {
+            position: absolute;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #FFD700;
+            opacity: 0;
+        }
+        @keyframes wcParticle {
+            0%   { opacity:1; transform: translate(0,0) scale(1); }
+            100% { opacity:0; transform: translate(var(--tx), var(--ty)) scale(0); }
+        }
+
+        .wc-card-name {
+            font-size: 1rem; font-weight: 800;
+            color: #FFD700;
+            margin-bottom: 0.2rem;
+            min-height: 1.4rem;
+        }
+        .wc-card-rarity {
+            font-size: 0.7rem; color: rgba(255,255,255,0.5);
+            text-transform: uppercase; letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .btn-wc-reveal {
+            width: 100%; padding: 0.9rem;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #1a0a00; font-weight: 900; font-size: 1rem;
+            border: none; border-radius: 14px;
+            cursor: pointer; transition: all 0.3s;
+            margin-bottom: 0.5rem;
+        }
+        .btn-wc-reveal:hover { transform: scale(1.03); box-shadow: 0 0 25px rgba(255,215,0,0.5); }
+        .btn-wc-reveal:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+        .btn-wc-close {
+            width: 100%; padding: 0.65rem;
+            background: transparent;
+            color: rgba(255,255,255,0.4); font-size: 0.85rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px; cursor: pointer; transition: all 0.3s;
+        }
+        .btn-wc-close:hover { background: rgba(255,255,255,0.08); color: white; }
+    </style>
+
+    <div id="weeklyCardModal" class="weekly-card-modal">
+        <div class="weekly-card-box">
+            <div class="wc-aura"></div>
+            <div class="wc-particles" id="wcParticles"></div>
+
+            <div class="relative z-10">
+                <div class="wc-badge">&#11088; Carte de la Semaine</div>
+                <div class="wc-title">Carte Mythique !</div>
+                <div class="wc-subtitle">Une carte légendaire vous attend...</div>
+
+                <div class="wc-card-wrap">
+                    <div class="wc-card-inner" id="wcCardInner">
+                        <div class="wc-card-face wc-card-back">&#10024;</div>
+                        <div class="wc-card-face wc-card-front" id="wcCardFront">
+                            <div class="wc-card-placeholder">&#10024;</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wc-card-name" id="wcCardName"></div>
+                <div class="wc-card-rarity" id="wcCardRarity"></div>
+
+                <button class="btn-wc-reveal" id="wcRevealBtn" onclick="claimWeeklyCard()">
+                    &#10024; Révéler ma carte !
+                </button>
+                <button class="btn-wc-close" id="wcCloseBtn" onclick="closeWeeklyCardModal()" style="display:none;">
+                    Superbe ! Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
         const diceSymbols = ['', '&#9856;', '&#9857;', '&#9858;', '&#9859;', '&#9860;', '&#9861;'];
@@ -957,6 +1158,19 @@
         // INITIALISATION
         // ==========================================
         document.addEventListener('DOMContentLoaded', async function() {
+            // Carte mythique hebdomadaire (vérifier en premier)
+            try {
+                const wcResponse = await fetch('/rewards/check-weekly-card', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const wcData = await wcResponse.json();
+                if (wcData.can_claim) {
+                    document.getElementById('weeklyCardModal').classList.add('active');
+                }
+            } catch (e) {
+                console.error('Erreur vérification carte hebdo:', e);
+            }
+
             // Bonus quotidien
             try {
                 const response = await fetch('/daily-bonus/check', {
@@ -1040,6 +1254,86 @@
         function getRankIcon(rank) {
             const icons = { 'bronze': '&#129353;', 'argent': '&#129352;', 'or': '&#129351;', 'divin': '&#128081;' };
             return icons[rank] || icons['bronze'];
+        }
+
+        // ==========================================
+        // CARTE MYTHIQUE HEBDOMADAIRE
+        // ==========================================
+        function closeWeeklyCardModal() {
+            document.getElementById('weeklyCardModal').classList.remove('active');
+        }
+
+        function spawnWeeklyParticles() {
+            const container = document.getElementById('wcParticles');
+            container.innerHTML = '';
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'wc-particle';
+                const tx = (Math.random() - 0.5) * 260;
+                const ty = (Math.random() - 0.5) * 260;
+                p.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                    --tx: ${tx}px; --ty: ${ty}px;
+                    background: ${['#FFD700','#FFA500','#fff','#FFE066'][Math.floor(Math.random()*4)]};
+                    animation: wcParticle ${0.6 + Math.random() * 0.8}s ease-out ${Math.random() * 0.3}s forwards;
+                `;
+                container.appendChild(p);
+            }
+        }
+
+        async function claimWeeklyCard() {
+            const btn = document.getElementById('wcRevealBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Récupération...';
+
+            try {
+                const response = await fetch('/rewards/claim-weekly-card', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                const data = await response.json();
+
+                if (!data.success) {
+                    btn.disabled = false;
+                    btn.textContent = '✨ Révéler ma carte !';
+                    alert(data.message);
+                    return;
+                }
+
+                // Préparer le recto de la carte
+                const front = document.getElementById('wcCardFront');
+                if (data.card.image) {
+                    front.innerHTML = `<img src="/storage/${data.card.image}" alt="${data.card.name}">`;
+                } else {
+                    front.innerHTML = `<div class="wc-card-placeholder">&#11088;</div>`;
+                }
+
+                // Retourner la carte
+                document.getElementById('wcCardInner').classList.add('revealed');
+
+                // Particules après 400ms (milieu de l'animation)
+                setTimeout(() => {
+                    spawnWeeklyParticles();
+                    document.getElementById('wcCardName').textContent = data.card.name;
+                    document.getElementById('wcCardRarity').textContent = '✦ ' + (data.card.rarity || 'Mythique') + ' ✦';
+                }, 450);
+
+                // Afficher le bouton fermer
+                setTimeout(() => {
+                    btn.style.display = 'none';
+                    document.getElementById('wcCloseBtn').style.display = 'block';
+                }, 900);
+
+            } catch (e) {
+                console.error('Erreur claim weekly card:', e);
+                btn.disabled = false;
+                btn.textContent = '✨ Révéler ma carte !';
+            }
         }
 
         // ==========================================

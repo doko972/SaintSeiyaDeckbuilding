@@ -130,6 +130,8 @@ Route::middleware(['auth', 'ensure.starter'])->group(function () {
         Route::post('/claim-streak', [RewardsController::class, 'claimStreak'])->name('claim-streak');
         Route::get('/check-wheel', [RewardsController::class, 'checkWheel'])->name('check-wheel');
         Route::post('/spin-wheel', [RewardsController::class, 'spinWheel'])->name('spin-wheel');
+        Route::get('/check-weekly-card', [RewardsController::class, 'checkWeeklyCard'])->name('check-weekly-card');
+        Route::post('/claim-weekly-card', [RewardsController::class, 'claimWeeklyCard'])->name('claim-weekly-card');
     });
 
     // Routes PvP

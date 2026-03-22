@@ -184,30 +184,31 @@
         /* Notifications Toast - Position haut centre */
         .battle-log-zone {
             position: fixed;
-            top: 50%;
-            left: 8px;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.4rem;
+            top: 64px;
+            left: 0;
+            right: 0;
             z-index: 500;
             pointer-events: none;
-            max-width: 200px;
-            width: max-content;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 1rem;
         }
 
         .log-entry {
-            padding: 0.75rem 1.25rem;
-            font-size: 0.95rem;
-            font-weight: 600;
+            padding: 0.4rem 1.2rem;
+            font-size: 0.82rem;
+            font-weight: 700;
             text-align: center;
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             pointer-events: auto;
             position: relative;
             overflow: hidden;
+            white-space: nowrap;
+            max-width: 90vw;
+            text-overflow: ellipsis;
         }
 
         /* Animation d'entrée */
@@ -270,25 +271,13 @@
         }
 
         @keyframes toastEnter {
-            0% {
-                opacity: 0;
-                transform: translateX(-60px) scale(0.85);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(0) scale(1);
-            }
+            0%   { opacity: 0; transform: translateY(-120%); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes toastExit {
-            0% {
-                opacity: 1;
-                transform: translateX(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateX(-40px) scale(0.85);
-            }
+            0%   { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-120%); }
         }
 
         @keyframes toastShift {
@@ -1851,7 +1840,7 @@
             }
 
             .battle-log-zone {
-                max-width: 180px;
+                top: 60px;
             }
 
             .log-entry {
@@ -1983,8 +1972,7 @@
 
             /* Log mobile */
             .battle-log-zone {
-                max-width: 160px;
-                left: 4px;
+                top: 56px;
             }
 
             .log-entry {
@@ -2381,6 +2369,13 @@
             <div class="hand-header">
                 <div class="flex items-center gap-4">
                     <span class="text-gray-400">🎴 Votre main</span>
+                    <span id="factionBonusBadge" style="display:none;padding:0.15rem 0.5rem;
+                         background:linear-gradient(135deg,rgba(255,215,0,0.2),rgba(255,165,0,0.15));
+                         border:1px solid rgba(255,215,0,0.5);border-radius:8px;
+                         font-size:0.6rem;font-weight:800;color:#FFD700;
+                         text-shadow:0 0 6px rgba(255,215,0,0.6);">
+                        ✦ BONUS FACTION : <span id="factionBonusName"></span>
+                    </span>
                     <span class="text-xs text-yellow-400 bg-yellow-400/20 px-2 py-1 rounded" id="helpText">
                         👆 Cliquez sur une carte pour la jouer sur le terrain
                     </span>
@@ -3181,10 +3176,23 @@
 
             renderAll();
 
+            // Afficher le bonus de faction du joueur si actif
+            const myKey = 'player' + playerNumber;
+            const fb = gameState[myKey] && gameState[myKey].faction_bonus;
+            if (fb && fb.active) {
+                const badge = document.getElementById('factionBonusBadge');
+                const nameEl = document.getElementById('factionBonusName');
+                if (badge) badge.style.display = 'inline-flex';
+                if (nameEl) nameEl.textContent = fb.faction;
+                setTimeout(() => {
+                    addLogEntry(`✦ Bonus Faction ${fb.faction} : +${fb.power_bonus}% Puissance, +${fb.hp_bonus}% PV !`, 'heal');
+                }, 300);
+            }
+
             if (isMyTurn) {
                 setTimeout(() => {
                     addLogEntry('🎮 C\'est votre tour !', 'info');
-                }, 500);
+                }, fb && fb.active ? 800 : 500);
             }
 
             if (!isMyTurn) {
@@ -4083,60 +4091,54 @@
         // ========================================
         // NOTIFICATIONS TOAST DYNAMIQUES
         // ========================================
-        const MAX_TOASTS = 3;
-        const TOAST_DURATION = 4000; // 4 secondes
+        // File d'attente : un seul message affiché à la fois
+        const messageQueue = [];
+        let isShowingMessage = false;
+        const MESSAGE_DISPLAY_TIME = 2200;
 
         function addLogEntry(message, type = 'info') {
-            const log = document.getElementById('battleLog');
-            const existingToasts = log.querySelectorAll('.log-entry:not(.exiting)');
+            // Limiter la queue à 6 messages max (les plus anciens sont ignorés)
+            if (messageQueue.length >= 6) messageQueue.shift();
+            messageQueue.push({ message, type });
+            if (!isShowingMessage) showNextMessage();
+        }
 
-            // Si on a déjà 3 toasts, retirer le plus ancien
-            if (existingToasts.length >= MAX_TOASTS) {
-                const oldestToast = existingToasts[0];
-                removeToast(oldestToast);
+        function showNextMessage() {
+            if (messageQueue.length === 0) {
+                isShowingMessage = false;
+                return;
             }
+            isShowingMessage = true;
 
-            // Créer le nouveau toast
+            const { message, type } = messageQueue.shift();
+            const log = document.getElementById('battleLog');
+
+            // Supprimer le message actuel sans animation
+            const existing = log.querySelector('.log-entry');
+            if (existing) existing.remove();
+
             const entry = document.createElement('div');
             entry.className = `log-entry ${type} entering`;
             entry.textContent = message;
-            entry.style.cursor = 'pointer';
-            entry.title = 'Cliquer pour fermer';
-
-            // Clic pour fermer
-            entry.addEventListener('click', () => removeToast(entry));
-
-            // Ajouter une animation de shift aux toasts existants
-            existingToasts.forEach(toast => {
-                toast.classList.add('shifting');
-                setTimeout(() => toast.classList.remove('shifting'), 300);
-            });
-
-            // Ajouter le nouveau toast
             log.appendChild(entry);
 
-            // Retirer la classe entering après l'animation
-            setTimeout(() => {
-                entry.classList.remove('entering');
-            }, 400);
+            setTimeout(() => entry.classList.remove('entering'), 350);
 
-            // Programmer la suppression automatique
+            // Afficher puis passer au suivant
             setTimeout(() => {
-                if (entry.parentNode) {
-                    removeToast(entry);
-                }
-            }, TOAST_DURATION);
+                if (!entry.parentNode) return;
+                entry.classList.add('exiting');
+                setTimeout(() => {
+                    if (entry.parentNode) entry.remove();
+                    showNextMessage();
+                }, 280);
+            }, MESSAGE_DISPLAY_TIME);
         }
 
         function removeToast(toast) {
             if (!toast || toast.classList.contains('exiting')) return;
-
             toast.classList.add('exiting');
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.remove();
-                }
-            }, 300);
+            setTimeout(() => { if (toast.parentNode) toast.remove(); }, 280);
         }
 
         // ========================================

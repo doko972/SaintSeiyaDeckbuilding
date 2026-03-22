@@ -86,6 +86,48 @@ class RewardsController extends Controller
     }
 
     /**
+     * Verifie si la carte mythique hebdomadaire peut etre reclamee (AJAX)
+     */
+    public function checkWeeklyCard(): JsonResponse
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        return response()->json($user->getWeeklyCardInfo());
+    }
+
+    /**
+     * Reclame la carte mythique hebdomadaire (AJAX)
+     */
+    public function claimWeeklyCard(): JsonResponse
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        $result = $user->claimWeeklyCard();
+
+        if (!$result['success']) {
+            return response()->json($result, 400);
+        }
+
+        $card = $result['card'];
+
+        return response()->json([
+            'success' => true,
+            'card' => [
+                'id' => $card->id,
+                'name' => $card->name,
+                'rarity' => $card->rarity,
+                'image' => $card->image_primary,
+                'faction' => $card->faction?->name ?? null,
+                'attack' => $card->attack ?? null,
+                'defense' => $card->defense ?? null,
+            ],
+            'message' => $result['message'],
+        ]);
+    }
+
+    /**
      * Tourne la roue de la fortune (AJAX)
      */
     public function spinWheel(): JsonResponse

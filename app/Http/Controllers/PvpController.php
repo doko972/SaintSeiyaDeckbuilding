@@ -295,8 +295,15 @@ class PvpController extends Controller
      */
     private function initializeBattleState(Battle $battle): array
     {
-        $player1Deck = $this->prepareDeck($battle->player1Deck);
-        $player2Deck = $this->prepareDeck($battle->player2Deck);
+        // Détecter les bonus de faction pour chaque joueur
+        $battle->player1Deck->load('cards.faction');
+        $battle->player2Deck->load('cards.faction');
+
+        $p1FactionBonus = $this->calculateFactionBonus($battle->player1Deck->cards);
+        $p2FactionBonus = $this->calculateFactionBonus($battle->player2Deck->cards);
+
+        $player1Deck = $this->prepareDeck($battle->player1Deck, $p1FactionBonus);
+        $player2Deck = $this->prepareDeck($battle->player2Deck, $p2FactionBonus);
 
         shuffle($player1Deck);
         shuffle($player2Deck);
@@ -313,6 +320,7 @@ class PvpController extends Controller
                 'field' => [],
                 'cosmos' => 5,
                 'max_cosmos' => 5,
+                'faction_bonus' => $p1FactionBonus,
             ],
             'player2' => [
                 'deck' => $player2Deck,
@@ -320,6 +328,7 @@ class PvpController extends Controller
                 'field' => [],
                 'cosmos' => 5,
                 'max_cosmos' => 5,
+                'faction_bonus' => $p2FactionBonus,
             ],
             // Charger tous les combos actifs pour le combat
             'all_combos' => $this->comboService->getAllActiveCombos(),
@@ -334,25 +343,35 @@ class PvpController extends Controller
     /**
      * Préparer le deck pour le combat
      */
-    private function prepareDeck(Deck $deck): array
+    private function prepareDeck(Deck $deck, ?array $factionBonus = null): array
     {
         $deck->load('cards.faction', 'cards.mainAttack', 'cards.secondaryAttack1', 'cards.secondaryAttack2');
-        
+
         $cards = [];
         foreach ($deck->cards as $card) {
             $quantity = $card->pivot->quantity ?? 1;
+
+            $hp    = $card->health_points;
+            $power = $card->power;
+
+            if ($factionBonus && $factionBonus['active']) {
+                $hp    = (int) round($hp    * (1 + $factionBonus['hp_bonus']    / 100));
+                $power = (int) round($power * (1 + $factionBonus['power_bonus'] / 100));
+            }
+
             for ($i = 0; $i < $quantity; $i++) {
                 $cards[] = [
                     'id' => $card->id,
                     'name' => $card->name,
                     'cost' => $card->cost,
-                    'health_points' => $card->health_points,
-                    'max_hp' => $card->health_points,
-                    'current_hp' => $card->health_points,
+                    'health_points' => $hp,
+                    'max_hp' => $hp,
+                    'current_hp' => $hp,
                     'endurance' => $card->endurance,
                     'current_endurance' => $card->endurance,
                     'defense' => $card->defense,
-                    'power' => $card->power,
+                    'power' => $power,
+                    'faction_bonus_active' => $factionBonus && $factionBonus['active'],
                     'image' => $card->image_primary ? \Storage::url($card->image_primary) : null,
                     'faction' => $card->faction ? [
                         'name' => $card->faction->name,
@@ -386,5 +405,25 @@ class PvpController extends Controller
         }
 
         return $cards;
+    }
+
+    /**
+     * Calcule le bonus de faction mono-deck.
+     */
+    private function calculateFactionBonus($cards): array
+    {
+        $factionIds = $cards->map(fn($c) => $c->faction_id)->filter()->unique();
+
+        if ($factionIds->count() === 1 && $cards->count() > 0) {
+            $factionName = $cards->first()->faction?->name ?? 'Inconnue';
+            return [
+                'active'      => true,
+                'faction'     => $factionName,
+                'power_bonus' => 20,
+                'hp_bonus'    => 10,
+            ];
+        }
+
+        return ['active' => false, 'faction' => null, 'power_bonus' => 0, 'hp_bonus' => 0];
     }
 }

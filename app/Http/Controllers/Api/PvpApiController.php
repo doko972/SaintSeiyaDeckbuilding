@@ -334,7 +334,7 @@ class PvpApiController extends Controller
                 ]);
 
                 // Récompenses
-                $user->coins += 150;
+                $user->coins += 300;
                 $user->wins++;
                 $user->save();
 
@@ -342,7 +342,7 @@ class PvpApiController extends Controller
                 $rankPromotion = $user->checkAndUpdateRank();
 
                 $opponent = $battle->player1_id === $user->id ? $battle->player2 : $battle->player1;
-                $opponent->coins += 25;
+                $opponent->coins += 100;
                 $opponent->losses++;
                 $opponent->save();
 
