@@ -88,6 +88,8 @@
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 200;
         }
 
         .battle-title {
