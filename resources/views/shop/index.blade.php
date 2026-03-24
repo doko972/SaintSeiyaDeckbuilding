@@ -541,17 +541,18 @@
                     <div class="earn-card victory">
                         <div class="earn-icon">🏆</div>
                         <h4 class="earn-label">Victoire en combat</h4>
-                        <p class="earn-amount">+100 🪙</p>
+                        <p class="earn-amount">+300 🪙</p>
                     </div>
                     <div class="earn-card defeat">
                         <div class="earn-icon">⚔️</div>
                         <h4 class="earn-label">Défaite en combat</h4>
-                        <p class="earn-amount">+25 🪙</p>
+                        <p class="earn-amount">+100 🪙</p>
                     </div>
                     <div class="earn-card bonus">
+                        <a href="{{ route('rewards.index') }}">
                         <div class="earn-icon">🎁</div>
                         <h4 class="earn-label">Bonus quotidien</h4>
-                        <p class="earn-soon">Bientôt disponible !</p>
+                        <p class="earn-soon">Jetez un oeil à vos bonus !</p></a>
                     </div>
                 </div>
             </div>

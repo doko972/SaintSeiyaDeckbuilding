@@ -613,6 +613,7 @@ class GameApiController extends Controller
 
         if ($request->victory) {
             $user->wins++;
+            $user->pve_wins++;
             $user->save();
             // Vérifier le changement de rang
             $rankPromotion = $user->checkAndUpdateRank();

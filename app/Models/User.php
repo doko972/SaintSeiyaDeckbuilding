@@ -21,6 +21,8 @@ class User extends Authenticatable
         'role',
         'coins',
         'wins',
+        'pve_wins',
+        'pvp_wins',
         'losses',
         'current_rank',
         'last_daily_bonus_at',

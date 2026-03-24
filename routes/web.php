@@ -19,6 +19,7 @@ use App\Http\Controllers\CardSellController;
 use App\Http\Controllers\DailyBonusController;
 use App\Http\Controllers\RewardsController;
 use App\Http\Controllers\PvpInvitationController;
+use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\Api\TournamentApiController;
 use App\Http\Controllers\Admin\TournamentController as AdminTournamentController;
@@ -164,6 +165,9 @@ Route::middleware(['auth', 'ensure.starter'])->group(function () {
         Route::post('/accept/{invitation}', [PvpInvitationController::class, 'accept']);
         Route::post('/decline/{invitation}', [PvpInvitationController::class, 'decline']);
     });
+
+    // Classement
+    Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
 
     // Routes Tournois (joueur)
     Route::prefix('tournaments')->name('tournaments.')->group(function () {

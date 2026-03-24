@@ -117,6 +117,22 @@
                                         <div class="text-xs text-gray-500">Competitions et recompenses</div>
                                     </div>
                                 </a>
+
+                                <!-- Classement -->
+                                <a href="{{ route('leaderboard.index') }}"
+                                    class="group flex items-center gap-3 px-4 py-3 transition-all duration-200
+                                   {{ request()->routeIs('leaderboard.*')
+                                       ? 'bg-gradient-to-r from-purple-600/30 to-pink-600/30 text-yellow-400'
+                                       : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                                    <span
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
+                                        &#127942;
+                                    </span>
+                                    <div class="flex-1">
+                                        <div class="font-semibold">Classement</div>
+                                        <div class="text-xs text-gray-500">Top joueurs PvP &amp; PvE</div>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -496,8 +512,10 @@
                class="mob-nav-tile {{ request()->routeIs('tournaments.*') ? 'is-active' : '' }}">
                 <span>&#127941;</span><span>Tournois</span>
             </a>
-            {{-- Case vide pour conserver la grille à 4 colonnes --}}
-            <div></div>
+            <a href="{{ route('leaderboard.index') }}"
+               class="mob-nav-tile {{ request()->routeIs('leaderboard.*') ? 'is-active' : '' }}">
+                <span>&#127942;</span><span>Classement</span>
+            </a>
 
             {{-- Cartes --}}
             <div class="mob-nav-section-label text-purple-400">&#127183; Cartes</div>

@@ -356,6 +356,7 @@ class PvpApiController extends Controller
                 // Récompenses
                 $user->coins += 300;
                 $user->wins++;
+                $user->pvp_wins++;
                 $user->save();
 
                 // Vérifier le changement de rang

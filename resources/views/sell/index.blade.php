@@ -390,7 +390,7 @@
         .price-item {
             text-align: center;
             padding: 0.5rem;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.6);
             border-radius: 8px;
         }
 
@@ -402,7 +402,7 @@
 
         .price-item .rarity-price {
             font-weight: 700;
-            color: #10B981;
+            color: #ffffff;
         }
 
         .price-item.rarity-common .rarity-name { color: #6B7280; }
@@ -424,7 +424,7 @@
                     <h1 class="text-3xl font-black text-white flex items-center gap-3">
                         <span class="text-4xl">&#128176;</span> Vente de Cartes
                     </h1>
-                    <p class="text-gray-400 mt-2">Revendez vos cartes contre des pieces d'or</p>
+                    <p class="mt-2">Revendez vos cartes contre des pieces d'or</p>
 
                     <!-- Prix par rarete -->
                     <div class="price-table mt-4">
@@ -442,7 +442,7 @@
                         <span class="value" id="sell-coins">{{ number_format($userCoins) }} po</span>
                     </div>
                     <div class="stat-badge">
-                        <span class="text-gray-400">Cartes possedees:</span>
+                        <span class="text-gray-400">Cartes:</span>
                         <span class="value">{{ $sellableCards->sum('pivot.quantity') }}</span>
                     </div>
                 </div>
@@ -451,7 +451,7 @@
             <!-- Cartes vendables -->
             <div class="mb-12">
                 <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <span class="text-2xl">&#127183;</span> Votre collection
+                    Votre collection
                 </h2>
 
                 @if($sellableCards->isEmpty())
