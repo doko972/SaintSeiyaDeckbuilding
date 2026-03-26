@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminUserSeeder::class,
             FactionSeeder::class,
+            UniverseSeeder::class,
             AttackSeeder::class,
             CardSeeder::class,
             AsgardWarriorsSeeder::class,

@@ -91,7 +91,7 @@ class DeckController extends Controller
                     'grade' => $card->grade,
                     'rarity' => $card->rarity,
                     'element' => $card->element,
-                    'armor_type' => $card->armor_type,
+                    'power_type' => $card->power_type,
                     'stats' => [
                         'health_points' => $card->health_points,
                         'endurance' => $card->endurance,

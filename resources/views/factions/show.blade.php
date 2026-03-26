@@ -50,7 +50,7 @@
                                         class="w-full h-full object-cover">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center">
-                                        <span class="text-4xl">🏛️</span>
+                                        <img src="{{ asset('images/icons/chateau.webp') }}" alt="Faction" class="w-10 h-10 object-contain">
                                     </div>
                                 @endif
                             </div>

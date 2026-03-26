@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Saint Seiya Deckbuilding') }}</title>
+    <title>{{ config('app.name', "L'Arène des Légendes") }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -46,18 +46,13 @@
         <!-- Logo -->
         <div class="relative z-10">
             <a href="/" class="flex flex-col items-center group">
-                {{-- Si tu as un logo image : --}}
-                @if(file_exists(public_path('images/logo.png')))
-                    <img src="{{ asset('images/logo.png') }}" alt="Saint Seiya Deckbuilding" 
-                         class="h-20 w-auto mb-2 transform group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_15px_rgba(255,215,0,0.5)]">
-                @else
-                    <div class="text-6xl mb-2 transform group-hover:scale-110 transition-transform duration-300">⚔️</div>
-                @endif
+                <img src="{{ asset('images/logo.webp') }}" alt="L'Arène des Légendes"
+                     class="h-20 w-auto mb-2 transform group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_15px_rgba(255,215,0,0.5)]">
                 
                 <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400">
-                    Saint Seiya
+                    L'Arène des Légendes
                 </h1>
-                <p class="text-purple-300 text-sm tracking-widest uppercase">Deckbuilding</p>
+                <p class="text-purple-300 text-sm tracking-widest uppercase">Jeu de Cartes Multi-Univers</p>
             </a>
         </div>
 
@@ -68,7 +63,7 @@
 
         <!-- Footer -->
         <p class="mt-8 text-purple-400 text-sm relative z-10">
-            Brûle ton cosmos ! 🔥
+            Entre dans l'Arène !
         </p>
     </div>
 

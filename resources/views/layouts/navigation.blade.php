@@ -15,14 +15,14 @@
                             $logoPath = public_path('images/logo.webp');
                         @endphp
                         @if (file_exists($logoPath))
-                            <img src="{{ asset('images/logo.webp') }}" alt="Saint Seiya Logo"
+                            <img src="{{ asset('images/logo.webp') }}" alt="L'Arène des Légendes"
                                 class="h-10 w-auto group-hover:scale-110 transition-transform duration-300">
                         @else
                             <span class="text-2xl group-hover:scale-110 transition-transform duration-300">&#9876;</span>
                         @endif
                         <span
-                            class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-400 group-hover:from-yellow-300 group-hover:to-amber-200 transition-all duration-300">
-                            Saint Seiya
+                            class="hidden sm:inline text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-400 group-hover:from-yellow-300 group-hover:to-amber-200 transition-all duration-300">
+                            L'Arène des Légendes
                         </span>
                     </a>
                 </div>
@@ -69,8 +69,8 @@
                                        ? 'bg-gradient-to-r from-blue-600/30 to-indigo-600/30 text-yellow-400'
                                        : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
                                     <span
-                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
-                                        &#129302;
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg overflow-hidden">
+                                        <img src="{{ asset('images/icons/pve.webp') }}" alt="PvE" class="w-7 h-7 object-contain">
                                     </span>
                                     <div>
                                         <div class="font-semibold">Combat PvE</div>
@@ -85,8 +85,8 @@
                                        ? 'bg-gradient-to-r from-red-600/30 to-orange-600/30 text-yellow-400'
                                        : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
                                     <span
-                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
-                                        &#127942;
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg overflow-hidden">
+                                        <img src="{{ asset('images/icons/trophee.webp') }}" alt="PvP" class="w-7 h-7 object-contain">
                                     </span>
                                     <div class="flex-1">
                                         <div class="font-semibold flex items-center gap-2">
@@ -109,8 +109,8 @@
                                        ? 'bg-gradient-to-r from-yellow-600/30 to-orange-600/30 text-yellow-400'
                                        : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
                                     <span
-                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
-                                        &#127941;
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg overflow-hidden">
+                                        <img src="{{ asset('images/icons/trophee.webp') }}" alt="Tournois" class="w-7 h-7 object-contain">
                                     </span>
                                     <div class="flex-1">
                                         <div class="font-semibold">Tournois</div>
@@ -125,8 +125,8 @@
                                        ? 'bg-gradient-to-r from-purple-600/30 to-pink-600/30 text-yellow-400'
                                        : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
                                     <span
-                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
-                                        &#127942;
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg overflow-hidden">
+                                        <img src="{{ asset('images/icons/trophee.webp') }}" alt="Classement" class="w-7 h-7 object-contain">
                                     </span>
                                     <div class="flex-1">
                                         <div class="font-semibold">Classement</div>
@@ -174,8 +174,8 @@
                                        ? 'bg-gradient-to-r from-purple-600/30 to-indigo-600/30 text-yellow-400'
                                        : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
                                     <span
-                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
-                                        &#127183;
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg overflow-hidden">
+                                        <img src="{{ asset('images/icons/livres.webp') }}" alt="Collection" class="w-7 h-7 object-contain">
                                     </span>
                                     <div>
                                         <div class="font-semibold">Collection</div>
@@ -190,8 +190,8 @@
                                        ? 'bg-gradient-to-r from-indigo-600/30 to-blue-600/30 text-yellow-400'
                                        : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
                                     <span
-                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
-                                        &#128218;
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg overflow-hidden">
+                                        <img src="{{ asset('images/icons/livres.webp') }}" alt="Decks" class="w-7 h-7 object-contain">
                                     </span>
                                     <div>
                                         <div class="font-semibold">Mes Decks</div>
@@ -206,8 +206,8 @@
                                        ? 'bg-gradient-to-r from-orange-600/30 to-yellow-600/30 text-yellow-400'
                                        : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
                                     <span
-                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
-                                        &#9889;
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg overflow-hidden">
+                                        <img src="{{ asset('images/icons/fusion.webp') }}" alt="Fusion" class="w-7 h-7 object-contain">
                                     </span>
                                     <div>
                                         <div class="font-semibold">Fusion</div>
@@ -255,8 +255,8 @@
                                        ? 'bg-gradient-to-r from-yellow-600/30 to-amber-600/30 text-yellow-400'
                                        : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
                                     <span
-                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-500 to-amber-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
-                                        &#128722;
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-500 to-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg overflow-hidden">
+                                        <img src="{{ asset('images/icons/achat.webp') }}" alt="Boutique" class="w-7 h-7 object-contain">
                                     </span>
                                     <div>
                                         <div class="font-semibold">Boutique</div>
@@ -271,8 +271,8 @@
                                        ? 'bg-gradient-to-r from-green-600/30 to-emerald-600/30 text-yellow-400'
                                        : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
                                     <span
-                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg">
-                                        &#128176;
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg overflow-hidden">
+                                        <img src="{{ asset('images/icons/vente.webp') }}" alt="Vente" class="w-7 h-7 object-contain">
                                     </span>
                                     <div>
                                         <div class="font-semibold">Vente</div>
@@ -289,10 +289,7 @@
                        {{ request()->routeIs('rewards.*')
                            ? 'bg-pink-500/30 text-yellow-400 shadow-lg shadow-pink-500/20'
                            : 'text-gray-300 hover:text-white hover:bg-white/10' }}">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                        </svg>
+                        <img src="{{ asset('images/icons/bonus.webp') }}" alt="Bonus" class="w-4 h-4 mr-2 object-contain">
                         Bonus
                     </a>
 
@@ -302,10 +299,7 @@
                        {{ request()->routeIs('factions.*')
                            ? 'bg-cyan-500/30 text-yellow-400 shadow-lg shadow-cyan-500/20'
                            : 'text-gray-300 hover:text-white hover:bg-white/10' }}">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
+                        <img src="{{ asset('images/icons/chateau.webp') }}" alt="Factions" class="w-4 h-4 mr-2 object-contain">
                         Factions
                     </a>
 
@@ -325,7 +319,7 @@
                 </div>
 
                 <!-- User Dropdown -->
-                <x-dropdown align="right" width="48">
+                <x-dropdown align="right" width="48" contentClasses="p-0">
                     <x-slot name="trigger">
                         <button
                             class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-purple-500/30 transition-all duration-300">
@@ -364,7 +358,7 @@
                                     </div>
                                     <a href="{{ route('cards.index') }}"
                                         class="block px-4 py-2 text-sm text-gray-300 hover:bg-red-500/20 hover:text-white transition">
-                                        &#127183; Cartes (CRUD)
+                                        <img src="{{ asset('images/icons/livres.webp') }}" alt="" class="w-4 h-4 object-contain inline-block"> Cartes (CRUD)
                                     </a>
                                     <a href="{{ route('attacks.index') }}"
                                         class="block px-4 py-2 text-sm text-gray-300 hover:bg-red-500/20 hover:text-white transition">
@@ -376,7 +370,7 @@
                                     </a>
                                     <a href="{{ route('admin.tournaments.index') }}"
                                         class="block px-4 py-2 text-sm text-gray-300 hover:bg-red-500/20 hover:text-white transition">
-                                        &#127942; Gestion tournois
+                                        <img src="{{ asset('images/icons/trophee.webp') }}" alt="" class="w-4 h-4 object-contain inline-block"> Gestion tournois
                                     </a>
                                 </div>
                             @endif
@@ -439,7 +433,7 @@
         }
         .mob-nav-tile:hover { background: rgba(255,255,255,0.13); color: white; }
         .mob-nav-tile.is-active { border-color: rgba(255,215,0,0.5); background: rgba(255,215,0,0.08); color: #FFD700; }
-        .mob-nav-tile span:first-child { font-size: 1.4rem; line-height: 1; }
+        .mob-nav-tile span:first-child { font-size: 1.4rem; line-height: 1; display: flex; align-items: center; justify-content: center; }
 
         .mob-nav-section-label {
             grid-column: 1 / -1;
@@ -496,11 +490,11 @@
 
             <a href="{{ route('game.index') }}"
                class="mob-nav-tile {{ request()->routeIs('game.*') ? 'is-active' : '' }}">
-                <span>&#129302;</span><span>PvE</span>
+                <span><img src="{{ asset('images/icons/pve.webp') }}" alt="PvE" class="w-7 h-7 object-contain"></span><span>PvE</span>
             </a>
             <a href="{{ route('pvp.lobby') }}"
                class="mob-nav-tile {{ request()->routeIs('pvp.*') ? 'is-active' : '' }}">
-                <span>&#127942;</span>
+                <span><img src="{{ asset('images/icons/trophee.webp') }}" alt="PvP" class="w-7 h-7 object-contain"></span>
                 <span class="flex items-center gap-1">PvP
                     <span class="relative flex h-1.5 w-1.5">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -510,11 +504,11 @@
             </a>
             <a href="{{ route('tournaments.index') }}"
                class="mob-nav-tile {{ request()->routeIs('tournaments.*') ? 'is-active' : '' }}">
-                <span>&#127941;</span><span>Tournois</span>
+                <span><img src="{{ asset('images/icons/trophee.webp') }}" alt="Tournois" class="w-7 h-7 object-contain"></span><span>Tournois</span>
             </a>
             <a href="{{ route('leaderboard.index') }}"
                class="mob-nav-tile {{ request()->routeIs('leaderboard.*') ? 'is-active' : '' }}">
-                <span>&#127942;</span><span>Classement</span>
+                <span><img src="{{ asset('images/icons/trophee.webp') }}" alt="Classement" class="w-7 h-7 object-contain"></span><span>Classement</span>
             </a>
 
             {{-- Cartes --}}
@@ -522,19 +516,19 @@
 
             <a href="{{ route('collection.index') }}"
                class="mob-nav-tile {{ request()->routeIs('collection.*') ? 'is-active' : '' }}">
-                <span>&#127183;</span><span>Collection</span>
+                <span><img src="{{ asset('images/icons/livres.webp') }}" alt="Collection" class="w-7 h-7 object-contain"></span><span>Collection</span>
             </a>
             <a href="{{ route('decks.index') }}"
                class="mob-nav-tile {{ request()->routeIs('decks.*') ? 'is-active' : '' }}">
-                <span>&#128218;</span><span>Decks</span>
+                <span><img src="{{ asset('images/icons/livres.webp') }}" alt="Decks" class="w-7 h-7 object-contain"></span><span>Decks</span>
             </a>
             <a href="{{ route('fusion.index') }}"
                class="mob-nav-tile {{ request()->routeIs('fusion.*') ? 'is-active' : '' }}">
-                <span>&#9889;</span><span>Fusion</span>
+                <span><img src="{{ asset('images/icons/fusion.webp') }}" alt="Fusion" class="w-7 h-7 object-contain"></span><span>Fusion</span>
             </a>
             <a href="{{ route('cards.index') }}"
                class="mob-nav-tile {{ request()->routeIs('cards.index') ? 'is-active' : '' }}">
-                <span>&#128270;</span><span>Encyclop.</span>
+                <span><img src="{{ asset('images/icons/recherche.webp') }}" alt="Encyclopédie" class="w-7 h-7 object-contain"></span><span>Encyclop.</span>
             </a>
 
             {{-- Commerce & Bonus --}}
@@ -542,19 +536,19 @@
 
             <a href="{{ route('shop.index') }}"
                class="mob-nav-tile {{ request()->routeIs('shop.*') ? 'is-active' : '' }}">
-                <span>&#128722;</span><span>Boutique</span>
+                <span><img src="{{ asset('images/icons/achat.webp') }}" alt="Boutique" class="w-7 h-7 object-contain"></span><span>Boutique</span>
             </a>
             <a href="{{ route('sell.index') }}"
                class="mob-nav-tile {{ request()->routeIs('sell.*') ? 'is-active' : '' }}">
-                <span>&#128176;</span><span>Vente</span>
+                <span><img src="{{ asset('images/icons/vente.webp') }}" alt="Vente" class="w-7 h-7 object-contain"></span><span>Vente</span>
             </a>
             <a href="{{ route('rewards.index') }}"
                class="mob-nav-tile {{ request()->routeIs('rewards.*') ? 'is-active' : '' }}">
-                <span>&#127873;</span><span>Bonus</span>
+                <span><img src="{{ asset('images/icons/bonus.webp') }}" alt="Bonus" class="w-7 h-7 object-contain"></span><span>Bonus</span>
             </a>
             <a href="{{ route('factions.index') }}"
                class="mob-nav-tile {{ request()->routeIs('factions.*') ? 'is-active' : '' }}">
-                <span>&#127984;</span><span>Factions</span>
+                <span><img src="{{ asset('images/icons/chateau.webp') }}" alt="Factions" class="w-7 h-7 object-contain"></span><span>Factions</span>
             </a>
 
         </div>

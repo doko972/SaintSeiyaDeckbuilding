@@ -378,7 +378,7 @@
             <!-- Header -->
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-black text-white flex items-center justify-center gap-3">
-                    <span class="text-4xl">&#127873;</span> Centre de Recompenses
+                    <span class="text-4xl"><img src="{{ asset('images/icons/bonus.webp') }}" alt="Bonus" class="w-10 h-10 object-contain inline-block"></span> Centre de Recompenses
                 </h1>
                 <p class="text-gray-400 mt-2">Connectez-vous chaque jour pour des bonus exclusifs !</p>
             </div>
@@ -422,7 +422,7 @@
                         {{ !$streakInfo['can_claim'] ? 'disabled' : '' }}
                         onclick="claimStreakReward()">
                         @if($streakInfo['can_claim'])
-                            &#127873; Reclamer la recompense du Jour {{ $streakInfo['current_day'] }}
+                            <img src="{{ asset('images/icons/bonus.webp') }}" alt="Bonus" class="w-5 h-5 object-contain inline-block"> Reclamer la recompense du Jour {{ $streakInfo['current_day'] }}
                         @else
                             &#10003; Recompense reclamee aujourd'hui
                         @endif
@@ -508,7 +508,7 @@
     <!-- Modal de recompense -->
     <div id="rewardModal" class="reward-modal">
         <div class="reward-modal-content">
-            <div class="reward-icon" id="rewardIcon">&#127873;</div>
+            <div class="reward-icon" id="rewardIcon"><img src="{{ asset('images/icons/bonus.webp') }}" alt="Bonus" class="w-16 h-16 object-contain mx-auto"></div>
             <h3 class="reward-title" id="rewardTitle">Felicitations !</h3>
             <p class="reward-description" id="rewardDescription"></p>
             <button class="reward-close-btn" onclick="closeRewardModal()">
@@ -632,7 +632,7 @@
                         updateAllBalances(data.new_balance);
 
                         // Afficher le resultat
-                        let icon = '&#127873;';
+                        let icon = '<img src="/images/icons/bonus.webp" alt="Bonus" class="w-16 h-16 object-contain mx-auto">';
                         let title = 'Bravo !';
 
                         if (data.reward_type === 'coins') {

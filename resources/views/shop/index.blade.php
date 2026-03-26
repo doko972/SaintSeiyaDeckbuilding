@@ -434,7 +434,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                 <div>
                     <h1 class="text-3xl font-bold text-white flex items-center gap-3">
-                        <span class="text-4xl">🛒</span>
+                        <span class="text-4xl"><img src="{{ asset('images/icons/achat.webp') }}" alt="Boutique" class="w-10 h-10 object-contain inline-block"></span>
                         Boutique
                     </h1>
                     <p class="text-gray-400 mt-1">Achetez des boosters pour agrandir votre collection</p>
@@ -449,10 +449,10 @@
 
             <!-- Intro Banner -->
             <div class="intro-banner mb-8">
-                <div class="intro-icon">🎴</div>
+                <div class="intro-icon"><img src="{{ asset('images/icons/livres.webp') }}" alt="Boosters" class="w-14 h-14 object-contain mx-auto"></div>
                 <h2 class="intro-title">Achetez des Boosters</h2>
                 <p class="intro-text">
-                    Ouvrez des boosters pour obtenir de nouvelles cartes et compléter votre collection de Chevaliers !
+                    Ouvrez des boosters pour obtenir de nouvelles cartes et compléter votre collection de Légendes !
                 </p>
             </div>
 
@@ -539,7 +539,7 @@
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="earn-card victory">
-                        <div class="earn-icon">🏆</div>
+                        <div class="earn-icon"><img src="{{ asset('images/icons/trophee.webp') }}" alt="Victoire" class="w-12 h-12 object-contain mx-auto"></div>
                         <h4 class="earn-label">Victoire en combat</h4>
                         <p class="earn-amount">+300 🪙</p>
                     </div>
@@ -550,7 +550,7 @@
                     </div>
                     <div class="earn-card bonus">
                         <a href="{{ route('rewards.index') }}">
-                        <div class="earn-icon">🎁</div>
+                        <div class="earn-icon"><img src="{{ asset('images/icons/bonus.webp') }}" alt="Bonus" class="w-12 h-12 object-contain mx-auto"></div>
                         <h4 class="earn-label">Bonus quotidien</h4>
                         <p class="earn-soon">Jetez un oeil à vos bonus !</p></a>
                     </div>

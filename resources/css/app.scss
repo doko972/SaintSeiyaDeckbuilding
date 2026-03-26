@@ -18,6 +18,18 @@ $color-darkness: #1F2937;
 $color-light: #FCD34D;
 
 // ===========================================
+// Universe CSS Variables (multi-franchise)
+// ===========================================
+:root {
+    --universe-saint-seiya:  #CD7F32;
+    --universe-dragon-ball:  #F97316;
+    --universe-naruto:       #EF4444;
+    --universe-one-piece:    #3B82F6;
+    --universe-bleach:       #6366F1;
+    --universe-default:      #8B5CF6;
+}
+
+// ===========================================
 // Animations
 // ===========================================
 @keyframes pulse-glow {

@@ -1,7 +1,7 @@
 {
-    "name": "Saint Seiya Deckbuilding",
-    "short_name": "SS Deckbuilding",
-    "description": "Jeu de deckbuilding sur le theme de Saint Seiya - Brulez votre cosmos !",
+    "name": "L'Arène des Légendes",
+    "short_name": "ArènaLeg",
+    "description": "Jeu de deckbuilding multi-univers — construis ton deck de légendes et affronte tes adversaires !",
     "start_url": "/dashboard",
     "display": "fullscreen",
     "orientation": "portrait",

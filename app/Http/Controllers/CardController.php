@@ -23,7 +23,7 @@ class CardController extends Controller
     /**
      * Options pour les selects
      */
-    public static function getArmorTypes(): array
+    public static function getPowerTypes(): array
     {
         return [
             'black' => 'Noir',
@@ -82,7 +82,7 @@ class CardController extends Controller
 
         // Filtre par armure
         if ($request->filled('armor')) {
-            $query->where('armor_type', $request->armor);
+            $query->where('power_type', $request->armor);
         }
 
         $cards = $query->orderBy('name')->get();
@@ -97,14 +97,14 @@ class CardController extends Controller
     {
         $factions = Faction::orderBy('name')->get();
         $attacks = Attack::orderBy('name')->get();
-        $armorTypes = self::getArmorTypes();
+        $powerTypes = self::getPowerTypes();
         $elements = self::getElements();
         $rarities = self::getRarities();
 
         return view('cards.create', compact(
             'factions',
             'attacks',
-            'armorTypes',
+            'powerTypes',
             'elements',
             'rarities'
         ));
@@ -119,7 +119,7 @@ class CardController extends Controller
             'name' => 'required|string|max:100',
             'faction_id' => 'required|exists:factions,id',
             'grade' => 'required|integer|min:1|max:10',
-            'armor_type' => 'required|in:' . implode(',', array_keys(self::getArmorTypes())),
+            'power_type' => 'required|in:' . implode(',', array_keys(self::getPowerTypes())),
             'element' => 'required|in:' . implode(',', array_keys(self::getElements())),
             'rarity' => 'required|in:' . implode(',', array_keys(self::getRarities())),
             'health_points' => 'required|integer|min:1',
@@ -187,7 +187,7 @@ class CardController extends Controller
     {
         $factions = Faction::orderBy('name')->get();
         $attacks = Attack::orderBy('name')->get();
-        $armorTypes = self::getArmorTypes();
+        $powerTypes = self::getPowerTypes();
         $elements = self::getElements();
         $rarities = self::getRarities();
 
@@ -195,9 +195,9 @@ class CardController extends Controller
             'card',
             'factions',
             'attacks',
-            'armorTypes',
+            'powerTypes',
             'elements',
-            'rarities'
+            'rarities',
         ));
     }
 
@@ -210,7 +210,7 @@ class CardController extends Controller
             'name' => 'required|string|max:100',
             'faction_id' => 'required|exists:factions,id',
             'grade' => 'required|integer|min:1|max:10',
-            'armor_type' => 'required|in:' . implode(',', array_keys(self::getArmorTypes())),
+            'power_type' => 'required|in:' . implode(',', array_keys(self::getPowerTypes())),
             'element' => 'required|in:' . implode(',', array_keys(self::getElements())),
             'rarity' => 'required|in:' . implode(',', array_keys(self::getRarities())),
             'health_points' => 'required|integer|min:1',

@@ -92,34 +92,34 @@
                         <!-- Type d'armure, Élément, Rareté -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <label for="armor_type" class="block text-sm font-medium text-gray-300 mb-2">🛡️ Type
-                                    d'armure *</label>
-                                <select name="armor_type" id="armor_type" required
+                                <label for="power_type" class="block text-sm font-medium text-gray-300 mb-2">⚡ Type
+                                    de puissance *</label>
+                                <select name="power_type" id="power_type" required
                                     class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:ring-purple-500">
                                     <option value="black"
-                                        {{ old('armor_type', $card->armor_type) == 'black' ? 'selected' : '' }}>🤖
+                                        {{ old('power_type', $card->power_type) == 'black' ? 'selected' : '' }}>🤖
                                         Noir</option>
                                     <option value="bronze"
-                                        {{ old('armor_type', $card->armor_type) == 'bronze' ? 'selected' : '' }}>🥉
+                                        {{ old('power_type', $card->power_type) == 'bronze' ? 'selected' : '' }}>🥉
                                         Bronze</option>
                                     <option value="silver"
-                                        {{ old('armor_type', $card->armor_type) == 'silver' ? 'selected' : '' }}>🥈
+                                        {{ old('power_type', $card->power_type) == 'silver' ? 'selected' : '' }}>🥈
                                         Argent</option>
                                     <option value="gold"
-                                        {{ old('armor_type', $card->armor_type) == 'gold' ? 'selected' : '' }}>🥇 Or
+                                        {{ old('power_type', $card->power_type) == 'gold' ? 'selected' : '' }}>🥇 Or
                                     </option>
                                     <option value="divine"
-                                        {{ old('armor_type', $card->armor_type) == 'divine' ? 'selected' : '' }}>👑
+                                        {{ old('power_type', $card->power_type) == 'divine' ? 'selected' : '' }}>👑
                                         Divine</option>
                                     <option value="surplis"
-                                        {{ old('armor_type', $card->armor_type) == 'surplis' ? 'selected' : '' }}>💀
+                                        {{ old('power_type', $card->power_type) == 'surplis' ? 'selected' : '' }}>💀
                                         Surplis</option>
                                     <option value="god_warrior"
-                                        {{ old('armor_type', $card->armor_type) == 'god_warrior' ? 'selected' : '' }}>
+                                        {{ old('power_type', $card->power_type) == 'god_warrior' ? 'selected' : '' }}>
                                         ⚔️
                                         Guerrier Divin</option>
                                     <option value="steel"
-                                        {{ old('armor_type', $card->armor_type) == 'steel' ? 'selected' : '' }}>🤖
+                                        {{ old('power_type', $card->power_type) == 'steel' ? 'selected' : '' }}>🤖
                                         Acier</option>
                                 </select>
                             </div>

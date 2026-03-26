@@ -594,8 +594,8 @@
 
             <!-- Tags Armure et Élément -->
             <div class="pro-card-tags">
-                <span class="pro-card-tag pro-tag-{{ $card->armor_type }}">
-                    @switch($card->armor_type)
+                <span class="pro-card-tag pro-tag-{{ $card->power_type }}">
+                    @switch($card->power_type)
                         @case('bronze') 🥉 Bronze @break
                         @case('silver') 🥈 Argent @break
                         @case('gold') 🥇 Or @break

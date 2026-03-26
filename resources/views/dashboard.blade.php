@@ -297,7 +297,7 @@
             transform: translateY(-2px);
             color: white;
         }
-        .sec-tile-icon { font-size: 1.5rem; line-height: 1; }
+        .sec-tile-icon { font-size: 1.5rem; line-height: 1; display: flex; align-items: center; justify-content: center; }
         .sec-tile-label { font-size: 0.62rem; color: rgba(255,255,255,0.65); }
         .sec-tile.bonus-available {
             border-color: rgba(16,185,129,0.5);
@@ -627,11 +627,11 @@
                 <div class="bento-col">
                     {{-- Combat PvE --}}
                     <a href="{{ route('game.index') }}" class="bento-tile tile-pve tile-large">
-                        <span class="tile-label">&#129302; Combat<br>PvE</span>
+                        <span class="tile-label"><img src="{{ asset('images/icons/pve.webp') }}" alt="PvE" class="w-7 h-7 object-contain inline-block"> Combat<br>PvE</span>
                         @if(file_exists(public_path('images/features/pve.webp')))
                             <img class="tile-img" src="{{ asset('images/features/pve.webp') }}" alt="PvE">
                         @else
-                            <span class="tile-icon">&#129302;</span>
+                            <span class="tile-icon"><img src="{{ asset('images/icons/pve.webp') }}" alt="PvE" class="w-10 h-10 object-contain"></span>
                         @endif
                     </a>
 
@@ -639,11 +639,11 @@
                     <a href="{{ route('pvp.lobby') }}" class="bento-tile tile-pvp tile-large">
                         <div class="notification-dot"></div>
                         <span class="tile-online-badge">En ligne</span>
-                        <span class="tile-label">&#127942; Arena<br>PvP</span>
+                        <span class="tile-label"><img src="{{ asset('images/icons/trophee.webp') }}" alt="PvP" class="w-7 h-7 object-contain inline-block"> Arena<br>PvP</span>
                         @if(file_exists(public_path('images/features/pvp.webp')))
                             <img class="tile-img" src="{{ asset('images/features/pvp.webp') }}" alt="PvP">
                         @else
-                            <span class="tile-icon">&#127942;</span>
+                            <span class="tile-icon"><img src="{{ asset('images/icons/trophee.webp') }}" alt="PvP" class="w-10 h-10 object-contain"></span>
                         @endif
                     </a>
                 </div>
@@ -652,24 +652,24 @@
                 <div class="bento-col">
                     {{-- Score --}}
                     <div class="tile-score">
-                        <div class="score-eyebrow">&#127942; Score</div>
+                        <div class="score-eyebrow"><img src="{{ asset('images/icons/trophee.webp') }}" alt="Score" class="w-5 h-5 object-contain inline-block"> Score</div>
                         <div class="score-big">{{ auth()->user()->wins }}</div>
                         <div class="score-sub">victoires &bull; {{ auth()->user()->cards()->count() }} cartes</div>
                     </div>
 
                     {{-- Mes Decks --}}
                     <a href="{{ route('decks.index') }}" class="bento-tile tile-decks" style="flex:1; min-height:75px;">
-                        <span class="tile-label-sm">&#127156; Mes<br>Decks</span>
+                        <span class="tile-label-sm"><img src="{{ asset('images/icons/livres.webp') }}" alt="Decks" class="w-7 h-7 object-contain inline-block"> Mes<br>Decks</span>
                         @if(file_exists(public_path('images/features/decks.webp')))
                             <img class="tile-img" src="{{ asset('images/features/decks.webp') }}" alt="Decks">
                         @else
-                            <span class="tile-icon">&#127156;</span>
+                            <span class="tile-icon"><img src="{{ asset('images/icons/livres.webp') }}" alt="Decks" class="w-10 h-10 object-contain"></span>
                         @endif
                     </a>
 
                     {{-- Boutique --}}
                     <a href="{{ route('shop.index') }}" class="tile-shop-cta">
-                        &#128722; BOUTIQUE
+                        <img src="{{ asset('images/icons/achat.webp') }}" alt="Boutique" class="w-6 h-6 object-contain inline-block"> BOUTIQUE
                     </a>
                 </div>
 
@@ -687,28 +687,28 @@
 
             <div class="bento-secondary mb-3">
                 <a href="{{ route('collection.index') }}" class="sec-tile">
-                    <span class="sec-tile-icon">&#128218;</span>
+                    <span class="sec-tile-icon"><img src="{{ asset('images/icons/livres.webp') }}" alt="Collection" class="w-7 h-7 object-contain"></span>
                     <span class="sec-tile-label">Collection</span>
                 </a>
                 <a href="{{ route('fusion.index') }}" class="sec-tile">
-                    <span class="sec-tile-icon">&#9889;</span>
+                    <span class="sec-tile-icon"><img src="{{ asset('images/icons/fusion.webp') }}" alt="Fusion" class="w-7 h-7 object-contain"></span>
                     <span class="sec-tile-label">Fusion</span>
                 </a>
                 <a href="{{ route('sell.index') }}" class="sec-tile">
-                    <span class="sec-tile-icon">&#128176;</span>
+                    <span class="sec-tile-icon"><img src="{{ asset('images/icons/vente.webp') }}" alt="Vente" class="w-7 h-7 object-contain"></span>
                     <span class="sec-tile-label">Vente</span>
                 </a>
                 <a href="{{ route('rewards.index') }}" class="sec-tile {{ $hasReward ? 'bonus-available' : '' }}">
                     @if($hasReward)<div class="notification-dot" style="top:6px;left:6px;width:8px;height:8px;"></div>@endif
-                    <span class="sec-tile-icon">&#127873;</span>
+                    <span class="sec-tile-icon"><img src="{{ asset('images/icons/bonus.webp') }}" alt="Bonus" class="w-7 h-7 object-contain"></span>
                     <span class="sec-tile-label">Bonus{{ $hasReward ? ' !' : '' }}</span>
                 </a>
                 <a href="{{ route('factions.index') }}" class="sec-tile">
-                    <span class="sec-tile-icon">&#127984;</span>
+                    <span class="sec-tile-icon"><img src="{{ asset('images/icons/chateau.webp') }}" alt="Factions" class="w-7 h-7 object-contain"></span>
                     <span class="sec-tile-label">Factions</span>
                 </a>
                 <a href="{{ route('cards.index') }}" class="sec-tile">
-                    <span class="sec-tile-icon">&#128270;</span>
+                    <span class="sec-tile-icon"><img src="{{ asset('images/icons/recherche.webp') }}" alt="Encyclopédie" class="w-7 h-7 object-contain"></span>
                     <span class="sec-tile-label">Encyclop.</span>
                 </a>
             </div>

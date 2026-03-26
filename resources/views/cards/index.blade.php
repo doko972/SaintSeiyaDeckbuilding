@@ -168,8 +168,8 @@
 
                                         <!-- Tags -->
                                         <div class="card-mini-tags">
-                                            <span class="tag-armor-{{ $card->armor_type }}">
-                                                @switch($card->armor_type)
+                                            <span class="tag-armor-{{ $card->power_type }}">
+                                                @switch($card->power_type)
                                                     @case('bronze')
                                                         🥉
                                                     @break
@@ -186,7 +186,7 @@
                                                         👑
                                                     @break
                                                 @endswitch
-                                                {{ ucfirst($card->armor_type) }}
+                                                {{ ucfirst($card->power_type) }}
                                             </span>
                                             <span class="tag-element-{{ $card->element }}">
                                                 @switch($card->element)

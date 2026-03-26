@@ -36,7 +36,7 @@ class PersephoneSeeder extends Seeder
                 'name' => 'Persephone',
                 'faction_id' => $spectres->id,
                 'grade' => 10,
-                'armor_type' => 'divine',
+                'power_type' => 'divine',
                 'element' => 'darkness',
                 'rarity' => 'legendary',
                 'health_points' => 265,

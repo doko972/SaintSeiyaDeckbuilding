@@ -29,8 +29,8 @@ class CardController extends Controller
             $query->where('element', $request->element);
         }
 
-        if ($request->has('armor_type')) {
-            $query->where('armor_type', $request->armor_type);
+        if ($request->has('power_type')) {
+            $query->where('power_type', $request->power_type);
         }
 
         $cards = $query->orderBy('name')->get();
@@ -86,7 +86,7 @@ class CardController extends Controller
             'id' => $card->id,
             'name' => $card->name,
             'grade' => $card->grade,
-            'armor_type' => $card->armor_type,
+            'power_type' => $card->power_type,
             'element' => $card->element,
             'rarity' => $card->rarity,
             'stats' => [

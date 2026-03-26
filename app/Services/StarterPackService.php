@@ -89,7 +89,7 @@ class StarterPackService
      */
     public function getAvailableBronzeStarters()
     {
-        return Card::where('armor_type', 'bronze')
+        return Card::where('power_type', 'bronze')
             ->where('rarity', 'rare')
             ->whereIn('name', [
                 'Seiya de Pegase',
@@ -118,7 +118,7 @@ class StarterPackService
             'Ikki du Phenix'
         ];
 
-        return $card->armor_type === 'bronze' 
+        return $card->power_type === 'bronze'
             && $card->rarity === 'rare' 
             && in_array($card->name, $validBronzes);
     }

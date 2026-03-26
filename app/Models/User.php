@@ -51,10 +51,10 @@ class User extends Authenticatable
      * Configuration des rangs et leurs seuils de victoires
      */
     public const RANKS = [
-        'bronze' => ['wins' => 0, 'name' => 'Chevalier de Bronze', 'icon' => '🥉', 'reward' => 0],
-        'argent' => ['wins' => 20, 'name' => 'Chevalier d\'Argent', 'icon' => '🥈', 'reward' => 500],
-        'or' => ['wins' => 50, 'name' => 'Chevalier d\'Or', 'icon' => '🥇', 'reward' => 1000],
-        'divin' => ['wins' => 100, 'name' => 'Chevalier Divin', 'icon' => '👑', 'reward' => 2000],
+        'bronze' => ['wins' => 0, 'name' => 'Recrue de l\'Arène', 'icon' => '🥉', 'reward' => 0],
+        'argent' => ['wins' => 20, 'name' => 'Combattant Confirmé', 'icon' => '🥈', 'reward' => 500],
+        'or' => ['wins' => 50, 'name' => 'Champion de l\'Arène', 'icon' => '🥇', 'reward' => 1000],
+        'divin' => ['wins' => 100, 'name' => 'Légende Immortelle', 'icon' => '👑', 'reward' => 2000],
     ];
 
     protected $hidden = [

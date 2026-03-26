@@ -35,7 +35,7 @@
             <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8 mb-8">
                 <div class="text-center mb-6">
                     <h3 class="text-4xl font-bold text-white mb-3">
-                        Bienvenue dans Saint Seiya Deckbuilding !
+                        Bienvenue dans L'Arène des Légendes !
                     </h3>
                     <p class="text-xl text-gray-300">
                         Commencez votre aventure en choisissant votre héros
@@ -49,7 +49,7 @@
                         <div class="flex items-center gap-3 text-gray-300">
                             <span class="text-2xl">⚔️</span>
                             <div>
-                                <strong class="text-amber-400">1 Chevalier de Bronze Rare</strong>
+                                <strong class="text-amber-400">1 Combattant Rare (au choix)</strong>
                                 <p class="text-sm text-gray-400">Celui que vous allez choisir</p>
                             </div>
                         </div>
@@ -162,8 +162,8 @@
 
                                                 <!-- Tags -->
                                                 <div class="card-tags">
-                                                    <span class="card-tag tag-{{ $bronze->armor_type }}">
-                                                        {{ ucfirst($bronze->armor_type) }}
+                                                    <span class="card-tag tag-{{ $bronze->power_type }}">
+                                                        {{ ucfirst($bronze->power_type) }}
                                                     </span>
                                                     <span class="card-tag tag-{{ $bronze->element }}">
                                                         {{ ucfirst($bronze->element) }}

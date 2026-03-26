@@ -314,7 +314,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                 <div>
                     <h1 class="text-3xl font-bold text-white flex items-center gap-3">
-                        <span class="text-4xl">🏛️</span>
+                        <span class="text-4xl"><img src="{{ asset('images/icons/chateau.webp') }}" alt="Factions" class="w-10 h-10 object-contain inline-block"></span>
                         Factions
                     </h1>
                     <p class="text-gray-400 mt-1">Les armées légendaires du Sanctuaire</p>
@@ -343,7 +343,7 @@
             <!-- Grille des factions -->
             @if ($factions->isEmpty())
                 <div class="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-12 text-center">
-                    <div class="text-7xl mb-6">🏛️</div>
+                    <div class="text-7xl mb-6"><img src="{{ asset('images/icons/chateau.webp') }}" alt="Factions" class="w-20 h-20 object-contain mx-auto"></div>
                     <h3 class="text-2xl font-bold text-white mb-3">Aucune faction</h3>
                     <p class="text-gray-400 mb-8 max-w-md mx-auto">
                         Les factions n'ont pas encore été créées.

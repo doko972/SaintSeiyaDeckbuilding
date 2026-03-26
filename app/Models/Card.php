@@ -15,7 +15,7 @@ class Card extends Model
         'name',
         'faction_id',
         'grade',
-        'armor_type',
+        'power_type',
         'element',
         'rarity',
         'health_points',

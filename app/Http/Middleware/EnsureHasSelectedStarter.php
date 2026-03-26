@@ -26,7 +26,7 @@ class EnsureHasSelectedStarter
                     return response()->json(['error' => 'Starter pack non sélectionné', 'redirect' => route('starter-pack.index')], 403);
                 }
                 return redirect()->route('starter-pack.index')
-                    ->with('info', 'Veuillez sélectionner votre Chevalier de Bronze de départ.');
+                    ->with('info', 'Veuillez sélectionner votre combattant de départ.');
             }
         }
 

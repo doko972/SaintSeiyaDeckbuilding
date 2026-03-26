@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Saint Seiya Deckbuilding - Construis ton deck et affronte tes adversaires avec les Chevaliers du Zodiaque !">
+    <meta name="description" content="L'Arène des Légendes - Jeu de deckbuilding multi-univers. Rassemble les plus grands guerriers et affronte tes adversaires dans des batailles épiques !">
 
-    <title>{{ config('app.name', 'Saint Seiya Deckbuilding') }}</title>
+    <title>{{ config('app.name', "L'Arène des Légendes") }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -53,7 +53,7 @@
         <!-- Background Image -->
         <div class="absolute inset-0 z-0">
             @if(file_exists(public_path('images/bg-sanctuary.webp')))
-                <img src="{{ asset('images/bg-sanctuary.webp') }}" alt="" class="w-full h-full object-cover">
+                <img src="{{ asset('images/bg-sanctuary.webp') }}" alt="" class="w-full h-full object-auto">
             @endif
             <div class="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-purple-900/60 to-gray-900"></div>
         </div>
@@ -69,7 +69,7 @@
             <!-- Logo principal -->
             <div class="mb-6">
                 @if(file_exists(public_path('images/logo.webp')))
-                    <img src="{{ asset('images/logo.webp') }}" alt="Saint Seiya Deckbuilding" class="h-32 md:h-40 w-auto mx-auto drop-shadow-[0_0_30px_rgba(255,215,0,0.5)] animate-float">
+                    {{-- <img src="{{ asset('images/logo.webp') }}" alt="L'Arène des Légendes" class="h-32 md:h-40 w-auto mx-auto drop-shadow-[0_0_30px_rgba(255,215,0,0.5)] animate-float"> --}}
                 @else
                     <div class="text-8xl md:text-9xl animate-float">⚔️</div>
                 @endif
@@ -77,15 +77,15 @@
 
             <h1 class="text-5xl md:text-7xl font-black mb-4">
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400">
-                    SAINT SEIYA
+                    L'ARÈNE DES LÉGENDES
                 </span>
             </h1>
             <h2 class="text-2xl md:text-4xl font-bold text-purple-300 mb-6 tracking-widest">
-                DECKBUILDING
+                {{-- DECKBUILDING MULTI-UNIVERS --}}
             </h2>
 
             <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                Construis ton deck de Chevaliers, maîtrise le Cosmos et affronte des adversaires dans des combats épiques !
+                Rassemble les plus grands guerriers de tous les univers, construis ton deck légendaire et affronte tes adversaires dans des batailles épiques !
             </p>
 
             <!-- CTA Buttons -->
@@ -96,7 +96,7 @@
                     </a>
                 @else
                     <a href="{{ route('register') }}" class="px-8 py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-gray-900 font-bold text-lg rounded-xl shadow-lg shadow-yellow-500/30 hover:from-yellow-400 hover:to-orange-400 transition transform hover:scale-105">
-                        🛡️ Devenir Chevalier
+                        ⚔️ Rejoindre l'Arène
                     </a>
                     <a href="{{ route('login') }}" class="px-8 py-4 bg-gray-800 border border-purple-500 text-purple-300 font-bold text-lg rounded-xl hover:bg-purple-900/50 transition">
                         Se connecter
@@ -117,7 +117,7 @@
                     </span>
                 </h2>
                 <p class="text-gray-400 text-lg max-w-2xl mx-auto">
-                    Chaque faction possède ses propres forces et stratégies. Quelle armure porteras-tu ?
+                    Chaque faction possède ses propres forces et stratégies. Quel univers choisiras-tu ?
                 </p>
             </div>
 
@@ -223,7 +223,7 @@
                     </span>
                 </h2>
                 <p class="text-gray-400 text-lg max-w-2xl mx-auto">
-                    Maîtrise les mécaniques du cosmos pour devenir le plus puissant des Chevaliers
+                    Maîtrise les mécaniques du cosmos pour devenir une Légende de l'Arène
                 </p>
             </div>
 
@@ -234,7 +234,7 @@
                         🃏
                     </div>
                     <h3 class="text-xl font-bold text-white mb-2">1. Collectionne</h3>
-                    <p class="text-gray-400">Obtiens des cartes de Chevaliers avec leurs attaques uniques et capacités spéciales.</p>
+                    <p class="text-gray-400">Obtiens des cartes de Légendes de tous les univers avec leurs attaques uniques et capacités spéciales.</p>
                 </div>
 
                 <!-- Étape 2 -->
@@ -243,7 +243,7 @@
                         📚
                     </div>
                     <h3 class="text-xl font-bold text-white mb-2">2. Construis</h3>
-                    <p class="text-gray-400">Crée ton deck en combinant stratégiquement tes meilleurs Chevaliers.</p>
+                    <p class="text-gray-400">Crée ton deck en combinant stratégiquement tes meilleures Légendes.</p>
                 </div>
 
                 <!-- Étape 3 -->
@@ -341,11 +341,11 @@
         <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
             <h2 class="text-4xl md:text-5xl font-black mb-6">
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400">
-                    Prêt à brûler ton Cosmos ?
+                    Prêt à entrer dans l'Arène ?
                 </span>
             </h2>
             <p class="text-xl text-gray-300 mb-8">
-                Rejoins des milliers de Chevaliers et commence ton aventure dès maintenant !
+                Rejoins des milliers de combattants et commence ton aventure dès maintenant !
             </p>
 
             @guest
@@ -371,7 +371,7 @@
                         <span class="text-2xl">⚔️</span>
                     @endif
                     <span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200">
-                        Saint Seiya Deckbuilding
+                        L'Arène des Légendes
                     </span>
                 </div>
 

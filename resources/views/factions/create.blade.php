@@ -16,7 +16,7 @@
             </div>
             <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden">
                 <div class="p-6 bg-gradient-to-r from-purple-600 to-indigo-600">
-                    <h3 class="text-xl font-bold text-white">🏛️ Créer une nouvelle faction</h3>
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2"><img src="{{ asset('images/icons/chateau.webp') }}" alt="Faction" class="w-6 h-6 object-contain"> Créer une nouvelle faction</h3>
                 </div>
 
                 <form method="POST" action="{{ route('admin.factions.store') }}" enctype="multipart/form-data" class="p-6 space-y-6">

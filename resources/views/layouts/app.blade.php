@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Saint Seiya Deckbuilding') }}</title>
+    <title>{{ config('app.name', "L'Arène des Légendes") }}</title>
 
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#8B5CF6">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="SS Deckbuilding">
+    <meta name="apple-mobile-web-app-title" content="ArènaLeg">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="SS Deckbuilding">
+    <meta name="application-name" content="ArènaLeg">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/images/icons/icon-192.png">
 
