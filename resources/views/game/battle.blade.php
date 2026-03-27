@@ -1517,6 +1517,27 @@
             cursor: not-allowed;
         }
 
+        .auto-play-btn {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+            color: white;
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.4);
+            font-size: 0.75rem;
+            padding: 0.75rem 1rem;
+        }
+        .auto-play-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 114, 128, 0.5);
+        }
+        .auto-play-btn.active {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.5);
+            animation: autoPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes autoPulse {
+            0%, 100% { box-shadow: 0 4px 15px rgba(245, 158, 11, 0.5); }
+            50% { box-shadow: 0 4px 25px rgba(245, 158, 11, 0.9); }
+        }
+
         /* ========================================
            MODAL GAME OVER
         ======================================== */
@@ -2346,6 +2367,7 @@
     <!-- Boutons de contrôle -->
     <div class="control-buttons">
         <button class="control-btn end-turn-btn" id="endTurnBtn" onclick="endTurn()">⏭️</button>
+        <button class="control-btn auto-play-btn" id="autoPlayBtn" onclick="toggleAutoPlay()">⚡ AUTO</button>
     </div>
 
     <!-- Modal Game Over -->
@@ -2388,6 +2410,8 @@
         let selectedAttacker = null;
         let selectedAttack = null;
         let phase = 'idle'; // idle, selectingAttacker, selectingAttack, selectingTarget
+        let autoPlay = false;
+        let autoPlayTimeout = null;
 
         // ========================================
         // SYSTÈME D'ANIMATIONS
@@ -3172,7 +3196,8 @@
         // ========================================
         // JOUER UNE CARTE
         // ========================================
-        async function playCard(index, cardElement) {
+        async function playCard(index, cardElement, fromAuto = false) {
+            if (!fromAuto) stopAutoPlay();
             const fieldZone = document.getElementById('playerField');
             const fieldRect = fieldZone.getBoundingClientRect();
             const targetPos = {
@@ -3204,6 +3229,7 @@
         // SÉLECTION D'ATTAQUANT
         // ========================================
         function selectAttacker(index) {
+            stopAutoPlay();
             const card = gameState.player.field[index];
             if (!card || card.has_attacked) {
                 addLogEntry('❌ Cette carte a déjà attaqué ce tour', 'damage');
@@ -3799,7 +3825,157 @@
         // ========================================
         // FIN DE PARTIE
         // ========================================
+        // ========================================
+        // COMBAT AUTOMATIQUE
+        // ========================================
+        function toggleAutoPlay() {
+            if (autoPlay) {
+                stopAutoPlay();
+                addLogEntry('⏸️ Combat automatique désactivé', 'info');
+            } else {
+                autoPlay = true;
+                document.getElementById('autoPlayBtn').classList.add('active');
+                addLogEntry('⚡ Combat automatique activé', 'info');
+                scheduleAutoPlayStep(500);
+            }
+        }
+
+        function stopAutoPlay() {
+            autoPlay = false;
+            clearTimeout(autoPlayTimeout);
+            const btn = document.getElementById('autoPlayBtn');
+            if (btn) btn.classList.remove('active');
+        }
+
+        function scheduleAutoPlayStep(delay = 1200) {
+            if (!autoPlay) return;
+            autoPlayTimeout = setTimeout(runAutoPlayStep, delay);
+        }
+
+        async function runAutoPlayStep() {
+            if (!autoPlay || !gameState || gameState.phase !== 'player') {
+                stopAutoPlay();
+                return;
+            }
+
+            try {
+                // Étape 1 : Jouer une carte si possible (même logique que l'IA)
+                if (gameState.player.field.length < 5) {
+                    const hand = gameState.player.hand;
+                    for (let i = 0; i < hand.length; i++) {
+                        if (gameState.player.cosmos >= hand[i].cost) {
+                            const handCards = document.querySelectorAll('.hand-card');
+                            if (handCards[i]) {
+                                await playCard(i, handCards[i], true);
+                                await sleep(600);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                if (!autoPlay) return;
+
+                // Étape 2 : Attaquer EN PREMIER (cosmos plein avant de jouer une carte)
+                let attackDone = true;
+                while (attackDone) {
+                    attackDone = false;
+                    for (let i = 0; i < gameState.player.field.length; i++) {
+                        if (!autoPlay) return;
+
+                        const card = gameState.player.field[i];
+                        if (card.has_attacked) continue;
+                        if (!gameState.opponent.field.length) break;
+
+                        const attack = card.main_attack;
+                        if (!attack) continue;
+
+                        if (card.current_endurance >= attack.endurance_cost &&
+                            gameState.player.cosmos >= attack.cosmos_cost) {
+
+                            const targetIndex = Math.floor(Math.random() * gameState.opponent.field.length);
+
+                            // Récupérer les éléments DOM AVANT l'appel API (comme selectTarget)
+                            const attackerEl = document.querySelector(`.battle-card[data-owner="player"][data-index="${i}"]`);
+                            const targetEl   = document.querySelector(`.battle-card[data-owner="opponent"][data-index="${targetIndex}"]`);
+
+                            // Animation d'attaque si les éléments existent
+                            if (attackerEl && targetEl) {
+                                await animations.attackAnimation(attackerEl, targetEl, { element: 'fire', damage: attack.damage });
+                            }
+
+                            const data = await apiCall('attack', 'POST', {
+                                deck_id: deckId,
+                                attacker_index: i,
+                                attack_type: 'main',
+                                target_index: targetIndex,
+                                battle_state: gameState
+                            });
+
+                            addLogEntry(`⚔️ ${data.message}`, 'damage');
+
+                            // Afficher les dégâts
+                            if (data.damage && targetEl) {
+                                animations.showDamage(targetEl, data.damage, 'damage');
+                            }
+
+                            // Animation de destruction si la cible est KO
+                            if (data.target_destroyed && targetEl) {
+                                await animations.destroyCardAnimation(targetEl);
+                            }
+
+                            gameState = data.battle_state;
+                            renderAll();
+                            await sleep(600);
+
+                            if (data.battle_ended) {
+                                endGame(data.winner === 'player');
+                                return;
+                            }
+
+                            attackDone = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!autoPlay) return;
+
+                // Étape 1 (après attaques) : Jouer une carte avec le cosmos restant
+                if (gameState.player.field.length < 5) {
+                    const hand = gameState.player.hand;
+                    for (let i = 0; i < hand.length; i++) {
+                        if (gameState.player.cosmos >= hand[i].cost) {
+                            const handCards = document.querySelectorAll('.hand-card');
+                            if (handCards[i]) {
+                                await playCard(i, handCards[i], true);
+                                await sleep(600);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                if (!autoPlay) return;
+
+                await sleep(400);
+
+                // Étape 3 : Fin de tour
+                await endTurn();
+
+                if (autoPlay && gameState?.phase === 'player') {
+                    scheduleAutoPlayStep(1200);
+                } else if (autoPlay) {
+                    scheduleAutoPlayStep(1200);
+                }
+            } catch (e) {
+                console.error('Auto-play error:', e);
+                stopAutoPlay();
+            }
+        }
+
         async function endGame(victory) {
+            stopAutoPlay();
             const modal = document.getElementById('gameOverModal');
             const title = document.getElementById('gameOverTitle');
             const subtitle = document.getElementById('gameOverSubtitle');

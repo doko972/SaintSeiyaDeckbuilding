@@ -1,42 +1,6 @@
 <x-app-layout>
     <style>
         /* ========================================
-           FOND COSMOS
-        ======================================== */
-        .cosmos-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            background:
-                radial-gradient(ellipse at 20% 80%, rgba(34, 197, 94, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(5, 150, 105, 0.1) 0%, transparent 70%),
-                linear-gradient(180deg, #0a1a0a 0%, #0a2a1a 50%, #0a1a1a 100%);
-        }
-
-        .stars {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image:
-                radial-gradient(2px 2px at 20px 30px, #10B981, transparent),
-                radial-gradient(2px 2px at 40px 70px, rgba(34,197,94,0.8), transparent),
-                radial-gradient(1px 1px at 90px 40px, #059669, transparent),
-                radial-gradient(2px 2px at 160px 120px, rgba(16,185,129,0.9), transparent),
-                radial-gradient(1px 1px at 230px 80px, #10B981, transparent);
-            background-size: 350px 200px;
-            animation: twinkle 5s ease-in-out infinite;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-
-        /* ========================================
            CARTES VENTE
         ======================================== */
         .sell-card {
@@ -412,8 +376,10 @@
         .price-item.rarity-mythic .rarity-name { color: #FF006E; }
     </style>
 
-    <div class="cosmos-bg">
-        <div class="stars"></div>
+    <!-- Fond Sanctuaire -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute inset-0 bg-gradient-to-b from-gray-800 via-gray-900 to-black"></div>
+        <img src="{{ asset('images/baniere.webp') }}" alt="" class="absolute inset-0 w-full h-full object-cover opacity-[0.10]">
     </div>
 
     <div class="min-h-screen relative z-10 py-8 px-4 sm:px-6 lg:px-8">

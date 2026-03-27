@@ -1,37 +1,6 @@
 <x-app-layout>
     <style>
         /* ========================================
-           FOND COSMOS ANIME
-        ======================================== */
-        .cosmos-bg {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            background:
-                radial-gradient(ellipse at 20% 80%, rgba(120, 0, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(255, 0, 100, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(0, 100, 255, 0.1) 0%, transparent 70%),
-                linear-gradient(180deg, #0a0a1a 0%, #1a0a2a 50%, #0a1a2a 100%);
-        }
-        .stars {
-            position: absolute;
-            width: 100%; height: 100%;
-            background-image:
-                radial-gradient(2px 2px at 20px 30px, #eee, transparent),
-                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 90px 40px, #fff, transparent),
-                radial-gradient(2px 2px at 160px 120px, rgba(255,255,255,0.9), transparent),
-                radial-gradient(1px 1px at 230px 80px, #fff, transparent);
-            background-size: 350px 200px;
-            animation: twinkle 5s ease-in-out infinite;
-        }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-
-        /* ========================================
            HERO COMPACT
         ======================================== */
         .hero-compact {
@@ -586,8 +555,11 @@
         .fullscreen-note { margin-top: 1rem; font-size: 0.75rem; color: rgba(255,255,255,0.4); }
     </style>
 
-    <!-- Fond Cosmos -->
-    <div class="cosmos-bg"><div class="stars"></div></div>
+    <!-- Fond Sanctuaire -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute inset-0 bg-gradient-to-b from-gray-800 via-gray-900 to-black"></div>
+        <img src="{{ asset('images/baniere.webp') }}" alt="" class="absolute inset-0 w-full h-full object-cover opacity-[0.10]">
+    </div>
 
     <div class="relative z-10 min-h-screen py-4 px-3 sm:px-5">
         <div class="max-w-xl mx-auto">

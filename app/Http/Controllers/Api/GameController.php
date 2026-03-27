@@ -117,11 +117,11 @@ class GameController extends Controller
             ], 400);
         }
 
-        // Vérifier la limite du terrain (max 3 cartes)
-        if (count($state['player']['field']) >= 3) {
+        // Vérifier la limite du terrain (max 5 cartes)
+        if (count($state['player']['field']) >= 5) {
             return response()->json([
                 'success' => false,
-                'message' => 'Votre terrain est plein (max 3 cartes).',
+                'message' => 'Votre terrain est plein (max 5 cartes).',
             ], 400);
         }
 
@@ -629,7 +629,7 @@ class GameController extends Controller
             $state['winner'] = 'player';
             $state['log'][] = [
                 'turn' => $state['turn'],
-                'message' => '🎉 VICTOIRE ! Vous avez triomphé !',
+                'message' => '🎉 VICTOIRE ! Vous avez triomphé',
             ];
         }
 
@@ -639,7 +639,7 @@ class GameController extends Controller
             $state['winner'] = 'opponent';
             $state['log'][] = [
                 'turn' => $state['turn'],
-                'message' => '💀 DÉFAITE... Votre cosmos s\'est éteint.',
+                'message' => '💀 DÉFAITE...',
             ];
         }
 
@@ -659,11 +659,11 @@ class GameController extends Controller
         $rankPromotion = null;
 
         if ($isVictory) {
-            $rankPromotion = $user->recordWin(100);
-            $message = 'Victoire ! Vous gagnez 100 pièces !';
+            $rankPromotion = $user->recordWin(300);
+            $message = 'Victoire ! Vous gagnez 300 pièces !';
         } else {
-            $user->recordLoss(25);
-            $message = 'Défaite... Vous gagnez quand même 25 pièces.';
+            $user->recordLoss(100);
+            $message = 'Défaite... Vous gagnez quand même 100 pièces.';
         }
 
         return response()->json([
