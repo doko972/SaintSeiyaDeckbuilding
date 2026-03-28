@@ -1557,6 +1557,13 @@
             0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); }
             50% { box-shadow: 0 0 15px 5px rgba(124, 58, 237, 0.2); }
         }
+        .sfx-btn.muted { opacity: 0.38; }
+        .sfx-controls {
+            position: fixed;
+            top: 27.8rem;
+            left: 1rem;
+            z-index: 100;
+        }
 
         .volume-panel {
             position: absolute;
@@ -2333,6 +2340,12 @@
     </div>
     @endif
 
+    <!-- Effets sonores -->
+    <script src="/js/sound-manager.js"></script>
+    <div class="sfx-controls">
+        <button class="music-btn sfx-btn" id="sfxToggle" onclick="toggleSfx()" title="Effets sonores (S)">🔊</button>
+    </div>
+
     <div class="battle-container">
         <!-- Header -->
         <header class="battle-header">
@@ -2499,6 +2512,7 @@
         const animations = {
             // Animation de jeu d'une carte avec flip
             playCardAnimation: async function(cardElement, targetPos) {
+                SoundManager.play('card_place');
                 return new Promise((resolve) => {
                     const clone = cardElement.cloneNode(true);
                     clone.style.position = 'fixed';
@@ -2550,6 +2564,7 @@
 
             // Animation d'attaque
             attackAnimation: async function(attackerCard, targetCard, attackData) {
+                SoundManager.play('attack', attackData ? attackData.element : null);
                 return new Promise(async (resolve) => {
                     const clone = attackerCard.cloneNode(true);
                     clone.style.position = 'fixed';
@@ -2656,6 +2671,7 @@
 
             // Animation de destruction spectaculaire
             destroyCardAnimation: async function(cardElement) {
+                SoundManager.play('destroy');
                 if (!cardElement) return;
 
                 return new Promise(async (resolve) => {
@@ -3136,7 +3152,7 @@
 
             // Animation d'attaque
             await animations.attackAnimation(attackerCard, targetCard, {
-                element: 'fire',
+                element: card.element || 'generic',
                 damage: damage
             });
 
@@ -3658,6 +3674,15 @@
         }
 
         // Actions avec animations
+        function toggleSfx() {
+            const enabled = SoundManager.toggle();
+            const btn = document.getElementById('sfxToggle');
+            if (btn) {
+                btn.textContent = enabled ? '🔊' : '🔇';
+                btn.classList.toggle('muted', !enabled);
+            }
+        }
+
         async function playCard(index, cardElement) {
             if (!isMyTurn) return;
 
@@ -3974,7 +3999,7 @@
             }
 
             const attackData = {
-                element: 'fire', // TODO: récupérer l'élément réel
+                element: card.element || 'generic',
                 damage: attackDamage
             };
 
@@ -4079,6 +4104,7 @@
 
         async function endTurn() {
             if (!isMyTurn) return;
+            SoundManager.play('end_turn');
 
             try {
                 const response = await fetch('/api/v1/pvp/end-turn', {
@@ -4193,6 +4219,7 @@
         // FIN DE PARTIE
         // ========================================
         function endGame(victory, rankPromotion = null) {
+            SoundManager.play(victory ? 'victory' : 'defeat');
             const modal = document.getElementById('gameOverModal');
             const title = document.getElementById('gameOverTitle');
             const subtitle = document.getElementById('gameOverSubtitle');

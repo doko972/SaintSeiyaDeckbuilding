@@ -2127,6 +2127,13 @@
             background: rgba(124, 58, 237, 0.6);
             animation: pulse-music 2s infinite;
         }
+        .sfx-btn.muted { opacity: 0.38; }
+        .sfx-controls {
+            position: fixed;
+            top: 27.8rem;
+            left: 1rem;
+            z-index: 100;
+        }
 
         @keyframes pulse-music {
             0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); }
@@ -2248,6 +2255,12 @@
         </div>
     </div>
     @endif
+
+    <!-- Effets sonores -->
+    <script src="/js/sound-manager.js"></script>
+    <div class="sfx-controls">
+        <button class="music-btn sfx-btn" id="sfxToggle" onclick="toggleSfx()" title="Effets sonores (S)">🔊</button>
+    </div>
 
     <div class="battle-container">
         <!-- Header -->
@@ -2419,6 +2432,7 @@
         const animations = {
             // Animation de jeu d'une carte
             playCardAnimation: async function(cardElement, targetPos) {
+                SoundManager.play('card_place');
                 return new Promise((resolve) => {
                     const clone = cardElement.cloneNode(true);
                     clone.style.position = 'fixed';
@@ -2448,6 +2462,7 @@
 
             // Animation d'attaque
             attackAnimation: async function(attackerCard, targetCard, attackData) {
+                SoundManager.play('attack', attackData ? attackData.element : null);
                 return new Promise(async (resolve) => {
                     const clone = attackerCard.cloneNode(true);
                     clone.style.position = 'fixed';
@@ -2568,6 +2583,7 @@
 
             // ✅ ANIMATION DE DESTRUCTION SPECTACULAIRE
             destroyCardAnimation: async function(cardElement) {
+                SoundManager.play('destroy');
                 console.log('💥 destroyCardAnimation appelée', cardElement);
 
                 if (!cardElement) {
@@ -3488,7 +3504,7 @@
             // Animation d'attaque
             const card = gameState.player.field[selectedAttacker];
             const attackData = {
-                element: 'fire',
+                element: card.element || 'generic',
                 damage: card.main_attack?.damage || 50
             };
 
@@ -3576,6 +3592,7 @@
         // FIN DU TOUR
         // ========================================
         async function endTurn() {
+            SoundManager.play('end_turn');
             try {
                 // ✅ SAUVEGARDER les références des cartes du joueur AVANT l'appel API
                 // Utilise instance_id comme clé principale, avec fallback sur le nom
@@ -3828,6 +3845,15 @@
         // ========================================
         // COMBAT AUTOMATIQUE
         // ========================================
+        function toggleSfx() {
+            const enabled = SoundManager.toggle();
+            const btn = document.getElementById('sfxToggle');
+            if (btn) {
+                btn.textContent = enabled ? '🔊' : '🔇';
+                btn.classList.toggle('muted', !enabled);
+            }
+        }
+
         function toggleAutoPlay() {
             if (autoPlay) {
                 stopAutoPlay();
@@ -3901,7 +3927,7 @@
 
                             // Animation d'attaque si les éléments existent
                             if (attackerEl && targetEl) {
-                                await animations.attackAnimation(attackerEl, targetEl, { element: 'fire', damage: attack.damage });
+                                await animations.attackAnimation(attackerEl, targetEl, { element: card.element || 'generic', damage: attack.damage });
                             }
 
                             const data = await apiCall('attack', 'POST', {
@@ -3976,6 +4002,7 @@
 
         async function endGame(victory) {
             stopAutoPlay();
+            SoundManager.play(victory ? 'victory' : 'defeat');
             const modal = document.getElementById('gameOverModal');
             const title = document.getElementById('gameOverTitle');
             const subtitle = document.getElementById('gameOverSubtitle');

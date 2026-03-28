@@ -319,6 +319,112 @@
         .recent-card img { width: 100%; height: 100%; object-fit: cover; }
 
         /* ========================================
+           PUB NOUVELLE CARTE
+        ======================================== */
+        .new-card-ad {
+            position: fixed;
+            bottom: 50%;
+            right: max(1rem, calc(50% - 18rem + 1rem));
+            z-index: 200;
+            width: 130px;
+            background: linear-gradient(160deg, #1e1b4b 0%, #2d1b69 60%, #1a0a2a 100%);
+            border: 1.5px solid rgba(255, 215, 0, 0.5);
+            border-radius: 14px;
+            padding: 10px 10px 8px;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.7), 0 0 30px rgba(139,92,246,0.3);
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px) scale(0.88);
+            transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+            pointer-events: none;
+        }
+        .new-card-ad.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+        }
+        .new-card-ad.dismissing {
+            opacity: 0;
+            transform: translateY(24px) scale(0.88);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+        .new-card-ad:hover {
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 40px rgba(255,215,0,0.25);
+        }
+        .nca-close {
+            position: absolute;
+            top: 6px; right: 7px;
+            background: none; border: none;
+            color: rgba(255,255,255,0.45);
+            font-size: 0.7rem; cursor: pointer;
+            line-height: 1; padding: 0;
+            transition: color 0.2s;
+        }
+        .nca-close:hover { color: white; }
+        .nca-tag {
+            font-size: 0.5rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #fbbf24;
+            margin-bottom: 7px;
+            display: flex; align-items: center; gap: 3px;
+        }
+        .nca-card {
+            width: 100%;
+            aspect-ratio: 2.5 / 4;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1.5px solid rgba(255,255,255,0.15);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            animation: ncaFloat 3s ease-in-out infinite;
+        }
+        .nca-card img {
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center top;
+        }
+        .nca-card-placeholder {
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem;
+        }
+        .nca-name {
+            margin-top: 7px;
+            font-size: 0.6rem;
+            font-weight: 800;
+            color: white;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .nca-rarity {
+            font-size: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            color: rgba(255,255,255,0.45);
+            margin-top: 2px;
+        }
+        .nca-progress {
+            margin-top: 8px;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .nca-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #7c3aed, #fbbf24);
+            border-radius: 2px;
+            transform-origin: left;
+        }
+        @keyframes ncaFloat {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50%       { transform: translateY(-6px) rotate(-3deg); }
+        }
+
+        /* ========================================
            JOUEURS EN LIGNE
         ======================================== */
         .player-card {
@@ -755,6 +861,62 @@
 
         </div>
     </div>
+
+    {{-- Pub nouvelle carte — flash one-time par session (dernière carte créée dans le jeu) --}}
+    @php $latestCard = \App\Models\Card::with('faction')->latest()->first(); @endphp
+    @if($latestCard)
+    <div class="new-card-ad" id="newCardAd" role="dialog" aria-label="Nouvelle carte ajoutée">
+        <button class="nca-close" onclick="dismissNewCardAd()" aria-label="Fermer">✕</button>
+        <div class="nca-tag">✨ Dernière carte ajoutée</div>
+        <div class="nca-card" style="background: linear-gradient(135deg, {{ $latestCard->faction?->color_primary ?? '#2d1b69' }}, {{ $latestCard->faction?->color_secondary ?? '#4c1d95' }});">
+            @if($latestCard->image_primary)
+                <img src="{{ Storage::url($latestCard->image_primary) }}" alt="{{ $latestCard->name }}">
+            @else
+                <div class="nca-card-placeholder">⚔️</div>
+            @endif
+        </div>
+        <div class="nca-name">{{ $latestCard->name }}</div>
+        <div class="nca-rarity">{{ ucfirst($latestCard->rarity ?? 'commune') }}</div>
+        <div class="nca-progress"><div class="nca-bar" id="ncaBar"></div></div>
+    </div>
+
+    <script>
+    (function() {
+        var cardId = {{ $latestCard->id }};
+        var storageKey = 'nc_ad_seen_' + cardId;
+        if (sessionStorage.getItem(storageKey)) return;
+
+        sessionStorage.setItem(storageKey, '1');
+
+        var ad = document.getElementById('newCardAd');
+        var bar = document.getElementById('ncaBar');
+        var duration = 5000;
+        var dismissTimeout;
+
+        // Affichage avec léger délai pour que la transition soit visible
+        setTimeout(function() {
+            ad.classList.add('visible');
+            // Barre de progression : part de 100%, descend à 0 en `duration` ms
+            bar.style.transition = 'none';
+            bar.style.width = '100%';
+            bar.getBoundingClientRect(); // force reflow
+            bar.style.transition = 'width ' + duration + 'ms linear';
+            bar.style.width = '0%';
+            dismissTimeout = setTimeout(dismissNewCardAd, duration);
+        }, 600);
+    })();
+
+    function dismissNewCardAd() {
+        var ad = document.getElementById('newCardAd');
+        if (!ad) return;
+        ad.classList.remove('visible');
+        ad.classList.add('dismissing');
+        setTimeout(function() { ad.style.display = 'none'; }, 400);
+        clearTimeout(window._ncaDismissTimeout);
+    }
+    window._ncaDismissTimeout = null;
+    </script>
+    @endif
 
     <!-- ========================================
          MODAL BONUS QUOTIDIEN
