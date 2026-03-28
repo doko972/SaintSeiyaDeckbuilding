@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Battle;
+use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable
 {
@@ -941,5 +942,10 @@ class User extends Authenticatable
             'invitation' => $invitation,
             'message' => "Invitation envoyee a {$toUser->name} !",
         ];
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }
