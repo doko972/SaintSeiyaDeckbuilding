@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black py-12 relative overflow-hidden">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8 gap-6">
+        <div class="sm:px-6 lg:px-8 gap-6">
             <!-- Fond d'écran bannière Sanctuaire -->
             <div class="fixed inset-0 z-0 pointer-events-none">
                 <img src="{{ asset('images/baniere.webp') }}" alt=""
@@ -103,7 +103,7 @@
                         <p class="text-gray-400">Cette faction n'a pas encore de cartes.</p>
                     </div>
                 @else
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
                         @foreach ($faction->cards as $card)
                             <div class="card-grid-item group">
                                 <a href="{{ route('cards.show', $card) }}" class="block">

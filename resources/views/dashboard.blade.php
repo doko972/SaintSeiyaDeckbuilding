@@ -324,7 +324,7 @@
         .new-card-ad {
             position: fixed;
             bottom: 50%;
-            right: max(1rem, calc(50% - 18rem + 1rem));
+            right: max(1rem, calc(50% - 28rem + 1rem));
             z-index: 200;
             width: 130px;
             background: linear-gradient(160deg, #1e1b4b 0%, #2d1b69 60%, #1a0a2a 100%);
@@ -668,7 +668,7 @@
     </div>
 
     <div class="relative z-10 min-h-screen py-4 px-3 sm:px-5">
-        <div class="max-w-xl mx-auto">
+        <div class="max-w-4xl mx-auto">
 
             {{-- ============================================================
                  HERO COMPACT
@@ -862,11 +862,16 @@
         </div>
     </div>
 
-    {{-- Pub nouvelle carte — flash one-time par session (dernière carte créée dans le jeu) --}}
-    @php $latestCard = \App\Models\Card::with('faction')->latest()->first(); @endphp
-    @if($latestCard)
-    <div class="new-card-ad" id="newCardAd" role="dialog" aria-label="Nouvelle carte ajoutée">
-        <button class="nca-close" onclick="dismissNewCardAd()" aria-label="Fermer">✕</button>
+    {{-- Pub nouvelle carte — flash one-time par session auth (session PHP, réinitialisée à chaque reconnexion) --}}
+    @php
+        $latestCard = \App\Models\Card::with('faction')->latest()->first();
+        $adKey = 'card_ad_shown_' . ($latestCard?->id ?? 0);
+        $showAd = $latestCard && !session()->has($adKey);
+        if ($showAd) session()->put($adKey, true);
+    @endphp
+    @if($showAd)
+    <a href="{{ route('collection.show', $latestCard) }}" class="new-card-ad" id="newCardAd" role="dialog" aria-label="Nouvelle carte ajoutée" style="text-decoration:none;display:block;">
+        <button class="nca-close" onclick="event.preventDefault(); dismissNewCardAd()" aria-label="Fermer">✕</button>
         <div class="nca-tag">✨ Dernière carte ajoutée</div>
         <div class="nca-card" style="background: linear-gradient(135deg, {{ $latestCard->faction?->color_primary ?? '#2d1b69' }}, {{ $latestCard->faction?->color_secondary ?? '#4c1d95' }});">
             @if($latestCard->image_primary)
@@ -878,31 +883,22 @@
         <div class="nca-name">{{ $latestCard->name }}</div>
         <div class="nca-rarity">{{ ucfirst($latestCard->rarity ?? 'commune') }}</div>
         <div class="nca-progress"><div class="nca-bar" id="ncaBar"></div></div>
-    </div>
+    </a>
 
     <script>
     (function() {
-        var cardId = {{ $latestCard->id }};
-        var storageKey = 'nc_ad_seen_' + cardId;
-        if (sessionStorage.getItem(storageKey)) return;
-
-        sessionStorage.setItem(storageKey, '1');
-
-        var ad = document.getElementById('newCardAd');
+        var ad  = document.getElementById('newCardAd');
         var bar = document.getElementById('ncaBar');
         var duration = 5000;
-        var dismissTimeout;
 
-        // Affichage avec léger délai pour que la transition soit visible
         setTimeout(function() {
             ad.classList.add('visible');
-            // Barre de progression : part de 100%, descend à 0 en `duration` ms
             bar.style.transition = 'none';
             bar.style.width = '100%';
-            bar.getBoundingClientRect(); // force reflow
+            bar.getBoundingClientRect();
             bar.style.transition = 'width ' + duration + 'ms linear';
             bar.style.width = '0%';
-            dismissTimeout = setTimeout(dismissNewCardAd, duration);
+            setTimeout(dismissNewCardAd, duration);
         }, 600);
     })();
 
@@ -912,9 +908,7 @@
         ad.classList.remove('visible');
         ad.classList.add('dismissing');
         setTimeout(function() { ad.style.display = 'none'; }, 400);
-        clearTimeout(window._ncaDismissTimeout);
     }
-    window._ncaDismissTimeout = null;
     </script>
     @endif
 

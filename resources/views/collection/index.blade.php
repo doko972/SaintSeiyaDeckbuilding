@@ -1,39 +1,29 @@
 <x-app-layout>
     <style>
         /* ========================================
-           FOND COSMOS
+           FOND
         ======================================== */
-        .cosmos-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            background: 
-                radial-gradient(ellipse at 20% 80%, rgba(120, 0, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(255, 0, 100, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(0, 100, 255, 0.1) 0%, transparent 70%),
-                linear-gradient(180deg, #0a0a1a 0%, #1a0a2a 50%, #0a1a2a 100%);
-        }
 
-        .stars {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(2px 2px at 20px 30px, #eee, transparent),
-                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 90px 40px, #fff, transparent),
-                radial-gradient(2px 2px at 160px 120px, rgba(255,255,255,0.9), transparent),
-                radial-gradient(1px 1px at 230px 80px, #fff, transparent);
-            background-size: 350px 200px;
-            animation: twinkle 5s ease-in-out infinite;
+        /* ========================================
+           FILTRES
+        ======================================== */
+        .filter-btn.active {
+            background: rgba(139, 92, 246, 0.35) !important;
+            border-color: rgba(139, 92, 246, 0.7) !important;
+            color: white !important;
         }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+        #ownedOnly:checked ~ .toggle-track {
+            background: rgba(139, 92, 246, 0.5);
+            border-color: rgba(139, 92, 246, 0.7);
+        }
+        #ownedOnly:checked ~ .toggle-thumb,
+        .toggle-thumb {
+            transition: transform 0.2s;
+        }
+        #ownedOnly:checked + .toggle-track + .toggle-thumb,
+        label:has(#ownedOnly:checked) .toggle-thumb {
+            transform: translateX(20px);
+            background: #a78bfa;
         }
 
         /* ========================================
@@ -648,9 +638,10 @@
     </style>
 
     <div class="min-h-screen relative overflow-hidden">
-        <!-- Fond Cosmos -->
-        <div class="cosmos-bg">
-            <div class="stars"></div>
+        <!-- Fond statique -->
+        <div class="fixed inset-0 z-0 pointer-events-none">
+            <div class="absolute inset-0 bg-gradient-to-b from-gray-800 via-gray-900 to-black"></div>
+            <img src="{{ asset('images/baniere.webp') }}" alt="" class="absolute inset-0 w-full h-full object-cover opacity-[0.10]" loading="eager">
         </div>
 
         <!-- Contenu -->
@@ -660,7 +651,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                 <div>
                     <h1 class="text-3xl font-bold text-white flex items-center gap-3">
-                        <span class="text-4xl">🎴</span>
+                        <img src="{{ asset('images/icons/palais.webp') }}" alt="Collection" class="w-10 h-10 object-contain">
                         Ma Collection
                     </h1>
                     <p class="text-gray-400 mt-1">Les cartes grisées ne sont pas encore dans votre collection</p>
@@ -679,14 +670,14 @@
 
                 {{-- Cartes uniques --}}
                 <div class="stat-card" style="--grad-from:#4C1D95; --grad-to:#7C3AED; --border-color:rgba(139,92,246,0.45);">
-                    <span class="stat-icon">&#127183;</span>
+                    <span class="stat-icon"><img src="{{ asset('images/icons/livres.webp') }}" alt="Uniques" class="w-8 h-8 object-contain"></span>
                     <div class="stat-value">{{ $stats['unique_cards'] }}</div>
                     <div class="stat-label">Uniques</div>
                 </div>
 
                 {{-- Total --}}
                 <div class="stat-card" style="--grad-from:#1E3A8A; --grad-to:#2563EB; --border-color:rgba(59,130,246,0.45);">
-                    <span class="stat-icon">&#128218;</span>
+                    <span class="stat-icon"><img src="{{ asset('images/icons/recherche.webp') }}" alt="Total cartes" class="w-8 h-8 object-contain"></span>
                     <div class="stat-value">{{ $stats['total_cards'] }}</div>
                     <div class="stat-label">Total cartes</div>
                 </div>
@@ -700,7 +691,7 @@
 
                 {{-- Légendaires --}}
                 <div class="stat-card" style="--grad-from:#78350F; --grad-to:#D97706; --border-color:rgba(245,158,11,0.45);">
-                    <span class="stat-icon">&#11088;</span>
+                    <span class="stat-icon"><img src="{{ asset('images/icons/trophee.webp') }}" alt="Légendaires" class="w-8 h-8 object-contain"></span>
                     <div class="stat-value">{{ $stats['by_rarity']['legendary'] ?? 0 }}</div>
                     <div class="stat-label">Légendaires</div>
                 </div>
@@ -733,6 +724,73 @@
                 </div>
             </div>
 
+            <!-- Filtres -->
+            <div class="mb-6 space-y-3">
+                {{-- Recherche --}}
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-4 flex items-center text-gray-400 pointer-events-none">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Rechercher une carte..."
+                        class="w-full pl-10 pr-4 py-3 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500/60 focus:bg-white/15 transition"
+                        oninput="filterCollection()">
+                </div>
+
+                {{-- Factions --}}
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick="setFaction(null)" id="faction-all"
+                        class="filter-btn faction-btn active px-3 py-1.5 rounded-full text-xs font-bold border border-white/20 bg-white/10 text-white transition">
+                        Toutes
+                    </button>
+                    @foreach($factions as $faction)
+                    <button onclick="setFaction({{ $faction->id }})" id="faction-{{ $faction->id }}"
+                        class="filter-btn faction-btn px-3 py-1.5 rounded-full text-xs font-bold border transition"
+                        style="border-color: {{ $faction->color_primary }}60; color: {{ $faction->color_primary }}; background: {{ $faction->color_primary }}20;">
+                        {{ $faction->name }}
+                    </button>
+                    @endforeach
+                </div>
+
+                {{-- Raretés --}}
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick="setRarity(null)" id="rarity-all"
+                        class="filter-btn rarity-btn active px-3 py-1.5 rounded-full text-xs font-bold border border-white/20 bg-white/10 text-white transition">
+                        Toutes
+                    </button>
+                    <button onclick="setRarity('common')" id="rarity-common"
+                        class="filter-btn rarity-btn px-3 py-1.5 rounded-full text-xs font-bold border border-gray-500/40 text-gray-300 bg-gray-500/10 transition">
+                        Commune
+                    </button>
+                    <button onclick="setRarity('rare')" id="rarity-rare"
+                        class="filter-btn rarity-btn px-3 py-1.5 rounded-full text-xs font-bold border border-blue-500/40 text-blue-300 bg-blue-500/10 transition">
+                        Rare
+                    </button>
+                    <button onclick="setRarity('epic')" id="rarity-epic"
+                        class="filter-btn rarity-btn px-3 py-1.5 rounded-full text-xs font-bold border border-purple-500/40 text-purple-300 bg-purple-500/10 transition">
+                        Épique
+                    </button>
+                    <button onclick="setRarity('legendary')" id="rarity-legendary"
+                        class="filter-btn rarity-btn px-3 py-1.5 rounded-full text-xs font-bold border border-yellow-500/40 text-yellow-300 bg-yellow-500/10 transition">
+                        Légendaire
+                    </button>
+                    <button onclick="setRarity('mythic')" id="rarity-mythic"
+                        class="filter-btn rarity-btn px-3 py-1.5 rounded-full text-xs font-bold border border-pink-500/40 text-pink-300 bg-pink-500/10 transition">
+                        Mythique
+                    </button>
+                </div>
+
+                {{-- Toggle possédées + compteur --}}
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center gap-2 cursor-pointer select-none">
+                        <div class="relative">
+                            <input type="checkbox" id="ownedOnly" class="sr-only" onchange="filterCollection()">
+                            <div class="toggle-track w-10 h-5 bg-white/10 border border-white/20 rounded-full transition"></div>
+                            <div class="toggle-thumb absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition"></div>
+                        </div>
+                        <span class="text-sm text-gray-300">Possédées seulement</span>
+                    </label>
+                    <span id="collectionCount" class="text-sm text-gray-500"></span>
+                </div>
+            </div>
+
             <!-- Collection -->
             @if($allCards->isEmpty())
                 <!-- État vide -->
@@ -745,16 +803,20 @@
                 </div>
             @else
                 <!-- Grille des cartes -->
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 rounded-3xl">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 rounded-3xl" id="collectionGrid">
                     @foreach($allCards as $card)
-                        <a href="{{ route('collection.show', $card) }}" class="block">
+                        <a href="{{ route('collection.show', $card) }}" class="block collection-card"
+                           data-name="{{ strtolower($card->name) }}"
+                           data-faction="{{ $card->faction?->id }}"
+                           data-rarity="{{ $card->rarity }}"
+                           data-owned="{{ $card->owned ? '1' : '0' }}">
                             <div class="holo-card-mini rarity-{{ $card->rarity }} {{ !$card->owned ? 'not-owned' : '' }}"
                                  style="--color1: {{ $card->faction->color_primary ?? '#6366f1' }}; --color2: {{ $card->faction->color_secondary ?? '#8b5cf6' }};">
                                 <div class="card-mini-content">
                                     <!-- Image de fond -->
                                     <div class="card-mini-image">
                                         @if($card->image_primary)
-                                            <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}">
+                                            <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}" loading="lazy">
                                         @else
                                             <div class="card-mini-placeholder">🃏</div>
                                         @endif
@@ -843,4 +905,47 @@
 
         </div>
     </div>
+
+    <script>
+    var activefaction = null;
+    var activeRarity  = null;
+
+    function setFaction(id) {
+        activefaction = id;
+        document.querySelectorAll('.faction-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.getElementById(id ? 'faction-' + id : 'faction-all').classList.add('active');
+        filterCollection();
+    }
+
+    function setRarity(r) {
+        activeRarity = r;
+        document.querySelectorAll('.rarity-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.getElementById(r ? 'rarity-' + r : 'rarity-all').classList.add('active');
+        filterCollection();
+    }
+
+    function filterCollection() {
+        var q       = document.getElementById('searchInput').value.trim().toLowerCase();
+        var owned   = document.getElementById('ownedOnly').checked;
+        var cards   = document.querySelectorAll('#collectionGrid .collection-card');
+        var visible = 0;
+
+        cards.forEach(function(card) {
+            var match =
+                (!q             || card.dataset.name.includes(q)) &&
+                (!activeRarity  || card.dataset.rarity === activeRarity) &&
+                (!activefaction || card.dataset.faction == activefaction) &&
+                (!owned         || card.dataset.owned === '1');
+
+            card.style.display = match ? '' : 'none';
+            if (match) visible++;
+        });
+
+        var total = cards.length;
+        var countEl = document.getElementById('collectionCount');
+        countEl.textContent = (q || activeRarity || activefaction || owned)
+            ? visible + ' / ' + total + ' carte' + (total > 1 ? 's' : '')
+            : '';
+    }
+    </script>
 </x-app-layout>

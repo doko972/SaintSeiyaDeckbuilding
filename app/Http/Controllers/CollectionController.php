@@ -97,7 +97,9 @@ class CollectionController extends Controller
             ? round(($stats['unique_cards'] / $stats['total_available']) * 100, 1)
             : 0;
 
-        return view('collection.index', compact('allCards', 'stats'));
+        $factions = $allCards->pluck('faction')->filter()->unique('id')->sortBy('name')->values();
+
+        return view('collection.index', compact('allCards', 'stats', 'factions'));
     }
 
     /**

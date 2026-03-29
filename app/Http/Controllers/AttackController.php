@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attack;
+use App\Models\Card;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -33,8 +34,19 @@ class AttackController extends Controller
     public function index(): View
     {
         $attacks = Attack::orderBy('name')->get();
-        
-        return view('attacks.index', compact('attacks'));
+
+        // Cartes utilisant chaque attaque (main + secondaires)
+        $allCards = Card::select('id', 'name', 'main_attack_id', 'secondary_attack_1_id', 'secondary_attack_2_id')->get();
+        $cardsByAttack = [];
+        foreach ($allCards as $card) {
+            foreach (['main_attack_id', 'secondary_attack_1_id', 'secondary_attack_2_id'] as $field) {
+                if ($card->$field) {
+                    $cardsByAttack[$card->$field][] = $card->name;
+                }
+            }
+        }
+
+        return view('attacks.index', compact('attacks', 'cardsByAttack'));
     }
 
     /**

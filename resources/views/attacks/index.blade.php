@@ -27,10 +27,25 @@
                 <span class="px-4 py-2 bg-purple-600/50 text-purple-300 rounded-full text-sm">💀 Drain: {{ $attacks->where('effect_type', 'drain')->count() }}</span>
             </div>
 
+            <!-- Barre de recherche -->
+            <div class="mb-6">
+                <div class="relative max-w-md mx-auto">
+                    <span class="absolute inset-y-0 left-4 flex items-center text-gray-400 pointer-events-none">🔍</span>
+                    <input type="text" id="attackSearch" placeholder="Rechercher une attaque..."
+                        class="w-full pl-10 pr-4 py-3 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-red-500/60 focus:bg-white/15 transition"
+                        oninput="filterAttacks(this.value)">
+                </div>
+                <p id="attackCount" class="text-center text-gray-500 text-sm mt-2"></p>
+            </div>
+
             <!-- Grille des attaques -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="attackGrid">
                 @foreach($attacks as $attack)
-                    <div class="attack-card group">
+                    @php $usedBy = $cardsByAttack[$attack->id] ?? []; @endphp
+                    <div class="attack-card group"
+                         data-name="{{ strtolower($attack->name) }}"
+                         data-effect="{{ $attack->effect_type }}"
+                         data-cards="{{ strtolower(implode('|', $usedBy)) }}">
                         <a href="{{ route('attacks.show', $attack) }}" class="block">
                             <div class="bg-white/5 backdrop-blur-md rounded-2xl border-2 border-white/10 overflow-hidden transition-all duration-300 hover:border-red-500/50 hover:shadow-2xl hover:shadow-red-500/20 hover:transform hover:-translate-y-2">
                                 
@@ -102,6 +117,20 @@
                                     @endif
                                 </div>
 
+                                <!-- Cartes qui utilisent cette attaque -->
+                                <div class="px-5 pb-4">
+                                    @if(count($usedBy) > 0)
+                                        <p class="text-gray-500 text-xs mb-2 uppercase tracking-wide">Utilisée par</p>
+                                        <div class="flex flex-wrap gap-1">
+                                            @foreach($usedBy as $cardName)
+                                                <span class="px-2 py-0.5 bg-white/10 text-gray-300 text-xs rounded-full border border-white/10">{{ $cardName }}</span>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <p class="text-gray-600 text-xs italic">Aucune carte ne l'utilise</p>
+                                    @endif
+                                </div>
+
                                 <!-- Footer Admin -->
                                 @if(auth()->user()->isAdmin())
                                     <div class="px-5 pb-4 flex gap-2">
@@ -128,4 +157,21 @@
 
         </div>
     </div>
+
+    <script>
+    function filterAttacks(query) {
+        var q = query.trim().toLowerCase();
+        var cards = document.querySelectorAll('#attackGrid .attack-card');
+        var visible = 0;
+        cards.forEach(function(card) {
+            var name  = card.dataset.name  || '';
+            var cardNames = card.dataset.cards || '';
+            var match = !q || name.includes(q) || cardNames.includes(q);
+            card.style.display = match ? '' : 'none';
+            if (match) visible++;
+        });
+        var countEl = document.getElementById('attackCount');
+        countEl.textContent = q ? (visible + ' résultat' + (visible > 1 ? 's' : '')) : '';
+    }
+    </script>
 </x-app-layout>
