@@ -222,7 +222,7 @@
                     <div class="relative" @click.away="commerceMenuOpen = false">
                         <button @click="commerceMenuOpen = !commerceMenuOpen"
                             class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
-                                {{ request()->routeIs('shop.*') || request()->routeIs('sell.*')
+                                {{ request()->routeIs('shop.*') || request()->routeIs('sell.*') || request()->routeIs('marketplace.*')
                                     ? 'bg-yellow-500/30 text-yellow-400 shadow-lg shadow-yellow-500/20'
                                     : 'text-gray-300 hover:text-white hover:bg-white/10' }}">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -279,6 +279,22 @@
                                         <div class="text-xs text-gray-500">Revendez vos cartes</div>
                                     </div>
                                 </a>
+
+                                <!-- Marketplace -->
+                                <a href="{{ route('marketplace.index') }}"
+                                    class="group flex items-center gap-3 px-4 py-3 transition-all duration-200
+                                   {{ request()->routeIs('marketplace.*')
+                                       ? 'bg-gradient-to-r from-amber-600/30 to-yellow-600/30 text-yellow-400'
+                                       : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                                    <span
+                                        class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg text-lg">
+                                        🏛️
+                                    </span>
+                                    <div>
+                                        <div class="font-semibold">Hall des Enchères</div>
+                                        <div class="text-xs text-gray-500">Échangez entre joueurs</div>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -308,15 +324,21 @@
 
             <!-- Right Side -->
             <div class="hidden sm:flex sm:items-center sm:ms-6 gap-3">
-                <!-- Coins Display -->
-                <div
-                    class="px-4 py-2 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 rounded-full flex items-center gap-2 shadow-lg shadow-yellow-500/10">
-                    <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.736 6.979C9.208 6.193 9.696 6 10 6c.304 0 .792.193 1.264.979a1 1 0 001.715-1.029C12.279 4.784 11.232 4 10 4s-2.279.784-2.979 1.95c-.285.475-.507 1-.67 1.55H6a1 1 0 000 2h.013a9.358 9.358 0 000 1H6a1 1 0 100 2h.351c.163.55.385 1.075.67 1.55C7.721 15.216 8.768 16 10 16s2.279-.784 2.979-1.95a1 1 0 10-1.715-1.029c-.472.786-.96.979-1.264.979-.304 0-.792-.193-1.264-.979a4.265 4.265 0 01-.264-.521H10a1 1 0 100-2H8.017a7.36 7.36 0 010-1H10a1 1 0 100-2H8.472c.08-.185.167-.36.264-.521z" />
+                <!-- Mailbox Badge -->
+                @php $navUnread = \App\Models\MailboxMessage::where('user_id', auth()->id())->whereNull('read_at')->count(); @endphp
+                <a href="{{ route('mailbox.index') }}"
+                   class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/15 hover:border-purple-500/30 transition-all duration-300"
+                   title="Boîte aux lettres">
+                    <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
-                    <span id="nav-coins-desktop" class="font-bold text-yellow-400">{{ number_format(auth()->user()->coins ?? 0) }}</span>
-                </div>
+                    @if($navUnread > 0)
+                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                        {{ $navUnread > 99 ? '99+' : $navUnread }}
+                    </span>
+                    @endif
+                </a>
 
                 <!-- User Dropdown -->
                 <x-dropdown align="right" width="48" contentClasses="p-0">
@@ -392,14 +414,7 @@
 
             <!-- Hamburger Mobile -->
             <div class="-me-2 flex items-center sm:hidden">
-                <!-- Mobile Coins -->
-                <div
-                    class="mr-2 px-3 py-1 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 rounded-full flex items-center gap-1">
-                    <span class="text-yellow-400 text-sm">&#129689;</span>
-                    <span id="nav-coins-mobile" class="font-bold text-yellow-400 text-sm">{{ auth()->user()->coins ?? 0 }}</span>
-                </div>
-
-                <button @click="open = ! open"
+<button @click="open = ! open"
                     class="inline-flex items-center justify-center p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 focus:outline-none transition duration-300">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{ 'hidden': open, 'inline-flex': !open }" class="inline-flex"
@@ -542,6 +557,10 @@
                class="mob-nav-tile {{ request()->routeIs('sell.*') ? 'is-active' : '' }}">
                 <span><img src="{{ asset('images/icons/vente.webp') }}" alt="Vente" class="w-7 h-7 object-contain"></span><span>Vente</span>
             </a>
+            <a href="{{ route('marketplace.index') }}"
+               class="mob-nav-tile {{ request()->routeIs('marketplace.*') ? 'is-active' : '' }}">
+                <span style="font-size:1.4rem;">🏛️</span><span>Enchères</span>
+            </a>
             <a href="{{ route('rewards.index') }}"
                class="mob-nav-tile {{ request()->routeIs('rewards.*') ? 'is-active' : '' }}">
                 <span><img src="{{ asset('images/icons/bonus.webp') }}" alt="Bonus" class="w-7 h-7 object-contain"></span><span>Bonus</span>
@@ -549,6 +568,21 @@
             <a href="{{ route('factions.index') }}"
                class="mob-nav-tile {{ request()->routeIs('factions.*') ? 'is-active' : '' }}">
                 <span><img src="{{ asset('images/icons/chateau.webp') }}" alt="Factions" class="w-7 h-7 object-contain"></span><span>Factions</span>
+            </a>
+            <a href="{{ route('mailbox.index') }}"
+               class="mob-nav-tile {{ request()->routeIs('mailbox.*') ? 'is-active' : '' }} relative">
+                <span class="relative inline-flex">
+                    <svg class="w-7 h-7 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    @if($navUnread > 0)
+                    <span class="absolute -top-1 -right-1 min-w-[14px] h-[14px] px-0.5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center leading-none">
+                        {{ $navUnread > 9 ? '9+' : $navUnread }}
+                    </span>
+                    @endif
+                </span>
+                <span>Lettres</span>
             </a>
 
         </div>

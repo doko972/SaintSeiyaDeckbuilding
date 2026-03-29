@@ -293,11 +293,11 @@ Attaques :
 Engagement quotidien ┌──────────────────────────┬──────────────────────────────────────────────────────────────────────────────────────────┐
 │ Idée │ Description │  
  ├──────────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────┤  
- │ Missions journalières │ 3 missions/jour (gagner 1 combat, acheter 1 booster, fusionner 1 carte) avec récompenses │
+ │ Missions journalières │ 3 missions/jour (gagner 1 combat, acheter 1 booster, fusionner 1 carte) avec récompenses │ ok
 ├──────────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────┤
 │ Série de connexion │ Bonus croissant si connexion plusieurs jours d'affilée (jour 7 = carte rare garantie) │
 ├──────────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────┤
-│ Roue de la fortune hebdo │ Une fois par semaine, roue avec cartes/pièces/boosters │
+│ Roue de la fortune hebdo │ Une fois par semaine, roue avec cartes/pièces/boosters ok│
 └──────────────────────────┴──────────────────────────────────────────────────────────────────────────────────────────┘
 Gameplay
 ┌──────────────────┬──────────────────────────────────────────────────────────────────────────────────┐
@@ -305,17 +305,17 @@ Gameplay
 ├──────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
 │ Mode histoire │ Chapitres suivant l'anime (Sanctuaire, Poséidon, Hadès) avec récompenses uniques │
 ├──────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
-│ Tournois │ Événements temporaires avec classement et récompenses exclusives │
+│ Tournois │ Événements temporaires avec classement et récompenses exclusives │ok
 ├──────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
-│ Défis quotidiens │ Combat avec règles spéciales (deck mono-faction, coût limité, etc.) │
+│ Défis quotidiens │ Combat avec règles spéciales (deck mono-faction, coût limité, etc.) │ok
 ├──────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
-│ Succès/Trophées │ Badges à débloquer (100 victoires, collection complète d'une faction, etc.) │
+│ Succès/Trophées │ Badges à débloquer (100 victoires, collection complète d'une faction, etc.) │ok
 └──────────────────┴──────────────────────────────────────────────────────────────────────────────────┘
 Collection & Économie
 ┌───────────────────────┬────────────────────────────────────────────────────────────────────────────────┐
 │ Idée │ Description │
 ├───────────────────────┼────────────────────────────────────────────────────────────────────────────────┤
-│ Échange entre joueurs │ Marketplace pour échanger des cartes │
+│ Échange entre joueurs │ Marketplace pour échanger des cartes │ ok
 ├───────────────────────┼────────────────────────────────────────────────────────────────────────────────┤
 │ Désenchantement │ Transformer des cartes en "poussière cosmique" pour craft une carte spécifique │
 ├───────────────────────┼────────────────────────────────────────────────────────────────────────────────┤

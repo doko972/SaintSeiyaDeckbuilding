@@ -861,6 +861,25 @@
                     <span class="sec-tile-icon">🏆</span>
                     <span class="sec-tile-label">Succès{{ ($unclaimedAchievements ?? 0) > 0 ? ' !' : '' }}</span>
                 </a>
+                <a href="{{ route('marketplace.index') }}" class="sec-tile">
+                    <span class="sec-tile-icon">🏛️</span>
+                    <span class="sec-tile-label">Enchères</span>
+                </a>
+                <a href="{{ route('mailbox.index') }}" class="sec-tile {{ ($mailboxUnread ?? 0) > 0 ? 'bonus-available' : '' }}">
+                    @if(($mailboxUnread ?? 0) > 0)<div class="notification-dot" style="top:6px;left:6px;width:8px;height:8px;background:#ef4444;"></div>@endif
+                    <span class="sec-tile-icon relative inline-flex">
+                        <svg class="w-7 h-7 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        @if(($mailboxUnread ?? 0) > 0)
+                        <span class="absolute -top-1 -right-1 min-w-[14px] h-[14px] px-0.5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center leading-none">
+                            {{ ($mailboxUnread ?? 0) > 9 ? '9+' : $mailboxUnread }}
+                        </span>
+                        @endif
+                    </span>
+                    <span class="sec-tile-label">Lettres{{ ($mailboxUnread ?? 0) > 0 ? ' (' . $mailboxUnread . ')' : '' }}</span>
+                </a>
             </div>
 
             {{-- ============================================================
@@ -975,6 +994,68 @@
                         @endforeach
                     </div>
                 </div>
+            </div>
+            @endif
+
+            {{-- ============================================================
+                 HALL DES ENCHÈRES — APERÇU
+            ============================================================ --}}
+            @if(isset($marketplaceListings) && $marketplaceListings->isNotEmpty())
+            <div class="mb-3">
+                <div class="section-header-compact">
+                    <span class="section-title-compact">🏛️ Hall des Enchères</span>
+                    <a href="{{ route('marketplace.index') }}" class="text-yellow-400 hover:text-yellow-300 text-xs">Voir tout &#10132;</a>
+                </div>
+                <div class="bg-white/5 backdrop-blur rounded-xl border border-white/10 p-3">
+                    <div class="grid grid-cols-4 gap-2">
+                        @foreach($marketplaceListings as $listing)
+                        <a href="{{ route('marketplace.show', $listing) }}"
+                           class="block rounded-xl overflow-hidden border border-white/10 hover:border-yellow-500/40 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/40">
+                            {{-- Image --}}
+                            <div class="aspect-[2.5/3] relative"
+                                 style="background: linear-gradient(135deg, {{ $listing->card->faction->color_primary ?? '#2d1b69' }}, {{ $listing->card->faction->color_secondary ?? '#4c1d95' }});">
+                                @if($listing->card->image_primary)
+                                    <img src="{{ Storage::url($listing->card->image_primary) }}"
+                                         alt="{{ $listing->card->name }}"
+                                         class="w-full h-full object-cover object-top" loading="lazy">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center text-2xl">⚔️</div>
+                                @endif
+                                {{-- Timer badge --}}
+                                @php $urgent = $listing->expires_at->diffInHours() <= 12; @endphp
+                                <div class="absolute bottom-0 left-0 right-0 px-1 py-0.5 text-center"
+                                     style="background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);">
+                                    <span class="text-[0.55rem] font-bold {{ $urgent ? 'text-red-400' : 'text-green-400' }}">
+                                        {{ $listing->timeRemaining() }}
+                                    </span>
+                                </div>
+                            </div>
+                            {{-- Prix --}}
+                            <div class="p-1.5 bg-black/30">
+                                <div class="text-white text-[0.55rem] font-bold truncate">{{ $listing->card->name }}</div>
+                                <div class="text-yellow-400 text-[0.6rem] font-bold">
+                                    {{ $listing->current_bid > 0 ? number_format($listing->current_bid) : number_format($listing->starting_price) }} 🪙
+                                </div>
+                            </div>
+                        </a>
+                        @endforeach
+                    </div>
+                    <a href="{{ route('marketplace.create') }}"
+                       class="mt-3 flex items-center justify-center gap-2 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-400 text-xs font-bold hover:bg-yellow-500/20 transition">
+                        ➕ Mettre une carte en vente
+                    </a>
+                </div>
+            </div>
+            @else
+            <div class="mb-3">
+                <div class="section-header-compact">
+                    <span class="section-title-compact">🏛️ Hall des Enchères</span>
+                </div>
+                <a href="{{ route('marketplace.index') }}"
+                   class="flex items-center justify-between p-4 bg-white/5 backdrop-blur rounded-xl border border-white/10 hover:bg-white/10 transition">
+                    <span class="text-gray-400 text-sm">Aucune annonce active pour le moment.</span>
+                    <span class="text-yellow-400 text-xs font-bold">Être le premier &#10132;</span>
+                </a>
             </div>
             @endif
 

@@ -25,6 +25,8 @@ use App\Http\Controllers\Api\TournamentApiController;
 use App\Http\Controllers\Admin\TournamentController as AdminTournamentController;
 use App\Http\Controllers\DailyMissionController;
 use App\Http\Controllers\AchievementController;
+use App\Http\Controllers\MailboxController;
+use App\Http\Controllers\MarketplaceController;
 use App\Services\DailyMissionService;
 use App\Services\AchievementService;
 use Illuminate\Support\Facades\Route;
@@ -78,7 +80,15 @@ Route::middleware(['auth', 'ensure.starter'])->group(function () {
         $newAchievements = app(AchievementService::class)->checkAndUnlock($user);
         $unclaimedAchievements = \App\Models\UserAchievement::where('user_id', $user->id)
             ->whereNull('reward_claimed_at')->count();
-        return view('dashboard', compact('missions', 'unclaimedAchievements', 'newAchievements'));
+        $mailboxUnread = \App\Models\MailboxMessage::where('user_id', $user->id)
+            ->whereNull('read_at')->count();
+        $marketplaceListings = \App\Models\MarketplaceListing::with(['card.faction', 'seller'])
+            ->where('status', 'active')
+            ->where('expires_at', '>', now())
+            ->orderByDesc('created_at')
+            ->take(4)
+            ->get();
+        return view('dashboard', compact('missions', 'unclaimedAchievements', 'newAchievements', 'mailboxUnread', 'marketplaceListings'));
     })->middleware(['verified'])->name('dashboard');
 
     // Profile (Breeze)
@@ -126,6 +136,27 @@ Route::middleware(['auth', 'ensure.starter'])->group(function () {
         Route::get('/', [CardSellController::class, 'index'])->name('index');
         Route::post('/preview', [CardSellController::class, 'preview'])->name('preview');
         Route::post('/sell', [CardSellController::class, 'sell'])->name('sell');
+    });
+
+    // Marketplace
+    Route::prefix('marketplace')->name('marketplace.')->group(function () {
+        Route::get('/',                              [MarketplaceController::class, 'index'])->name('index');
+        Route::get('/create',                        [MarketplaceController::class, 'create'])->name('create');
+        Route::post('/',                             [MarketplaceController::class, 'store'])->name('store');
+        Route::get('/{listing}',                     [MarketplaceController::class, 'show'])->name('show');
+        Route::post('/{listing}/bid',                [MarketplaceController::class, 'bid'])->name('bid');
+        Route::post('/{listing}/buyout',             [MarketplaceController::class, 'buyout'])->name('buyout');
+        Route::post('/{listing}/offer',              [MarketplaceController::class, 'offer'])->name('offer');
+        Route::post('/offers/{offer}/respond',       [MarketplaceController::class, 'respondOffer'])->name('offer.respond');
+        Route::delete('/{listing}/cancel',           [MarketplaceController::class, 'cancel'])->name('cancel');
+    });
+
+    // Boîte aux lettres
+    Route::prefix('mailbox')->name('mailbox.')->group(function () {
+        Route::get('/',                          [MailboxController::class, 'index'])->name('index');
+        Route::post('/{message}/read',           [MailboxController::class, 'markRead'])->name('read');
+        Route::post('/read-all',                 [MailboxController::class, 'markAllRead'])->name('read-all');
+        Route::delete('/{message}',              [MailboxController::class, 'destroy'])->name('destroy');
     });
 
     // Missions journalières
