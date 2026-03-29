@@ -83,6 +83,9 @@ class FusionController extends Controller
             ], 400);
         }
 
+        // Mission journalière : fusionner 1 carte
+        app(\App\Services\DailyMissionService::class)->complete($user, 'fusion');
+
         return response()->json([
             'success' => true,
             'message' => 'Fusion réussie !',

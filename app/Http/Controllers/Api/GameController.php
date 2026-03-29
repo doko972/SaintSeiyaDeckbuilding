@@ -661,6 +661,10 @@ class GameController extends Controller
         if ($isVictory) {
             $rankPromotion = $user->recordWin(300);
             $message = 'Victoire ! Vous gagnez 300 pièces !';
+            // Mission journalière : gagner 1 combat
+            app(\App\Services\DailyMissionService::class)->complete($user, 'combat_win');
+            // Succès
+            app(\App\Services\AchievementService::class)->checkAndUnlock($user);
         } else {
             $user->recordLoss(100);
             $message = 'Défaite... Vous gagnez quand même 100 pièces.';

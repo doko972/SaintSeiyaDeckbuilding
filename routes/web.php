@@ -23,6 +23,10 @@ use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\Api\TournamentApiController;
 use App\Http\Controllers\Admin\TournamentController as AdminTournamentController;
+use App\Http\Controllers\DailyMissionController;
+use App\Http\Controllers\AchievementController;
+use App\Services\DailyMissionService;
+use App\Services\AchievementService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -68,7 +72,13 @@ Route::middleware(['auth', 'ensure.starter'])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        $user = auth()->user();
+        $user->updateLoginStreak();
+        $missions = app(DailyMissionService::class)->getTodayMissions($user);
+        $newAchievements = app(AchievementService::class)->checkAndUnlock($user);
+        $unclaimedAchievements = \App\Models\UserAchievement::where('user_id', $user->id)
+            ->whereNull('reward_claimed_at')->count();
+        return view('dashboard', compact('missions', 'unclaimedAchievements', 'newAchievements'));
     })->middleware(['verified'])->name('dashboard');
 
     // Profile (Breeze)
@@ -117,6 +127,13 @@ Route::middleware(['auth', 'ensure.starter'])->group(function () {
         Route::post('/preview', [CardSellController::class, 'preview'])->name('preview');
         Route::post('/sell', [CardSellController::class, 'sell'])->name('sell');
     });
+
+    // Missions journalières
+    Route::post('/missions/{missionId}/claim', [DailyMissionController::class, 'claim'])->name('missions.claim');
+
+    // Succès / Trophées
+    Route::get('/achievements', [AchievementController::class, 'index'])->name('achievements.index');
+    Route::post('/achievements/{achievementId}/claim', [AchievementController::class, 'claim'])->name('achievements.claim');
 
     // Bonus quotidien
     Route::prefix('daily-bonus')->name('daily-bonus.')->group(function () {

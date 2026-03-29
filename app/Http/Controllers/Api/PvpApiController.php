@@ -359,6 +359,11 @@ class PvpApiController extends Controller
                 $user->pvp_wins++;
                 $user->save();
 
+                // Mission journalière : gagner 1 combat
+                app(\App\Services\DailyMissionService::class)->complete($user, 'combat_win');
+                // Succès
+                app(\App\Services\AchievementService::class)->checkAndUnlock($user);
+
                 // Vérifier le changement de rang
                 $rankPromotion = $user->checkAndUpdateRank();
 

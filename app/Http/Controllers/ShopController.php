@@ -103,6 +103,9 @@ class ShopController extends Controller
             $user->addCard($card);
         }
 
+        // Mission journalière : acheter 1 booster
+        app(\App\Services\DailyMissionService::class)->complete($user, 'buy_booster');
+
         // Préparer le message
         $cardNames = $cards->pluck('name')->implode(', ');
 

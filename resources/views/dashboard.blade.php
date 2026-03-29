@@ -425,6 +425,73 @@
         }
 
         /* ========================================
+           MODAL SUCCES
+        ======================================== */
+        .ach-modal-overlay {
+            position: fixed; inset: 0; z-index: 500;
+            background: rgba(0,0,0,0.75);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+        .ach-modal-overlay.visible { opacity: 1; pointer-events: all; }
+        .ach-modal {
+            position: relative;
+            width: 320px;
+            background: linear-gradient(160deg, #1e1b4b 0%, #2d1b69 60%, #1a0a2a 100%);
+            border: 2px solid rgba(255,215,0,0.5);
+            border-radius: 20px;
+            padding: 2rem 1.5rem 1.5rem;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(255,215,0,0.15), 0 30px 80px rgba(0,0,0,0.8);
+            transform: scale(0.85) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .ach-modal-overlay.visible .ach-modal { transform: scale(1) translateY(0); }
+        .ach-modal-close {
+            position: absolute; top: 12px; right: 14px;
+            background: none; border: none;
+            color: rgba(255,255,255,0.4); font-size: 1.2rem;
+            cursor: pointer; line-height: 1; padding: 4px;
+            transition: color 0.2s;
+        }
+        .ach-modal-close:hover { color: white; }
+        .ach-modal-tag {
+            font-size: 0.6rem; font-weight: 800;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: #fbbf24; margin-bottom: 1rem;
+        }
+        .ach-modal-icon { font-size: 3.5rem; line-height: 1; margin-bottom: 0.75rem; }
+        .ach-modal-title {
+            font-size: 1.2rem; font-weight: 900; color: white;
+            margin-bottom: 0.35rem;
+        }
+        .ach-modal-desc {
+            font-size: 0.8rem; color: rgba(255,255,255,0.55);
+            margin-bottom: 1rem;
+        }
+        .ach-modal-reward {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: rgba(255,215,0,0.15); border: 1px solid rgba(255,215,0,0.4);
+            border-radius: 10px; padding: 0.5rem 1rem;
+            font-size: 1rem; font-weight: 800; color: #fbbf24;
+            margin-bottom: 1.25rem;
+        }
+        .ach-modal-btn {
+            width: 100%; padding: 0.65rem;
+            background: linear-gradient(90deg, #eab308, #f59e0b);
+            color: #1a1a1a; font-weight: 800; font-size: 0.875rem;
+            border: none; border-radius: 12px; cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .ach-modal-btn:hover { opacity: 0.85; }
+        @keyframes achGlow {
+            0%, 100% { box-shadow: 0 0 60px rgba(255,215,0,0.15), 0 30px 80px rgba(0,0,0,0.8); }
+            50%       { box-shadow: 0 0 80px rgba(255,215,0,0.35), 0 30px 80px rgba(0,0,0,0.8); }
+        }
+        .ach-modal-overlay.visible .ach-modal { animation: achGlow 2.5s ease-in-out infinite; }
+
+        /* ========================================
            JOUEURS EN LIGNE
         ======================================== */
         .player-card {
@@ -788,6 +855,98 @@
                 <a href="{{ route('cards.index') }}" class="sec-tile">
                     <span class="sec-tile-icon"><img src="{{ asset('images/icons/recherche.webp') }}" alt="Encyclopédie" class="w-7 h-7 object-contain"></span>
                     <span class="sec-tile-label">Encyclop.</span>
+                </a>
+                <a href="{{ route('achievements.index') }}" class="sec-tile {{ ($unclaimedAchievements ?? 0) > 0 ? 'bonus-available' : '' }}">
+                    @if(($unclaimedAchievements ?? 0) > 0)<div class="notification-dot" style="top:6px;left:6px;width:8px;height:8px;"></div>@endif
+                    <span class="sec-tile-icon">🏆</span>
+                    <span class="sec-tile-label">Succès{{ ($unclaimedAchievements ?? 0) > 0 ? ' !' : '' }}</span>
+                </a>
+            </div>
+
+            {{-- ============================================================
+                 MISSIONS JOURNALIERES
+            ============================================================ --}}
+            @if(isset($missions) && $missions->isNotEmpty())
+            <div class="mb-3">
+                <div class="section-header-compact">
+                    <span class="section-title-compact">🎯 Missions du jour</span>
+                    <span class="text-xs text-gray-500">Reset à minuit</span>
+                </div>
+                <div class="bg-white/5 backdrop-blur rounded-xl border border-white/10 p-3 space-y-2">
+                    @foreach($missions as $type => $mission)
+                    @php $config = $mission->getConfig(); @endphp
+                    <div class="flex items-center gap-3 p-2 rounded-lg {{ $mission->isCompleted() ? 'bg-white/5' : '' }}" id="mission-{{ $mission->id }}">
+                        {{-- Icône --}}
+                        <div class="text-xl w-8 text-center flex-shrink-0">{{ $config['icon'] }}</div>
+
+                        {{-- Texte --}}
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm font-bold text-white {{ $mission->isRewardClaimed() ? 'line-through opacity-40' : '' }}">
+                                {{ $config['title'] }}
+                            </div>
+                            <div class="text-xs text-gray-400">{{ $config['description'] }}</div>
+                        </div>
+
+                        {{-- Récompense + bouton --}}
+                        <div class="flex-shrink-0 text-right">
+                            @if($mission->isRewardClaimed())
+                                <span class="text-xs text-gray-500">✓ Réclamé</span>
+                            @elseif($mission->isCompleted())
+                                <button onclick="claimMission({{ $mission->id }}, this)"
+                                    class="px-3 py-1.5 bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 text-xs font-bold rounded-lg hover:from-yellow-400 hover:to-amber-400 transition">
+                                    +{{ $config['reward_coins'] }} 🪙
+                                </button>
+                            @else
+                                <span class="text-xs text-gray-500 font-semibold">+{{ $config['reward_coins'] }} 🪙</span>
+                                <div class="w-5 h-5 rounded-full border-2 border-gray-600 mx-auto mt-1"></div>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            {{-- ============================================================
+                 SERIE DE CONNEXION
+            ============================================================ --}}
+            <div class="mb-3">
+                <div class="section-header-compact">
+                    <span class="section-title-compact">🔥 Série de connexion</span>
+                    <span class="text-xs text-gray-500">Jour {{ $streakInfo['current_day'] }}/7</span>
+                </div>
+                <a href="{{ route('rewards.index') }}" class="block bg-white/5 backdrop-blur rounded-xl border border-white/10 p-3 hover:bg-white/10 transition">
+                    {{-- Barre des 7 jours --}}
+                    <div class="flex gap-1.5 mb-2">
+                        @foreach(range(1, 7) as $day)
+                        @php
+                            $isDone = $day < $streakInfo['current_day'] || ($day === $streakInfo['current_day'] && !$streakInfo['can_claim']);
+                            $isCurrent = $day === $streakInfo['current_day'];
+                            $reward = \App\Models\User::STREAK_REWARDS[$day];
+                        @endphp
+                        <div class="flex-1 flex flex-col items-center gap-1" title="Jour {{ $day }} : +{{ $reward['coins'] }} 🪙{{ $reward['card'] ? ' + carte rare' : '' }}">
+                            <div class="w-full h-1.5 rounded-full {{ $isDone ? 'bg-yellow-500' : ($isCurrent ? 'bg-yellow-500/50 ring-1 ring-yellow-400' : 'bg-white/10') }}"></div>
+                            <span class="text-xs {{ $isDone ? 'text-yellow-400' : ($isCurrent ? 'text-white font-bold' : 'text-gray-600') }}">
+                                {{ $day === 7 ? '🎴' : $day }}
+                            </span>
+                        </div>
+                        @endforeach
+                    </div>
+                    {{-- Statut --}}
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-gray-400">
+                            @if($streakInfo['can_claim'])
+                                Récompense disponible !
+                            @else
+                                Reviens demain pour continuer
+                            @endif
+                        </span>
+                        @if($streakInfo['can_claim'])
+                            <span class="text-xs font-bold text-yellow-400 animate-pulse">
+                                +{{ $streakInfo['today_reward']['coins'] ?? 0 }} 🪙{{ ($streakInfo['today_reward']['card'] ?? null) ? ' + carte rare !' : '' }}
+                            </span>
+                        @endif
+                    </div>
                 </a>
             </div>
 
@@ -1768,5 +1927,85 @@
                 }
             }, 1000);
         });
+    </script>
+
+    {{-- Modal succès débloqués --}}
+    @if(isset($newAchievements) && $newAchievements->isNotEmpty())
+    <div class="ach-modal-overlay" id="achModalOverlay">
+        <div class="ach-modal">
+            <button class="ach-modal-close" onclick="closeAchModal()" aria-label="Fermer">✕</button>
+            <div class="ach-modal-tag">🏆 Succès débloqué !</div>
+            <div class="ach-modal-icon" id="achModalIcon"></div>
+            <div class="ach-modal-title" id="achModalTitle"></div>
+            <div class="ach-modal-desc" id="achModalDesc"></div>
+            <div class="ach-modal-reward" id="achModalReward"></div>
+            <button class="ach-modal-btn" id="achModalBtn" onclick="nextAchModal()">Super !</button>
+        </div>
+    </div>
+    <script>
+    var _achQueue = @json($newAchievements->values());
+    var _achIndex = 0;
+
+    function showAchModal(a) {
+        document.getElementById('achModalIcon').textContent  = a.icon;
+        document.getElementById('achModalTitle').textContent = a.title;
+        document.getElementById('achModalDesc').textContent  = a.description;
+        document.getElementById('achModalReward').textContent = '+' + a.reward_coins.toLocaleString('fr-FR') + ' 🪙';
+        var remaining = _achQueue.length - _achIndex - 1;
+        document.getElementById('achModalBtn').textContent =
+            remaining > 0 ? 'Suivant (' + remaining + ')' : 'Super !';
+        document.getElementById('achModalOverlay').classList.add('visible');
+    }
+
+    function nextAchModal() {
+        _achIndex++;
+        if (_achIndex < _achQueue.length) {
+            showAchModal(_achQueue[_achIndex]);
+        } else {
+            closeAchModal();
+        }
+    }
+
+    function closeAchModal() {
+        document.getElementById('achModalOverlay').classList.remove('visible');
+    }
+
+    // Affichage après chargement de la page
+    setTimeout(function() {
+        if (_achQueue.length > 0) showAchModal(_achQueue[0]);
+    }, 800);
+    </script>
+    @endif
+
+    <script>
+    function claimMission(missionId, btn) {
+        btn.disabled = true;
+        btn.textContent = '...';
+
+        fetch('/missions/' + missionId + '/claim', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+            },
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                var row = document.getElementById('mission-' + missionId);
+                var rewardCol = btn.closest('.flex-shrink-0');
+                rewardCol.innerHTML = '<span class="text-xs text-gray-500">✓ Réclamé</span>';
+                row.classList.add('opacity-50');
+
+                // Met à jour le solde affiché s'il existe
+                var balanceEl = document.getElementById('userCoins');
+                if (balanceEl) balanceEl.textContent = data.new_balance.toLocaleString('fr-FR');
+            } else {
+                btn.disabled = false;
+                btn.textContent = 'Erreur';
+            }
+        })
+        .catch(() => { btn.disabled = false; btn.textContent = 'Erreur'; });
+    }
     </script>
 </x-app-layout>
