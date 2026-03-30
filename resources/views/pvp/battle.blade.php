@@ -907,36 +907,52 @@
         /* Contrôles */
         .control-buttons {
             position: fixed;
-            bottom: 110px;
-            left: 2rem;
+            top: 50%;
+            right: 0.75rem;
+            transform: translateY(-50%);
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 0.6rem;
             z-index: 100;
         }
 
         .control-btn {
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            font-weight: 700;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            padding: 0;
+            font-size: 1.4rem;
+            font-weight: 800;
             cursor: pointer;
-            transition: all 0.3s;
-            border: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 40% 35%, #3a2a10, #1e1406 80%);
+            border: 2px solid #8a6a20;
+            color: #f0d060;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.7), 0 0 6px rgba(138,106,32,0.2), inset 0 1px 0 rgba(255,200,80,0.12);
         }
 
         .end-turn-btn {
-            background: linear-gradient(135deg, #3B82F6, #2563EB);
-            color: white;
+            background: radial-gradient(circle at 40% 35%, #5a3a10, #2a1405 80%);
+            border-color: #c8920a;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.7), 0 0 10px rgba(200,146,10,0.35), inset 0 1px 0 rgba(255,220,80,0.18);
         }
 
         .end-turn-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+            transform: scale(1.12);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.7), 0 0 16px rgba(200,146,10,0.6);
+            border-color: #e8a820;
         }
 
         .end-turn-btn:disabled {
-            background: #4B5563;
+            background: radial-gradient(circle at 40% 35%, #2a2218, #181410 80%);
+            border-color: #4a3e28;
+            color: #6a5a38;
+            box-shadow: none;
             cursor: not-allowed;
+            opacity: 0.6;
         }
 
         /* Action panel */
@@ -1560,7 +1576,7 @@
         .sfx-btn.muted { opacity: 0.38; }
         .sfx-controls {
             position: fixed;
-            top: 27.8rem;
+            top: 15.8rem;
             left: 1rem;
             z-index: 100;
         }
@@ -1889,8 +1905,8 @@
             /* Music controls mobile */
             .music-controls {
                 top: auto;
-                bottom: 180px;
-                left: 0.5rem;
+                bottom: 343px;
+                left: 1rem;
             }
 
             .music-btn {
@@ -2078,16 +2094,15 @@
 
             /* Contrôles mobile */
             .control-buttons {
-                position: fixed;
-                /* bottom: auto; */
-                top: 80%;
-                left: 0.3rem;
+                top: 50%;
+                right: 0.3rem;
                 transform: translateY(-50%);
             }
 
             .control-btn {
-                padding: 0.6rem 0.8rem;
-                font-size: 0.7rem;
+                width: 44px;
+                height: 44px;
+                font-size: 1.2rem;
             }
 
             /* Panel d'action mobile */
@@ -2128,6 +2143,7 @@
             .waiting-content .text-4xl {
                 font-size: 1.2rem;
             }
+
         }
 
         /* ========================================
@@ -2169,13 +2185,15 @@
             }
 
             .control-buttons {
-                left: 70%;
+                right: 0.5rem;
             }
 
             .control-btn {
-                padding: 0.5rem 0.6rem;
-                font-size: 0.65rem;
+                width: 46px;
+                height: 46px;
+                font-size: 1.25rem;
             }
+
         }
 
         /* ========================================
@@ -2285,6 +2303,181 @@
             .battle-card.targetable {
                 transform: scale(1.02);
             }
+        }
+
+        /* ═══════════════════════════════════════
+           STYLE HEARTHSTONE — CARTES EN MAIN
+        ═══════════════════════════════════════ */
+
+        .hand-card-front {
+            background: linear-gradient(
+                180deg,
+                var(--color1, #1a1a2e) 0%,
+                var(--color2, #16213e) 57%,
+                #2e1e08 57%,
+                #1e1406 100%
+            ) !important;
+        }
+
+        .hand-card-front .hand-card-image {
+            height: 57% !important;
+            background-position: center top !important;
+        }
+        .hand-card-front .hand-card-image::after {
+            height: 35% !important;
+        }
+
+        .hs-cost-gem {
+            position: absolute;
+            top: -5px; left: -5px;
+            width: 30px; height: 30px;
+            background: radial-gradient(circle at 35% 35%, #7ab8f5, #1a5fa0 50%, #0a2a50);
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            border: 2px solid #5090d0;
+            box-shadow: 0 0 10px rgba(80,160,255,0.45), inset 0 -2px 4px rgba(0,0,0,0.4);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 900; color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.9), 0 0 6px rgba(120,190,255,0.5);
+            z-index: 20; pointer-events: none;
+        }
+
+        .hs-name-banner {
+            position: absolute;
+            top: 53%; left: 50%;
+            transform: translateX(-50%);
+            width: 92%; height: 22px;
+            z-index: 8;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                #a07820 5%,
+                #d8b840 18%,
+                #f4e080 50%,
+                #d8b840 82%,
+                #a07820 95%,
+                transparent 100%
+            );
+            border-radius: 3px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.7), 0 -1px 3px rgba(200,160,40,0.2);
+            display: flex; align-items: center; justify-content: center;
+            pointer-events: none;
+        }
+        .hs-name-banner .hand-card-name {
+            font-size: 0.55rem !important;
+            color: #1a0800 !important;
+            text-shadow: none !important;
+            font-weight: 800 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            max-width: 90%;
+            margin: 0 !important;
+            letter-spacing: 0.2px;
+        }
+
+        .hs-stat-atk, .hs-stat-hp {
+            position: absolute;
+            bottom: 3px;
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 900; color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+            z-index: 20; pointer-events: none;
+            line-height: 1;
+        }
+        .hs-stat-atk {
+            left: 3px;
+            background: radial-gradient(circle at 40% 35%, #f0c040, #b07010 60%, #704a00);
+            border: 2px solid #d09020;
+            box-shadow: 0 0 8px rgba(200,130,20,0.5);
+        }
+        .hs-stat-hp {
+            right: 3px;
+            background: radial-gradient(circle at 40% 35%, #e05040, #901020 60%, #500010);
+            border: 2px solid #c03020;
+            box-shadow: 0 0 8px rgba(180,40,30,0.5);
+        }
+
+        .hs-defense {
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 900; color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+            z-index: 20; pointer-events: none;
+            line-height: 1;
+            background: radial-gradient(circle at 40% 35%, #60a8f0, #1050a0 60%, #082060);
+            border: 2px solid #3070c0;
+            box-shadow: 0 0 8px rgba(50,120,220,0.5);
+        }
+
+        /* Cercles HS — taille responsive (placé APRÈS les définitions de base) */
+        @media (max-width: 768px) {
+            .hs-stat-atk, .hs-stat-hp, .hs-defense {
+                width: 22px; height: 22px;
+                font-size: 10px;
+            }
+            .hs-stat-atk { left: 2px; }
+            .hs-stat-hp  { right: 2px; }
+            .hs-cost-gem { width: 22px; height: 22px; font-size: 10px; }
+            .battle-card-info { height: 36% !important; padding-bottom: 22px !important; }
+        }
+        @media (max-width: 480px) {
+            .hs-stat-atk, .hs-stat-hp, .hs-defense {
+                width: 19px; height: 19px;
+                font-size: 9px;
+            }
+            .hs-stat-atk { left: 1px; }
+            .hs-stat-hp  { right: 1px; }
+            .hs-cost-gem { width: 19px; height: 19px; font-size: 9px; }
+            .battle-card-info { height: 36% !important; padding-bottom: 19px !important; }
+        }
+
+        /* ═══════════════════════════════════════
+           STYLE HEARTHSTONE — CARTES SUR LE TERRAIN
+        ═══════════════════════════════════════ */
+
+        .battle-card {
+            background: linear-gradient(
+                180deg,
+                var(--color1, #1a1a2e) 0%,
+                var(--color2, #16213e) 57%,
+                #2e1e08 57%,
+                #1e1406 100%
+            ) !important;
+        }
+        .battle-card-image {
+            height: 57% !important;
+            background-position: center top !important;
+        }
+        .battle-card-image::after {
+            height: 28% !important;
+        }
+        .battle-card-info {
+            top: 57% !important;
+            bottom: unset !important;
+            height: 28% !important;
+            background: transparent !important;
+            backdrop-filter: none !important;
+            padding: 3px 5px 0 !important;
+        }
+        .battle-card-name {
+            color: #e8c860 !important;
+            font-size: 0.58rem !important;
+            text-align: center;
+            margin-bottom: 2px !important;
+        }
+        .hp-bar-container {
+            margin-bottom: 1px !important;
+        }
+        .battle-card-stats {
+            justify-content: center !important;
+            gap: 3px !important;
+            margin-top: 1px;
         }
     </style>
 </head>
@@ -2447,9 +2640,7 @@
 
     <!-- Contrôles -->
     <div class="control-buttons">
-        <button class="control-btn end-turn-btn" id="endTurnBtn" onclick="endTurn()" {{ !$isMyTurn ? 'disabled' : '' }}>
-            ⏭️ Fin du tour
-        </button>
+        <button class="control-btn end-turn-btn" id="endTurnBtn" onclick="endTurn()" title="Fin du tour" {{ !$isMyTurn ? 'disabled' : '' }}>⏭️</button>
     </div>
 
     <!-- Waiting notification (non-blocking) -->
@@ -3592,12 +3783,11 @@
                     <div class="hp-bar-container">
                         <div class="hp-bar" style="width: ${hpPercent}%"></div>
                     </div>
-                    <div class="battle-card-stats">
-                        <span>❤️ ${card.current_hp}/${card.max_hp}</span>
-                        <span>💪 ${card.power || 0}</span>
-                        ${bonusPercent > 0 ? `<span class="fusion-bonus">🔥+${bonusPercent}%</span>` : ''}
-                    </div>
+                    ${bonusPercent > 0 ? `<div class="battle-card-stats"><span class="mini-stat fusion-bonus">🔥+${bonusPercent}%</span></div>` : ''}
                 </div>
+                <div class="hs-defense">${card.defense || 0}</div>
+                <div class="hs-stat-atk" title="Puissance">${card.power || 0}</div>
+                <div class="hs-stat-hp" title="Points de vie">${card.current_hp}</div>
             `;
 
             if (isMyTurn && owner === 'player' && phase === 'idle') {
@@ -3640,18 +3830,13 @@
                 <div class="hand-card-inner">
                     <div class="hand-card-back"></div>
                     <div class="hand-card-front">
-                        <div class="hand-card-cost">💎 ${card.cost}</div>
+                        <div class="hs-cost-gem">${card.cost}</div>
                         ${fusionBadgeHtml}
                         <div class="hand-card-image" style="background-image: url('${card.image || ''}'); background-color: ${card.faction?.color_primary || '#333'};"></div>
-                        <div class="hand-card-info">
-                            <div class="hand-card-name">${card.name}</div>
-                            <div class="hand-card-stats">
-                                <span title="Points de vie">❤️ ${card.max_hp || card.health_points || '?'}</span>
-                                <span title="Puissance">⚔️ ${card.power || 0}</span>
-                                <span title="Défense">🛡️ ${card.defense || 0}</span>
-                                ${bonusPercent > 0 ? `<span class="fusion-bonus" title="Bonus fusion">🔥+${bonusPercent}%</span>` : ''}
-                            </div>
-                        </div>
+                        <div class="hs-name-banner"><span class="hand-card-name">${card.name}</span></div>
+                        <div class="hs-defense">${card.defense || 0}</div>
+                        <div class="hs-stat-atk" title="Puissance">${card.power || 0}</div>
+                        <div class="hs-stat-hp" title="Points de vie">${card.max_hp || card.health_points || '?'}</div>
                     </div>
                 </div>
             `;

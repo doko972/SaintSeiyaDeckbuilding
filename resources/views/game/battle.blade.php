@@ -309,19 +309,34 @@
         }
 
         @keyframes toastEnter {
-            0%   { opacity: 0; transform: translateY(-120%); }
-            100% { opacity: 1; transform: translateY(0); }
+            0% {
+                opacity: 0;
+                transform: translateY(-120%);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes toastExit {
-            0%   { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-120%); }
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-120%);
+            }
         }
 
         @keyframes toastShift {
             0% {
                 transform: translateY(10px);
             }
+
             100% {
                 transform: translateY(0);
             }
@@ -331,6 +346,7 @@
             0% {
                 width: 100%;
             }
+
             100% {
                 width: 0%;
             }
@@ -363,7 +379,9 @@
             0% {
                 left: -100%;
             }
-            50%, 100% {
+
+            50%,
+            100% {
                 left: 100%;
             }
         }
@@ -434,12 +452,10 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.1) 0%,
-                transparent 50%,
-                rgba(0, 0, 0, 0.2) 100%
-            );
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    transparent 50%,
+                    rgba(0, 0, 0, 0.2) 100%);
             pointer-events: none;
             z-index: 10;
             border-radius: 10px;
@@ -463,8 +479,15 @@
         }
 
         @keyframes border-glow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
         }
 
         .battle-card.targetable {
@@ -477,9 +500,12 @@
         }
 
         @keyframes pulse-target {
-            0%, 100% {
+
+            0%,
+            100% {
                 box-shadow: 0 0 15px rgba(239, 68, 68, 0.4), 0 4px 15px rgba(0, 0, 0, 0.4);
             }
+
             50% {
                 box-shadow: 0 0 35px rgba(239, 68, 68, 0.7), 0 4px 15px rgba(0, 0, 0, 0.4);
             }
@@ -513,24 +539,53 @@
         }
 
         @keyframes rare-shimmer {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.2); }
+
+            0%,
+            100% {
+                filter: brightness(1);
+            }
+
+            50% {
+                filter: brightness(1.2);
+            }
         }
 
         @keyframes epic-shimmer {
-            0%, 100% { filter: brightness(1) hue-rotate(0deg); }
-            50% { filter: brightness(1.3) hue-rotate(10deg); }
+
+            0%,
+            100% {
+                filter: brightness(1) hue-rotate(0deg);
+            }
+
+            50% {
+                filter: brightness(1.3) hue-rotate(10deg);
+            }
         }
 
         @keyframes legendary-shimmer {
-            0%, 100% { filter: brightness(1) hue-rotate(0deg); }
-            50% { filter: brightness(1.4) hue-rotate(15deg); }
+
+            0%,
+            100% {
+                filter: brightness(1) hue-rotate(0deg);
+            }
+
+            50% {
+                filter: brightness(1.4) hue-rotate(15deg);
+            }
         }
 
         @keyframes mythic-shimmer {
-            0% { filter: brightness(1) hue-rotate(0deg); }
-            50% { filter: brightness(1.5) hue-rotate(30deg); }
-            100% { filter: brightness(1) hue-rotate(0deg); }
+            0% {
+                filter: brightness(1) hue-rotate(0deg);
+            }
+
+            50% {
+                filter: brightness(1.5) hue-rotate(30deg);
+            }
+
+            100% {
+                filter: brightness(1) hue-rotate(0deg);
+            }
         }
 
         .battle-card-image {
@@ -551,13 +606,11 @@
             left: 0;
             right: 0;
             height: 70%;
-            background: linear-gradient(
-                to top,
-                rgba(0, 0, 0, 0.95) 0%,
-                rgba(0, 0, 0, 0.7) 30%,
-                rgba(0, 0, 0, 0.3) 60%,
-                transparent 100%
-            );
+            background: linear-gradient(to top,
+                    rgba(0, 0, 0, 0.95) 0%,
+                    rgba(0, 0, 0, 0.7) 30%,
+                    rgba(0, 0, 0, 0.3) 60%,
+                    transparent 100%);
             z-index: 2;
         }
 
@@ -621,13 +674,22 @@
         }
 
         @keyframes pulse-hp {
-            0%, 100% { opacity: 1; box-shadow: 0 0 12px rgba(239, 68, 68, 0.6); }
-            50% { opacity: 0.7; box-shadow: 0 0 20px rgba(239, 68, 68, 0.9); }
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+            }
+
+            50% {
+                opacity: 0.7;
+                box-shadow: 0 0 20px rgba(239, 68, 68, 0.9);
+            }
         }
 
         .battle-card-stats {
             display: flex;
-            justify-content: space-around;
+            /* justify-content: space-around; */
             font-size: 0.6rem;
             gap: 2px;
         }
@@ -647,14 +709,12 @@
         .battle-card .holo-shimmer {
             position: absolute;
             inset: 0;
-            background: linear-gradient(
-                125deg,
-                transparent 0%,
-                rgba(255, 255, 255, 0.1) 25%,
-                rgba(255, 255, 255, 0.3) 50%,
-                rgba(255, 255, 255, 0.1) 75%,
-                transparent 100%
-            );
+            background: linear-gradient(125deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.1) 25%,
+                    rgba(255, 255, 255, 0.3) 50%,
+                    rgba(255, 255, 255, 0.1) 75%,
+                    transparent 100%);
             background-size: 200% 200%;
             animation: holo-move 3s ease-in-out infinite;
             pointer-events: none;
@@ -669,8 +729,13 @@
         }
 
         @keyframes holo-move {
-            0% { background-position: 200% 0%; }
-            100% { background-position: -200% 0%; }
+            0% {
+                background-position: 200% 0%;
+            }
+
+            100% {
+                background-position: -200% 0%;
+            }
         }
 
         /* Combo indicator style */
@@ -704,8 +769,15 @@
         }
 
         @keyframes fusionPulse {
-            0%, 100% { box-shadow: 0 2px 6px rgba(255, 215, 0, 0.4); }
-            50% { box-shadow: 0 2px 12px rgba(255, 215, 0, 0.8); }
+
+            0%,
+            100% {
+                box-shadow: 0 2px 6px rgba(255, 215, 0, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 2px 12px rgba(255, 215, 0, 0.8);
+            }
         }
 
         .status-effects-bar {
@@ -721,7 +793,7 @@
 
         .status-effect-icon {
             font-size: 0.75rem;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.6);
             border-radius: 4px;
             padding: 1px 3px;
             line-height: 1.2;
@@ -819,12 +891,10 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.1) 0%,
-                transparent 50%,
-                rgba(0, 0, 0, 0.2) 100%
-            );
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    transparent 50%,
+                    rgba(0, 0, 0, 0.2) 100%);
             pointer-events: none;
             z-index: 10;
             border-radius: 10px;
@@ -848,8 +918,17 @@
         }
 
         @keyframes playable-pulse {
-            0%, 100% { filter: brightness(1); box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
-            50% { filter: brightness(1.2); box-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
+
+            0%,
+            100% {
+                filter: brightness(1);
+                box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+            }
+
+            50% {
+                filter: brightness(1.2);
+                box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+            }
         }
 
         .hand-card.playable:hover {
@@ -924,13 +1003,11 @@
             left: 0;
             right: 0;
             height: 65%;
-            background: linear-gradient(
-                to top,
-                rgba(0, 0, 0, 0.95) 0%,
-                rgba(0, 0, 0, 0.7) 35%,
-                rgba(0, 0, 0, 0.2) 70%,
-                transparent 100%
-            );
+            background: linear-gradient(to top,
+                    rgba(0, 0, 0, 0.95) 0%,
+                    rgba(0, 0, 0, 0.7) 35%,
+                    rgba(0, 0, 0, 0.2) 70%,
+                    transparent 100%);
             z-index: 2;
             pointer-events: none;
         }
@@ -977,14 +1054,12 @@
         .hand-card .hand-holo-shimmer {
             position: absolute;
             inset: 0;
-            background: linear-gradient(
-                125deg,
-                transparent 0%,
-                rgba(255, 255, 255, 0.15) 25%,
-                rgba(255, 255, 255, 0.35) 50%,
-                rgba(255, 255, 255, 0.15) 75%,
-                transparent 100%
-            );
+            background: linear-gradient(125deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.15) 25%,
+                    rgba(255, 255, 255, 0.35) 50%,
+                    rgba(255, 255, 255, 0.15) 75%,
+                    transparent 100%);
             background-size: 200% 200%;
             animation: hand-holo-move 3s ease-in-out infinite;
             pointer-events: none;
@@ -1000,8 +1075,13 @@
         }
 
         @keyframes hand-holo-move {
-            0% { background-position: 200% 0%; }
-            100% { background-position: -200% 0%; }
+            0% {
+                background-position: 200% 0%;
+            }
+
+            100% {
+                background-position: -200% 0%;
+            }
         }
 
         /* ========================================
@@ -1090,8 +1170,16 @@
         }
 
         @keyframes comboPulse {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 1; text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+
+            0%,
+            100% {
+                opacity: 0.8;
+            }
+
+            50% {
+                opacity: 1;
+                text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+            }
         }
 
         .combo-attack {
@@ -1113,8 +1201,14 @@
         }
 
         @keyframes comboShine {
-            0% { left: -100%; }
-            50%, 100% { left: 100%; }
+            0% {
+                left: -100%;
+            }
+
+            50%,
+            100% {
+                left: 100%;
+            }
         }
 
         .combo-attack:hover:not(:disabled) {
@@ -1139,8 +1233,17 @@
         }
 
         @keyframes comboIndicatorPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
-            50% { transform: scale(1.1); box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+            }
+
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+            }
         }
 
         /* ========================================
@@ -1174,9 +1277,20 @@
         }
 
         @keyframes comboFlash {
-            0% { opacity: 0; transform: scale(0.5); }
-            20% { opacity: 1; transform: scale(1.2); }
-            100% { opacity: 0; transform: scale(2); }
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            20% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(2);
+            }
         }
 
         /* Cercle d'onde de choc */
@@ -1192,12 +1306,26 @@
             animation: comboShockwave 1s ease-out forwards;
         }
 
-        .combo-shockwave:nth-child(2) { animation-delay: 0.1s; }
-        .combo-shockwave:nth-child(3) { animation-delay: 0.2s; }
+        .combo-shockwave:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .combo-shockwave:nth-child(3) {
+            animation-delay: 0.2s;
+        }
 
         @keyframes comboShockwave {
-            0% { transform: scale(0); opacity: 1; border-width: 8px; }
-            100% { transform: scale(15); opacity: 0; border-width: 1px; }
+            0% {
+                transform: scale(0);
+                opacity: 1;
+                border-width: 8px;
+            }
+
+            100% {
+                transform: scale(15);
+                opacity: 0;
+                border-width: 1px;
+            }
         }
 
         /* Particules d'explosion */
@@ -1215,6 +1343,7 @@
                 transform: translate(-50%, -50%) scale(1);
                 opacity: 1;
             }
+
             100% {
                 transform: translate(var(--tx), var(--ty)) scale(0);
                 opacity: 0;
@@ -1233,10 +1362,12 @@
                 transform: translate(-50%, -50%) scale(0) rotate(0deg);
                 opacity: 1;
             }
+
             50% {
                 transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(180deg);
                 opacity: 1;
             }
+
             100% {
                 transform: translate(calc(var(--tx) * 2), calc(var(--ty) * 2)) scale(0) rotate(360deg);
                 opacity: 0;
@@ -1267,14 +1398,17 @@
                 transform: translate(-50%, -50%) scale(0) rotate(-10deg);
                 opacity: 0;
             }
+
             30% {
                 transform: translate(-50%, -50%) scale(1.3) rotate(5deg);
                 opacity: 1;
             }
+
             50% {
                 transform: translate(-50%, -50%) scale(1) rotate(0deg);
                 opacity: 1;
             }
+
             100% {
                 transform: translate(-50%, -50%) scale(1.5) rotate(0deg);
                 opacity: 0;
@@ -1298,10 +1432,12 @@
                 transform: translateX(-50%) scaleY(0);
                 opacity: 1;
             }
+
             50% {
                 transform: translateX(-50%) scaleY(1);
                 opacity: 1;
             }
+
             100% {
                 transform: translateX(-50%) scaleY(1.5);
                 opacity: 0;
@@ -1310,16 +1446,47 @@
 
         /* Effet de tremblement d'écran */
         @keyframes comboScreenShake {
-            0%, 100% { transform: translate(0, 0); }
-            10% { transform: translate(-10px, -5px); }
-            20% { transform: translate(10px, 5px); }
-            30% { transform: translate(-8px, 8px); }
-            40% { transform: translate(8px, -8px); }
-            50% { transform: translate(-5px, 5px); }
-            60% { transform: translate(5px, -5px); }
-            70% { transform: translate(-3px, 3px); }
-            80% { transform: translate(3px, -3px); }
-            90% { transform: translate(-1px, 1px); }
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            10% {
+                transform: translate(-10px, -5px);
+            }
+
+            20% {
+                transform: translate(10px, 5px);
+            }
+
+            30% {
+                transform: translate(-8px, 8px);
+            }
+
+            40% {
+                transform: translate(8px, -8px);
+            }
+
+            50% {
+                transform: translate(-5px, 5px);
+            }
+
+            60% {
+                transform: translate(5px, -5px);
+            }
+
+            70% {
+                transform: translate(-3px, 3px);
+            }
+
+            80% {
+                transform: translate(3px, -3px);
+            }
+
+            90% {
+                transform: translate(-1px, 1px);
+            }
         }
 
         .screen-shake {
@@ -1346,10 +1513,12 @@
                 transform: scale(0) rotate(0deg);
                 opacity: 1;
             }
+
             50% {
                 transform: scale(2) rotate(180deg);
                 opacity: 1;
             }
+
             100% {
                 transform: scale(4) rotate(360deg);
                 opacity: 0;
@@ -1420,6 +1589,7 @@
                 opacity: 0;
                 transform: translateX(-50%) translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(-50%) translateY(0);
@@ -1479,63 +1649,87 @@
         ======================================== */
         .control-buttons {
             position: fixed;
-            bottom: 130px;
-            left: 2rem;
+            top: 35%;
+            right: 0.75rem;
+            transform: translateY(-50%);
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 0.6rem;
             z-index: 100;
         }
 
         .control-btn {
-            padding: 1rem;
-            border-radius: 32px;
-            font-weight: 700;
-            font-size: 1rem;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            padding: 0;
+            font-size: 1.4rem;
+            font-weight: 800;
             cursor: pointer;
-            transition: all 0.3s;
-            border: none;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
+            background: radial-gradient(circle at 40% 35%, #3a2a10, #1e1406 80%);
+            border: 2px solid #8a6a20;
+            color: #f0d060;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7), 0 0 6px rgba(138, 106, 32, 0.2), inset 0 1px 0 rgba(255, 200, 80, 0.12);
         }
 
         .end-turn-btn {
-            background: linear-gradient(135deg, #3B82F6, #2563EB);
-            color: white;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            background: radial-gradient(circle at 40% 35%, #5a3a10, #2a1405 80%);
+            border-color: #c8920a;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7), 0 0 10px rgba(200, 146, 10, 0.35), inset 0 1px 0 rgba(255, 220, 80, 0.18);
         }
 
         .end-turn-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+            transform: scale(1.12);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7), 0 0 16px rgba(200, 146, 10, 0.6);
+            border-color: #e8a820;
         }
 
         .end-turn-btn:disabled {
-            background: #4B5563;
+            background: radial-gradient(circle at 40% 35%, #2a2218, #181410 80%);
+            border-color: #4a3e28;
+            color: #6a5a38;
             box-shadow: none;
             cursor: not-allowed;
+            opacity: 0.6;
         }
 
         .auto-play-btn {
-            background: linear-gradient(135deg, #6B7280, #4B5563);
-            color: white;
-            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.4);
-            font-size: 0.75rem;
-            padding: 0.75rem 1rem;
+            background: radial-gradient(circle at 40% 35%, #2e2010, #181206 80%);
+            border-color: #6a4e18;
+            color: #c8a050;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
         }
+
         .auto-play-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(107, 114, 128, 0.5);
+            transform: scale(1.12);
+            border-color: #8a6a20;
+            color: #e0b860;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6), 0 0 8px rgba(138, 106, 32, 0.3);
         }
+
         .auto-play-btn.active {
-            background: linear-gradient(135deg, #F59E0B, #D97706);
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.5);
+            background: radial-gradient(circle at 40% 35%, #7a5010, #3a2204 80%);
+            border-color: #e8a820;
+            color: #ffe070;
+            box-shadow: 0 4px 15px rgba(200, 146, 10, 0.5);
             animation: autoPulse 1.5s ease-in-out infinite;
         }
+
         @keyframes autoPulse {
-            0%, 100% { box-shadow: 0 4px 15px rgba(245, 158, 11, 0.5); }
-            50% { box-shadow: 0 4px 25px rgba(245, 158, 11, 0.9); }
+
+            0%,
+            100% {
+                box-shadow: 0 4px 15px rgba(200, 146, 10, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 22px rgba(200, 146, 10, 0.9);
+            }
         }
 
         /* ========================================
@@ -1656,13 +1850,27 @@
         }
 
         @keyframes rankPromotionPulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+            }
         }
 
         @keyframes rankPromotionSlideIn {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .rank-promotion-icon {
@@ -1671,8 +1879,15 @@
         }
 
         @keyframes rankIconBounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
         }
 
         .rank-promotion-text {
@@ -1809,7 +2024,7 @@
             }
 
             .control-buttons {
-                left: 1rem;
+                right: 0.5rem;
             }
 
             .battle-log-zone {
@@ -2059,6 +2274,7 @@
 
             .battle-card-stats {
                 font-size: 0.4rem;
+
             }
 
             .mini-stat {
@@ -2093,7 +2309,7 @@
         /* Music controls */
         .music-controls {
             position: fixed;
-            top: 25.5rem;
+            top: 12.5rem;
             left: 1rem;
             z-index: 100;
             display: flex;
@@ -2127,17 +2343,28 @@
             background: rgba(124, 58, 237, 0.6);
             animation: pulse-music 2s infinite;
         }
-        .sfx-btn.muted { opacity: 0.38; }
+
+        .sfx-btn.muted {
+            opacity: 0.38;
+        }
+
         .sfx-controls {
             position: fixed;
-            top: 27.8rem;
+            top: 15.8rem;
             left: 1rem;
             z-index: 100;
         }
 
         @keyframes pulse-music {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); }
-            50% { box-shadow: 0 0 15px 5px rgba(124, 58, 237, 0.2); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 15px 5px rgba(124, 58, 237, 0.2);
+            }
         }
 
         .volume-panel {
@@ -2202,6 +2429,257 @@
             background: #1a1a2e;
             color: white;
         }
+
+        /* ═══════════════════════════════════════
+           STYLE HEARTHSTONE — CARTES EN MAIN
+        ═══════════════════════════════════════ */
+
+        /* Fond : dégradé faction en haut, parchemin brun en bas */
+        .hand-card {
+            background: linear-gradient(180deg,
+                    var(--color1, #1a1a2e) 0%,
+                    var(--color2, #16213e) 57%,
+                    #2e1e08 57%,
+                    #1e1406 100%) !important;
+        }
+
+        /* Image — uniquement le haut (57%) */
+        .hand-card-image {
+            height: 57% !important;
+            background-position: center top !important;
+        }
+
+        .hand-card-image::after {
+            height: 35% !important;
+        }
+
+        /* Gemme de coût bleue (haut gauche) */
+        .hs-cost-gem {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at 35% 35%, #7ab8f5, #1a5fa0 50%, #0a2a50);
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            border: 2px solid #5090d0;
+            box-shadow: 0 0 10px rgba(80, 160, 255, 0.45), inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 6px rgba(120, 190, 255, 0.5);
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        /* Bannière dorée pour le nom */
+        .hs-name-banner {
+            position: absolute;
+            top: 53%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            height: 22px;
+            z-index: 8;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    #a07820 5%,
+                    #d8b840 18%,
+                    #f4e080 50%,
+                    #d8b840 82%,
+                    #a07820 95%,
+                    transparent 100%);
+            border-radius: 3px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7), 0 -1px 3px rgba(200, 160, 40, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .hs-name-banner .hand-card-name {
+            font-size: 0.55rem !important;
+            color: #1a0800 !important;
+            text-shadow: none !important;
+            font-weight: 800 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            max-width: 90%;
+            margin: 0 !important;
+            letter-spacing: 0.2px;
+        }
+
+        /* Cercles ATK (or, bas gauche) et HP (rouge, bas droite) */
+        .hs-stat-atk,
+        .hs-stat-hp {
+            position: absolute;
+            bottom: 3px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+            z-index: 20;
+            pointer-events: none;
+            line-height: 1;
+        }
+
+        .hs-stat-atk {
+            left: 3px;
+            background: radial-gradient(circle at 40% 35%, #f0c040, #b07010 60%, #704a00);
+            border: 2px solid #d09020;
+            box-shadow: 0 0 8px rgba(200, 130, 20, 0.5);
+        }
+
+        .hs-stat-hp {
+            right: 3px;
+            background: radial-gradient(circle at 40% 35%, #e05040, #901020 60%, #500010);
+            border: 2px solid #c03020;
+            box-shadow: 0 0 8px rgba(180, 40, 30, 0.5);
+        }
+
+        /* Défense — cercle bleu central */
+        .hs-defense {
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+            z-index: 20;
+            pointer-events: none;
+            line-height: 1;
+            background: radial-gradient(circle at 40% 35%, #60a8f0, #1050a0 60%, #082060);
+            border: 2px solid #3070c0;
+            box-shadow: 0 0 8px rgba(50, 120, 220, 0.5);
+        }
+
+        /* Cercles HS — taille responsive (placé APRÈS les définitions de base) */
+        @media (max-width: 768px) {
+
+            .hs-stat-atk,
+            .hs-stat-hp,
+            .hs-defense {
+                width: 22px;
+                height: 22px;
+                font-size: 10px;
+            }
+
+            .hs-stat-atk {
+                left: 2px;
+            }
+
+            .hs-stat-hp {
+                right: 2px;
+            }
+
+            .hs-cost-gem {
+                width: 22px;
+                height: 22px;
+                font-size: 10px;
+            }
+
+            /* Pousse les stats au-dessus des cercles */
+            .battle-card-info {
+                height: 36% !important;
+                padding-bottom: 22px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .hs-stat-atk,
+            .hs-stat-hp,
+            .hs-defense {
+                width: 19px;
+                height: 19px;
+                font-size: 9px;
+            }
+
+            .hs-stat-atk {
+                left: 1px;
+            }
+
+            .hs-stat-hp {
+                right: 1px;
+            }
+
+            .hs-cost-gem {
+                width: 19px;
+                height: 19px;
+                font-size: 9px;
+            }
+
+            /* Pousse les stats au-dessus des cercles */
+            .battle-card-info {
+                height: 36% !important;
+                padding-bottom: 19px !important;
+            }
+        }
+
+        /* ═══════════════════════════════════════
+           STYLE HEARTHSTONE — CARTES SUR LE TERRAIN
+        ═══════════════════════════════════════ */
+
+        .battle-card {
+            background: linear-gradient(180deg,
+                    var(--color1, #1a1a2e) 0%,
+                    var(--color2, #16213e) 57%,
+                    #2e1e08 57%,
+                    #1e1406 100%) !important;
+        }
+
+        .battle-card-image {
+            height: 57% !important;
+            background-position: center top !important;
+        }
+
+        .battle-card-image::after {
+            height: 28% !important;
+        }
+
+        .battle-card-info {
+            top: 57% !important;
+            bottom: unset !important;
+            height: 28% !important;
+            background: transparent !important;
+            backdrop-filter: none !important;
+            padding: 3px 5px 0 !important;
+        }
+
+        .battle-card-name {
+            color: #e8c860 !important;
+            font-size: 0.58rem !important;
+            text-align: center;
+            margin-bottom: 2px !important;
+        }
+
+        .hp-bar-container {
+            margin-bottom: 1px !important;
+        }
+
+        .battle-card-stats {
+            justify-content: center !important;
+            gap: 3px !important;
+            margin-top: 1px;
+        }
     </style>
 </head>
 
@@ -2214,46 +2692,48 @@
     <div class="combo-explosion-container" id="comboExplosion"></div>
 
     <!-- Music Player -->
-    @if(isset($battleMusics) && $battleMusics->count() > 0)
-    <audio id="battleMusic" loop preload="auto">
-        <source src="{{ Storage::url($battleMusics->first()->file_path) }}" type="audio/mpeg">
-    </audio>
+    @if (isset($battleMusics) && $battleMusics->count() > 0)
+        <audio id="battleMusic" loop preload="auto">
+            <source src="{{ Storage::url($battleMusics->first()->file_path) }}" type="audio/mpeg">
+        </audio>
     @endif
 
     <!-- Victory/Defeat Music -->
-    @if(isset($victoryMusic) && $victoryMusic)
-    <audio id="victoryMusic" preload="auto">
-        <source src="{{ Storage::url($victoryMusic->file_path) }}" type="audio/mpeg">
-    </audio>
+    @if (isset($victoryMusic) && $victoryMusic)
+        <audio id="victoryMusic" preload="auto">
+            <source src="{{ Storage::url($victoryMusic->file_path) }}" type="audio/mpeg">
+        </audio>
     @endif
 
-    @if(isset($defeatMusic) && $defeatMusic)
-    <audio id="defeatMusic" preload="auto">
-        <source src="{{ Storage::url($defeatMusic->file_path) }}" type="audio/mpeg">
-    </audio>
+    @if (isset($defeatMusic) && $defeatMusic)
+        <audio id="defeatMusic" preload="auto">
+            <source src="{{ Storage::url($defeatMusic->file_path) }}" type="audio/mpeg">
+        </audio>
     @endif
 
-    @if(isset($battleMusics) && $battleMusics->count() > 0)
+    @if (isset($battleMusics) && $battleMusics->count() > 0)
 
-    <div class="music-controls">
-        <button class="music-btn" id="musicToggle" title="Musique">
-            🎵
-        </button>
-        <div class="volume-panel" id="volumePanel">
-            <div class="volume-slider-container">
-                <span>🔊</span>
-                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="{{ $battleMusics->first()->volume }}">
-                <span class="volume-value" id="volumeValue">{{ $battleMusics->first()->volume }}%</span>
+        <div class="music-controls">
+            <button class="music-btn" id="musicToggle" title="Musique">
+                🎵
+            </button>
+            <div class="volume-panel" id="volumePanel">
+                <div class="volume-slider-container">
+                    <span>🔊</span>
+                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100"
+                        value="{{ $battleMusics->first()->volume }}">
+                    <span class="volume-value" id="volumeValue">{{ $battleMusics->first()->volume }}%</span>
+                </div>
+                @if ($battleMusics->count() > 1)
+                    <select class="track-select" id="trackSelect">
+                        @foreach ($battleMusics as $music)
+                            <option value="{{ Storage::url($music->file_path) }}" data-volume="{{ $music->volume }}">
+                                {{ $music->name }}</option>
+                        @endforeach
+                    </select>
+                @endif
             </div>
-            @if($battleMusics->count() > 1)
-            <select class="track-select" id="trackSelect">
-                @foreach($battleMusics as $music)
-                <option value="{{ Storage::url($music->file_path) }}" data-volume="{{ $music->volume }}">{{ $music->name }}</option>
-                @endforeach
-            </select>
-            @endif
         </div>
-    </div>
     @endif
 
     <!-- Effets sonores -->
@@ -2269,7 +2749,8 @@
             <div class="turn-indicator">
                 <span class="turn-badge player-turn" id="turnBadge">Tour 1</span>
             </div>
-            <a href="{{ route('game.index') }}" class="quit-btn" onclick="return confirm('Abandonner le combat ?')">✖</a>
+            <a href="{{ route('game.index') }}" class="quit-btn"
+                onclick="return confirm('Abandonner le combat ?')">✖</a>
         </header>
 
         <!-- Zone de combat -->
@@ -2317,7 +2798,8 @@
                             <span class="stat-value" id="playerHandCount">0</span>
                         </div>
                     </div>
-                    <div id="factionBonusBadge" style="display:none;margin-top:0.4rem;padding:0.2rem 0.5rem;
+                    <div id="factionBonusBadge"
+                        style="display:none;margin-top:0.4rem;padding:0.2rem 0.5rem;
                          background:linear-gradient(135deg,rgba(255,215,0,0.2),rgba(255,165,0,0.15));
                          border:1px solid rgba(255,215,0,0.5);border-radius:8px;
                          font-size:0.6rem;font-weight:800;color:#FFD700;text-align:center;
@@ -2379,8 +2861,9 @@
 
     <!-- Boutons de contrôle -->
     <div class="control-buttons">
-        <button class="control-btn end-turn-btn" id="endTurnBtn" onclick="endTurn()">⏭️</button>
-        <button class="control-btn auto-play-btn" id="autoPlayBtn" onclick="toggleAutoPlay()">⚡ AUTO</button>
+        <button class="control-btn end-turn-btn" id="endTurnBtn" onclick="endTurn()" title="Fin du tour">⏭️</button>
+        <button class="control-btn auto-play-btn" id="autoPlayBtn" onclick="toggleAutoPlay()"
+            title="Auto-play">⚡</button>
     </div>
 
     <!-- Modal Game Over -->
@@ -2841,7 +3324,8 @@
                         particle.style.top = '50%';
                         particle.style.setProperty('--tx', tx + 'px');
                         particle.style.setProperty('--ty', ty + 'px');
-                        particle.style.animation = `comboParticle ${0.8 + Math.random() * 0.4}s ease-out forwards`;
+                        particle.style.animation =
+                            `comboParticle ${0.8 + Math.random() * 0.4}s ease-out forwards`;
                         particle.style.animationDelay = `${Math.random() * 0.2}s`;
                         particle.style.width = (6 + Math.random() * 8) + 'px';
                         particle.style.height = particle.style.width;
@@ -2951,7 +3435,9 @@
                     if (badge) badge.style.display = 'block';
                     if (nameEl) nameEl.textContent = fb.faction;
                     setTimeout(() => {
-                        addLogEntry(`✦ Bonus Faction ${fb.faction} : +${fb.power_bonus}% Puissance, +${fb.hp_bonus}% PV !`, 'heal');
+                        addLogEntry(
+                            `✦ Bonus Faction ${fb.faction} : +${fb.power_bonus}% Puissance, +${fb.hp_bonus}% PV !`,
+                            'heal');
                     }, 300);
                 }
 
@@ -2971,7 +3457,8 @@
             console.log('=== renderAll() DEBUG ===');
             console.log('Player field:', gameState?.player?.field?.length, gameState?.player?.field?.map(c => c.name));
             console.log('Player hand:', gameState?.player?.hand?.length);
-            console.log('Opponent field:', gameState?.opponent?.field?.length, gameState?.opponent?.field?.map(c => c.name));
+            console.log('Opponent field:', gameState?.opponent?.field?.length, gameState?.opponent?.field?.map(c => c
+                .name));
             console.log('========================');
 
             renderOpponentField();
@@ -3055,11 +3542,19 @@
                 });
 
                 if (matchCount >= 3) {
-                    return { inCombo: true, isLeader: combo.leader_card_id === card.id, comboName: combo.name };
+                    return {
+                        inCombo: true,
+                        isLeader: combo.leader_card_id === card.id,
+                        comboName: combo.name
+                    };
                 }
             }
 
-            return { inCombo: false, isLeader: false, comboName: null };
+            return {
+                inCombo: false,
+                isLeader: false,
+                comboName: null
+            };
         }
 
         function createBattleCard(card, index, owner) {
@@ -3082,20 +3577,30 @@
 
             // Vérifier si la carte fait partie d'un combo actif (seulement pour le joueur)
             const fieldCards = owner === 'player' ? gameState.player.field : gameState.opponent.field;
-            const comboStatus = owner === 'player' ? isCardInActiveCombo(card, fieldCards) : { inCombo: false };
-            const comboIndicatorHtml = comboStatus.inCombo
-                ? `<div class="combo-indicator" title="${comboStatus.comboName}">${comboStatus.isLeader ? '👑⚡' : '⚡'}</div>`
-                : '';
+            const comboStatus = owner === 'player' ? isCardInActiveCombo(card, fieldCards) : {
+                inCombo: false
+            };
+            const comboIndicatorHtml = comboStatus.inCombo ?
+                `<div class="combo-indicator" title="${comboStatus.comboName}">${comboStatus.isLeader ? '👑⚡' : '⚡'}</div>` :
+                '';
 
             // Badge de niveau de fusion (si améliorée)
             const fusionLevel = card.fusion_level || 1;
             const bonusPercent = card.bonus_percent || 0;
-            const fusionBadgeHtml = fusionLevel > 1
-                ? `<div class="fusion-level-indicator" title="+${bonusPercent}% stats">+${fusionLevel - 1}</div>`
-                : '';
+            const fusionBadgeHtml = fusionLevel > 1 ?
+                `<div class="fusion-level-indicator" title="+${bonusPercent}% stats">+${fusionLevel - 1}</div>` :
+                '';
 
             // Icônes d'effets de statut
-            const statusEffectIcons = { burn: '🔥', freeze: '❄️', stun: '💤', buff_attack: '⬆️', buff_defense: '🛡️', debuff: '⬇️', drain: '🩸' };
+            const statusEffectIcons = {
+                burn: '🔥',
+                freeze: '❄️',
+                stun: '💤',
+                buff_attack: '⬆️',
+                buff_defense: '🛡️',
+                debuff: '⬇️',
+                drain: '🩸'
+            };
             const statusEffectsHtml = (card.status_effects || []).map(e =>
                 `<span class="status-effect-icon" title="${e.type} (${e.turns} tour${e.turns > 1 ? 's' : ''})">${statusEffectIcons[e.type] || '?'}</span>`
             ).join('');
@@ -3110,27 +3615,11 @@
                     <div class="hp-bar-container">
                         <div class="hp-bar ${hpClass}" style="width: ${hpPercent}%"></div>
                     </div>
-                    <div class="battle-card-stats">
-                        <span class="mini-stat">❤️ ${card.current_hp}/${card.max_hp}</span>
-                        <span class="mini-stat">⚡ ${card.current_endurance || 0}</span>
-                        <span class="mini-stat">💪 ${card.power || 0}</span>
-                        ${bonusPercent > 0 ? `<span class="mini-stat fusion-bonus">🔥 +${bonusPercent}%</span>` : ''}
-                    </div>
                 </div>
+                <div class="hs-defense">${card.defense || 0}</div>
+                <div class="hs-stat-atk" title="Puissance">${card.power || 0}</div>
+                <div class="hs-stat-hp" title="Points de vie">${card.current_hp}</div>
             `;
-
-            // Events selon le contexte
-            // if (owner === 'player' && phase === 'idle') {
-            //     div.onclick = () => selectAttacker(index);
-            // } else if (owner === 'opponent' && phase === 'selectingTarget') {
-            //     div.classList.add('targetable');
-            //     div.onclick = () => selectTarget(index);
-            // }
-
-            // if (owner === 'player' && selectedAttacker === index) {
-            //     div.classList.add('selected');
-            // }
-
 
             // Events selon le contexte
             if (owner === 'player') {
@@ -3174,15 +3663,12 @@
             }
 
             div.innerHTML = `
-                <div class="hand-card-cost">💎 ${card.cost}</div>
+                <div class="hs-cost-gem">${card.cost}</div>
                 <div class="hand-card-image" style="background-image: url('${card.image || ''}'); background-color: ${card.faction?.color_primary || '#333'};"></div>
-                <div class="hand-card-info">
-                    <div class="hand-card-name">${card.name}</div>
-                    <div class="hand-card-stats">
-                        <span>❤️ ${card.health_points}</span>
-                        <span>💪 ${card.power}</span>
-                    </div>
-                </div>
+                <div class="hs-name-banner"><span class="hand-card-name">${card.name}</span></div>
+                <div class="hs-defense">${card.defense || 0}</div>
+                <div class="hs-stat-atk" title="Puissance">${card.power}</div>
+                <div class="hs-stat-hp" title="Points de vie">${card.health_points}</div>
             `;
 
             if (canPlay) {
@@ -3194,9 +3680,13 @@
                     if (!touchHandled) {
                         touchHandled = true;
                         playCard(index, div);
-                        setTimeout(() => { touchHandled = false; }, 300);
+                        setTimeout(() => {
+                            touchHandled = false;
+                        }, 300);
                     }
-                }, { passive: false });
+                }, {
+                    passive: false
+                });
 
                 div.addEventListener('click', function(e) {
                     // Éviter double-fire si touch déjà traité
@@ -3922,12 +4412,17 @@
                             const targetIndex = Math.floor(Math.random() * gameState.opponent.field.length);
 
                             // Récupérer les éléments DOM AVANT l'appel API (comme selectTarget)
-                            const attackerEl = document.querySelector(`.battle-card[data-owner="player"][data-index="${i}"]`);
-                            const targetEl   = document.querySelector(`.battle-card[data-owner="opponent"][data-index="${targetIndex}"]`);
+                            const attackerEl = document.querySelector(
+                                `.battle-card[data-owner="player"][data-index="${i}"]`);
+                            const targetEl = document.querySelector(
+                                `.battle-card[data-owner="opponent"][data-index="${targetIndex}"]`);
 
                             // Animation d'attaque si les éléments existent
                             if (attackerEl && targetEl) {
-                                await animations.attackAnimation(attackerEl, targetEl, { element: card.element || 'generic', damage: attack.damage });
+                                await animations.attackAnimation(attackerEl, targetEl, {
+                                    element: card.element || 'generic',
+                                    damage: attack.damage
+                                });
                             }
 
                             const data = await apiCall('attack', 'POST', {
@@ -4055,7 +4550,8 @@
                     promotionBanner.style.display = 'flex';
                     document.getElementById('rankPromotionIcon').textContent = response.rank_promotion.rank_icon;
                     document.getElementById('rankPromotionName').textContent = response.rank_promotion.rank_name;
-                    document.getElementById('rankPromotionReward').textContent = `+${response.rank_promotion.reward} pièces`;
+                    document.getElementById('rankPromotionReward').textContent =
+                        `+${response.rank_promotion.reward} pièces`;
                 } else {
                     promotionBanner.style.display = 'none';
                 }
@@ -4107,7 +4603,10 @@
         function addLogEntry(message, type = 'info') {
             // Limiter la queue à 6 messages max (les plus anciens sont ignorés)
             if (messageQueue.length >= 6) messageQueue.shift();
-            messageQueue.push({ message, type });
+            messageQueue.push({
+                message,
+                type
+            });
             if (!isShowingMessage) showNextMessage();
         }
 
@@ -4118,7 +4617,10 @@
             }
             isShowingMessage = true;
 
-            const { message, type } = messageQueue.shift();
+            const {
+                message,
+                type
+            } = messageQueue.shift();
             const log = document.getElementById('battleLog');
 
             // Supprimer le message actuel sans animation
@@ -4146,7 +4648,9 @@
         function removeToast(toast) {
             if (!toast || toast.classList.contains('exiting')) return;
             toast.classList.add('exiting');
-            setTimeout(() => { if (toast.parentNode) toast.remove(); }, 280);
+            setTimeout(() => {
+                if (toast.parentNode) toast.remove();
+            }, 280);
         }
 
         // ========================================
@@ -4167,138 +4671,138 @@
         // ========================================
         // MUSIC PLAYER
         // ========================================
-        @if(isset($battleMusics) && $battleMusics->count() > 0)
-        const battleMusic = document.getElementById('battleMusic');
-        const musicToggle = document.getElementById('musicToggle');
-        const volumePanel = document.getElementById('volumePanel');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const volumeValueEl = document.getElementById('volumeValue');
-        const trackSelect = document.getElementById('trackSelect');
+        @if (isset($battleMusics) && $battleMusics->count() > 0)
+            const battleMusic = document.getElementById('battleMusic');
+            const musicToggle = document.getElementById('musicToggle');
+            const volumePanel = document.getElementById('volumePanel');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeValueEl = document.getElementById('volumeValue');
+            const trackSelect = document.getElementById('trackSelect');
 
-        let isMusicPlaying = false;
-        let volumePanelVisible = false;
-        let hasTriedAutoplay = false;
+            let isMusicPlaying = false;
+            let volumePanelVisible = false;
+            let hasTriedAutoplay = false;
 
-        // Initialize volume
-        battleMusic.volume = volumeSlider.value / 100;
+            // Initialize volume
+            battleMusic.volume = volumeSlider.value / 100;
 
-        // Try to autoplay
-        function tryAutoplay() {
-            if (hasTriedAutoplay && isMusicPlaying) return;
+            // Try to autoplay
+            function tryAutoplay() {
+                if (hasTriedAutoplay && isMusicPlaying) return;
 
-            battleMusic.play().then(() => {
-                musicToggle.classList.add('playing');
-                musicToggle.innerHTML = '⏸️';
-                isMusicPlaying = true;
-                hasTriedAutoplay = true;
-            }).catch(err => {
-                console.log('Autoplay blocked, waiting for user interaction');
-            });
-        }
-
-        // Try autoplay on page load
-        tryAutoplay();
-
-        // Autoplay on first user interaction
-        function onFirstInteraction() {
-            if (!isMusicPlaying) {
-                tryAutoplay();
-            }
-            document.removeEventListener('click', onFirstInteraction);
-            document.removeEventListener('keydown', onFirstInteraction);
-            document.removeEventListener('touchstart', onFirstInteraction);
-        }
-
-        document.addEventListener('click', onFirstInteraction);
-        document.addEventListener('keydown', onFirstInteraction);
-        document.addEventListener('touchstart', onFirstInteraction);
-
-        // Toggle play/pause
-        musicToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-
-            if (isMusicPlaying) {
-                battleMusic.pause();
-                musicToggle.classList.remove('playing');
-                musicToggle.innerHTML = '🎵';
-                isMusicPlaying = false;
-            } else {
                 battleMusic.play().then(() => {
                     musicToggle.classList.add('playing');
                     musicToggle.innerHTML = '⏸️';
                     isMusicPlaying = true;
+                    hasTriedAutoplay = true;
                 }).catch(err => {
-                    console.log('Autoplay blocked:', err);
+                    console.log('Autoplay blocked, waiting for user interaction');
                 });
             }
-        });
 
-        // Right-click or long-press to show volume panel
-        musicToggle.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            volumePanelVisible = !volumePanelVisible;
-            volumePanel.classList.toggle('visible', volumePanelVisible);
-        });
+            // Try autoplay on page load
+            tryAutoplay();
 
-        // Double-click to toggle volume panel
-        musicToggle.addEventListener('dblclick', function(e) {
-            e.preventDefault();
-            volumePanelVisible = !volumePanelVisible;
-            volumePanel.classList.toggle('visible', volumePanelVisible);
-        });
-
-        // Volume slider
-        volumeSlider.addEventListener('input', function() {
-            battleMusic.volume = this.value / 100;
-            volumeValueEl.textContent = this.value + '%';
-            localStorage.setItem('battleMusicVolume', this.value);
-        });
-
-        // Track selector
-        if (trackSelect) {
-            trackSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                const newSrc = this.value;
-                const defaultVolume = selectedOption.dataset.volume || 50;
-
-                const wasPlaying = isMusicPlaying;
-                battleMusic.src = newSrc;
-                volumeSlider.value = defaultVolume;
-                battleMusic.volume = defaultVolume / 100;
-                volumeValueEl.textContent = defaultVolume + '%';
-
-                if (wasPlaying) {
-                    battleMusic.play();
+            // Autoplay on first user interaction
+            function onFirstInteraction() {
+                if (!isMusicPlaying) {
+                    tryAutoplay();
                 }
+                document.removeEventListener('click', onFirstInteraction);
+                document.removeEventListener('keydown', onFirstInteraction);
+                document.removeEventListener('touchstart', onFirstInteraction);
+            }
 
-                localStorage.setItem('battleMusicTrack', newSrc);
+            document.addEventListener('click', onFirstInteraction);
+            document.addEventListener('keydown', onFirstInteraction);
+            document.addEventListener('touchstart', onFirstInteraction);
+
+            // Toggle play/pause
+            musicToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+
+                if (isMusicPlaying) {
+                    battleMusic.pause();
+                    musicToggle.classList.remove('playing');
+                    musicToggle.innerHTML = '🎵';
+                    isMusicPlaying = false;
+                } else {
+                    battleMusic.play().then(() => {
+                        musicToggle.classList.add('playing');
+                        musicToggle.innerHTML = '⏸️';
+                        isMusicPlaying = true;
+                    }).catch(err => {
+                        console.log('Autoplay blocked:', err);
+                    });
+                }
             });
-        }
 
-        // Close volume panel when clicking outside
-        document.addEventListener('click', function(e) {
-            if (volumePanelVisible && !volumePanel.contains(e.target) && e.target !== musicToggle) {
-                volumePanelVisible = false;
-                volumePanel.classList.remove('visible');
+            // Right-click or long-press to show volume panel
+            musicToggle.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                volumePanelVisible = !volumePanelVisible;
+                volumePanel.classList.toggle('visible', volumePanelVisible);
+            });
+
+            // Double-click to toggle volume panel
+            musicToggle.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+                volumePanelVisible = !volumePanelVisible;
+                volumePanel.classList.toggle('visible', volumePanelVisible);
+            });
+
+            // Volume slider
+            volumeSlider.addEventListener('input', function() {
+                battleMusic.volume = this.value / 100;
+                volumeValueEl.textContent = this.value + '%';
+                localStorage.setItem('battleMusicVolume', this.value);
+            });
+
+            // Track selector
+            if (trackSelect) {
+                trackSelect.addEventListener('change', function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    const newSrc = this.value;
+                    const defaultVolume = selectedOption.dataset.volume || 50;
+
+                    const wasPlaying = isMusicPlaying;
+                    battleMusic.src = newSrc;
+                    volumeSlider.value = defaultVolume;
+                    battleMusic.volume = defaultVolume / 100;
+                    volumeValueEl.textContent = defaultVolume + '%';
+
+                    if (wasPlaying) {
+                        battleMusic.play();
+                    }
+
+                    localStorage.setItem('battleMusicTrack', newSrc);
+                });
             }
-        });
 
-        // Load saved preferences
-        const savedVolume = localStorage.getItem('battleMusicVolume');
-        if (savedVolume) {
-            volumeSlider.value = savedVolume;
-            battleMusic.volume = savedVolume / 100;
-            volumeValueEl.textContent = savedVolume + '%';
-        }
+            // Close volume panel when clicking outside
+            document.addEventListener('click', function(e) {
+                if (volumePanelVisible && !volumePanel.contains(e.target) && e.target !== musicToggle) {
+                    volumePanelVisible = false;
+                    volumePanel.classList.remove('visible');
+                }
+            });
 
-        const savedTrack = localStorage.getItem('battleMusicTrack');
-        if (savedTrack && trackSelect) {
-            const option = trackSelect.querySelector(`option[value="${savedTrack}"]`);
-            if (option) {
-                trackSelect.value = savedTrack;
-                battleMusic.src = savedTrack;
+            // Load saved preferences
+            const savedVolume = localStorage.getItem('battleMusicVolume');
+            if (savedVolume) {
+                volumeSlider.value = savedVolume;
+                battleMusic.volume = savedVolume / 100;
+                volumeValueEl.textContent = savedVolume + '%';
             }
-        }
+
+            const savedTrack = localStorage.getItem('battleMusicTrack');
+            if (savedTrack && trackSelect) {
+                const option = trackSelect.querySelector(`option[value="${savedTrack}"]`);
+                if (option) {
+                    trackSelect.value = savedTrack;
+                    battleMusic.src = savedTrack;
+                }
+            }
         @endif
     </script>
 </body>
