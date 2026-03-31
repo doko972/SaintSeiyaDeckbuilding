@@ -39,11 +39,21 @@ self.addEventListener('fetch', (event) => {
     // Ignorer les requetes non-GET
     if (event.request.method !== 'GET') return;
 
-    // Ignorer les requetes API et les websockets
     const url = new URL(event.request.url);
+
+    // Ignorer les requetes API, websockets et toutes les pages dynamiques (auth, jeu)
     if (url.pathname.startsWith('/api/') ||
         url.pathname.startsWith('/broadcasting/') ||
-        url.pathname.startsWith('/livewire/')) {
+        url.pathname.startsWith('/livewire/') ||
+        url.pathname.startsWith('/pvp/') ||
+        url.pathname.startsWith('/game/') ||
+        url.pathname.startsWith('/collection') ||
+        url.pathname.startsWith('/marketplace') ||
+        url.pathname.startsWith('/mailbox') ||
+        url.pathname.startsWith('/dashboard') ||
+        url.pathname.startsWith('/login') ||
+        url.pathname.startsWith('/register') ||
+        event.request.mode === 'navigate') {
         return;
     }
 

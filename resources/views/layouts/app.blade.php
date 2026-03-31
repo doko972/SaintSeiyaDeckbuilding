@@ -264,11 +264,93 @@
                 updateGlobalFullscreenFab();
             };
 
+            // ==========================================
+            // PWA — INSTALL PROMPT
+            // ==========================================
+            let deferredInstallPrompt = null;
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredInstallPrompt = e;
+                // Afficher la bannière d'installation si pas déjà installé
+                if (!window.matchMedia('(display-mode: fullscreen)').matches &&
+                    !window.matchMedia('(display-mode: standalone)').matches) {
+                    showInstallBanner();
+                }
+            });
+
+            window.addEventListener('appinstalled', () => {
+                hideInstallBanner();
+                deferredInstallPrompt = null;
+            });
+
+            function showInstallBanner() {
+                if (document.getElementById('pwa-install-banner')) return;
+                const banner = document.createElement('div');
+                banner.id = 'pwa-install-banner';
+                banner.style.cssText = `
+                    position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%);
+                    background: linear-gradient(135deg, #1e1a2e, #2d2060);
+                    border: 1px solid #7c3aed; border-radius: 14px;
+                    padding: 0.75rem 1.25rem; display: flex; align-items: center; gap: 0.75rem;
+                    box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+                    z-index: 9999; max-width: 340px; width: calc(100% - 2rem);
+                    font-family: sans-serif; color: white;
+                `;
+
+                const icon = document.createElement('img');
+                icon.src = '/images/icons/icon-192.png';
+                icon.style.cssText = 'width:40px;height:40px;border-radius:8px;';
+
+                const text = document.createElement('div');
+                text.style.cssText = 'flex:1; min-width:0;';
+                text.innerHTML = `
+                    <div style="font-weight:700;font-size:0.9rem;">Installer l'application</div>
+                    <div style="font-size:0.75rem;color:#c4b5fd;">Accès rapide depuis votre écran d'accueil</div>
+                `;
+
+                const installBtn = document.createElement('button');
+                installBtn.textContent = 'Installer';
+                installBtn.style.cssText = `
+                    background:#7c3aed; border:none; color:white;
+                    padding:0.4rem 0.85rem; border-radius:8px;
+                    font-weight:700; font-size:0.8rem; cursor:pointer; white-space:nowrap;
+                `;
+                installBtn.addEventListener('click', triggerInstallPrompt);
+
+                const closeBtn = document.createElement('button');
+                closeBtn.textContent = '✕';
+                closeBtn.style.cssText = `
+                    background:none; border:none; color:#9ca3af;
+                    font-size:1.2rem; cursor:pointer; padding:0 0.25rem; line-height:1;
+                `;
+                closeBtn.addEventListener('click', hideInstallBanner);
+
+                banner.appendChild(icon);
+                banner.appendChild(text);
+                banner.appendChild(installBtn);
+                banner.appendChild(closeBtn);
+                document.body.appendChild(banner);
+            }
+
+            function hideInstallBanner() {
+                const banner = document.getElementById('pwa-install-banner');
+                if (banner) banner.remove();
+            }
+
+            async function triggerInstallPrompt() {
+                if (!deferredInstallPrompt) return;
+                deferredInstallPrompt.prompt();
+                const { outcome } = await deferredInstallPrompt.userChoice;
+                deferredInstallPrompt = null;
+                hideInstallBanner();
+            }
+
             function registerServiceWorker() {
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.register('/sw.js')
                         .then((registration) => {
-                            console.log('[PWA] Service Worker enregistre:', registration.scope);
+                            console.log('[PWA] Service Worker enregistré:', registration.scope);
                         })
                         .catch((error) => {
                             console.log('[PWA] Erreur enregistrement SW:', error);

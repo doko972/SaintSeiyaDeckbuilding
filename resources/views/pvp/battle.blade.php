@@ -3343,7 +3343,7 @@
 
             // Animation d'attaque
             await animations.attackAnimation(attackerCard, targetCard, {
-                element: card.element || 'generic',
+                element: 'generic',
                 damage: damage
             });
 
@@ -3433,12 +3433,11 @@
         let watchdogInterval = null;
         let isPollingActive = false;
         let lastSuccessfulPoll = Date.now();
-        const BASE_POLLING_INTERVAL = 2000;
-        const MAX_POLLING_INTERVAL = 10000;
-        const WATCHDOG_INTERVAL = 5000;
+        const BASE_POLLING_INTERVAL = 800;   // Réduit de 2000 → 800ms
+        const MAX_POLLING_INTERVAL = 3000;   // Réduit de 10000 → 3000ms (cap erreurs)
+        const WATCHDOG_INTERVAL = 2000;      // Réduit de 5000 → 2000ms
 
         function getPollingInterval() {
-            // Augmenter l'intervalle en cas d'erreurs (exponential backoff)
             if (pollingErrorCount === 0) return BASE_POLLING_INTERVAL;
             return Math.min(BASE_POLLING_INTERVAL * Math.pow(1.5, pollingErrorCount), MAX_POLLING_INTERVAL);
         }
@@ -3450,7 +3449,6 @@
             lastSuccessfulPoll = Date.now();
             scheduleNextPoll();
             startWatchdog();
-            console.log('Polling started');
         }
 
         function scheduleNextPoll() {
@@ -3471,21 +3469,19 @@
                 pollingInterval = null;
             }
             stopWatchdog();
-            console.log('Polling stopped');
         }
 
         function startWatchdog() {
             if (watchdogInterval) return;
             watchdogInterval = setInterval(() => {
-                // Si ce n'est pas notre tour et le polling n'est pas actif, le relancer
                 if (!isMyTurn && !isPollingActive) {
-                    console.warn('Watchdog: polling was stopped but should be active, restarting...');
+                    console.warn('Watchdog: relance polling...');
                     startPolling();
                 }
-                // Si pas de poll réussi depuis 30 secondes et ce n'est pas notre tour, forcer une vérification
-                if (!isMyTurn && Date.now() - lastSuccessfulPoll > 30000) {
-                    console.warn('Watchdog: no successful poll in 30s, forcing check...');
-                    pollingErrorCount = 0; // Reset pour permettre un nouveau cycle
+                // Réduit de 30s → 10s avant de forcer une vérification
+                if (!isMyTurn && Date.now() - lastSuccessfulPoll > 10000) {
+                    console.warn('Watchdog: aucun poll réussi depuis 10s, forçage...');
+                    pollingErrorCount = 0;
                     checkForUpdates();
                 }
             }, WATCHDOG_INTERVAL);
@@ -3498,9 +3494,18 @@
             }
         }
 
+        // Reprise immédiate quand l'onglet reprend le focus
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && !isMyTurn) {
+                console.log('Onglet actif : poll immédiat');
+                pollingErrorCount = 0;
+                checkForUpdates();
+                if (!isPollingActive) startPolling();
+            }
+        });
+
         // Fonction pour forcer un rafraîchissement manuel
         async function forceRefresh() {
-            console.log('Force refresh requested');
             pollingErrorCount = 0;
             await checkForUpdates();
             if (!isMyTurn && !isPollingActive) {
@@ -3511,7 +3516,7 @@
         async function checkForUpdates() {
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
 
                 const response = await fetch(`/api/v1/pvp/battle-state/${battleId}`, {
                     headers: {
