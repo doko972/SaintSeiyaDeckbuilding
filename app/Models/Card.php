@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Card extends Model
 {
@@ -73,5 +74,27 @@ class Card extends Model
     public function decks(): BelongsToMany
     {
         return $this->belongsToMany(Deck::class)->withPivot('quantity')->withTimestamps();
+    }
+
+    /**
+     * Relation : Images par niveau de fusion
+     */
+    public function cardImages(): HasMany
+    {
+        return $this->hasMany(CardImage::class)->orderBy('fusion_level');
+    }
+
+    /**
+     * Retourne l'image pour un niveau de fusion donné.
+     * Fallback vers le niveau 1 si le niveau demandé n'existe pas.
+     */
+    public function imageForLevel(int $level): ?CardImage
+    {
+        if ($this->relationLoaded('cardImages')) {
+            return $this->cardImages->firstWhere('fusion_level', $level)
+                ?? $this->cardImages->firstWhere('fusion_level', 1);
+        }
+        return $this->cardImages()->where('fusion_level', $level)->first()
+            ?? $this->cardImages()->where('fusion_level', 1)->first();
     }
 }

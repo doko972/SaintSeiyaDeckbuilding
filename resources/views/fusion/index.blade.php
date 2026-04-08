@@ -386,6 +386,187 @@
             margin-bottom: 1rem;
         }
 
+        /* ========================================
+           OVERLAY DE TRANSFORMATION
+        ======================================== */
+        .transform-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            background: rgba(0, 0, 0, 0.97);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .transform-overlay.active {
+            display: flex;
+            animation: overlayIn 0.25s ease;
+        }
+
+        @keyframes overlayIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        /* Aura autour de la carte */
+        .transform-aura {
+            position: absolute;
+            inset: -30px;
+            border-radius: 20px;
+            pointer-events: none;
+        }
+
+        .aura-ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            animation: auraPulse 1s ease-in-out infinite;
+        }
+
+        .aura-ring:nth-child(2) {
+            inset: -14px;
+            border-color: rgba(255, 140, 0, 0.35);
+            animation-delay: 0.25s;
+        }
+
+        .aura-ring:nth-child(3) {
+            inset: -28px;
+            border-color: rgba(255, 80, 0, 0.2);
+            animation-delay: 0.5s;
+        }
+
+        @keyframes auraPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50%       { opacity: 1;   transform: scale(1.04); }
+        }
+
+        .transform-aura.intense .aura-ring {
+            animation-duration: 0.25s;
+            border-color: rgba(255, 255, 255, 0.9) !important;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.9);
+        }
+
+        /* Cadre de la carte */
+        .transform-card-frame {
+            position: relative;
+            width: 190px;
+            height: 266px;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.4);
+            flex-shrink: 0;
+        }
+
+        .transform-card-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+        }
+
+        .transform-card-img.img-hide { opacity: 0; }
+
+        .transform-card-img.anim-fade-out {
+            animation: fadeOut 0.35s ease forwards;
+        }
+
+        .transform-card-img.anim-fade-in {
+            animation: fadeInScale 0.6s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; }
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(1.08); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        /* Flash blanc */
+        .transform-flash {
+            position: absolute;
+            inset: 0;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .transform-flash.anim-flash {
+            animation: flashBurst 0.65s ease forwards;
+        }
+
+        @keyframes flashBurst {
+            0%   { opacity: 0; }
+            30%  { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Badge de niveau */
+        .transform-badge {
+            background: linear-gradient(135deg, #FFD700, #FF8C00);
+            color: #000;
+            font-weight: 900;
+            font-size: 1.3rem;
+            padding: 0.6rem 2rem;
+            border-radius: 50px;
+            box-shadow: 0 0 35px rgba(255, 215, 0, 0.8), 0 0 70px rgba(255, 140, 0, 0.4);
+            opacity: 0;
+        }
+
+        .transform-badge.anim-pop {
+            animation: popIn 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            0%   { opacity: 0; transform: scale(0.2) rotate(-5deg); }
+            60%  { transform: scale(1.18) rotate(2deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        /* Titre de transformation */
+        .transform-title {
+            font-size: 1.1rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.9);
+            opacity: 0;
+        }
+
+        .transform-title.anim-slide {
+            animation: slideUp 0.5s ease 0.15s forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Particules d'énergie */
+        .energy-particle {
+            position: fixed;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 3001;
+            animation: particleFly var(--dur, 0.8s) ease-out forwards;
+        }
+
+        @keyframes particleFly {
+            0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.2); }
+        }
+
         /* Header stats */
         .header-stats {
             display: flex;
@@ -447,13 +628,18 @@
                 @else
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                         @foreach($fusionableCards as $card)
+                            @php
+                                $currentFusionLevel = $card->pivot->fusion_level ?? 1;
+                                $levelImg = $card->imageForLevel($currentFusionLevel);
+                                $displayImgSrc = $levelImg?->image_primary ?? $card->image_primary;
+                            @endphp
                             <div class="fusion-card rarity-{{ $card->rarity }}"
                                  onclick="showFusionPreview({{ $card->id }})"
                                  style="--color1: {{ $card->faction?->color_primary ?? '#333' }}; --color2: {{ $card->faction?->color_secondary ?? '#555' }}">
 
                                 <!-- Badge niveau -->
-                                <div class="fusion-level-badge {{ ($card->pivot->fusion_level ?? 1) >= $maxLevel ? 'max-level' : '' }}">
-                                    Niv. {{ $card->pivot->fusion_level ?? 1 }}
+                                <div class="fusion-level-badge {{ $currentFusionLevel >= $maxLevel ? 'max-level' : '' }}">
+                                    Niv. {{ $currentFusionLevel }}
                                 </div>
 
                                 <!-- Badge doublons -->
@@ -463,8 +649,8 @@
 
                                 <!-- Image -->
                                 <div class="card-image">
-                                    @if($card->image_primary)
-                                        <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}">
+                                    @if($displayImgSrc)
+                                        <img src="{{ Storage::url($displayImgSrc) }}" alt="{{ $card->name }}">
                                     @else
                                         <div class="card-placeholder">&#9876;</div>
                                     @endif
@@ -495,18 +681,23 @@
                     </h2>
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                         @foreach($upgradedCards as $card)
+                            @php
+                                $upgradedLevel = $card->pivot->fusion_level ?? 1;
+                                $upgradedLevelImg = $card->imageForLevel($upgradedLevel);
+                                $upgradedImgSrc = $upgradedLevelImg?->image_primary ?? $card->image_primary;
+                            @endphp
                             <div class="fusion-card rarity-{{ $card->rarity }}"
                                  style="--color1: {{ $card->faction?->color_primary ?? '#333' }}; --color2: {{ $card->faction?->color_secondary ?? '#555' }}">
 
                                 <!-- Badge niveau -->
-                                <div class="fusion-level-badge {{ ($card->pivot->fusion_level ?? 1) >= $maxLevel ? 'max-level' : '' }}">
-                                    Niv. {{ $card->pivot->fusion_level ?? 1 }}
+                                <div class="fusion-level-badge {{ $upgradedLevel >= $maxLevel ? 'max-level' : '' }}">
+                                    Niv. {{ $upgradedLevel }}
                                 </div>
 
                                 <!-- Image -->
                                 <div class="card-image">
-                                    @if($card->image_primary)
-                                        <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}">
+                                    @if($upgradedImgSrc)
+                                        <img src="{{ Storage::url($upgradedImgSrc) }}" alt="{{ $card->name }}">
                                     @else
                                         <div class="card-placeholder">&#9876;</div>
                                     @endif
@@ -531,6 +722,33 @@
             @endif
         </div>
     </div>
+
+    <!-- Overlay de transformation -->
+    <div id="transformOverlay" class="transform-overlay">
+        <div id="transformCardWrapper" style="position: relative;">
+            <!-- Aura -->
+            <div class="transform-aura" id="transformAura">
+                <div class="aura-ring"></div>
+                <div class="aura-ring"></div>
+                <div class="aura-ring"></div>
+            </div>
+            <!-- Carte -->
+            <div class="transform-card-frame">
+                <img id="transformOldImg" class="transform-card-img" src="" alt="">
+                <img id="transformNewImg" class="transform-card-img img-hide" src="" alt="">
+                <div id="transformFlash" class="transform-flash"></div>
+            </div>
+        </div>
+
+        <!-- Badge niveau -->
+        <div id="transformBadge" class="transform-badge"></div>
+
+        <!-- Titre -->
+        <div id="transformTitle" class="transform-title">Transformation accomplie !</div>
+    </div>
+
+    <!-- Son de fusion (remplace par ton fichier MP3 dans public/sounds/) -->
+    <audio id="fusionSound" src="{{ asset('sounds/fusion-transform.mp3') }}" preload="none"></audio>
 
     <!-- Modal de fusion -->
     <div id="fusionModal" class="fusion-modal">
@@ -684,6 +902,148 @@
             `;
         }
 
+        /* ============================================================
+           SON DE TRANSFORMATION
+        ============================================================ */
+        function playTransformSound() {
+            // Tentative avec le fichier MP3 custom (public/sounds/fusion-transform.mp3)
+            const audio = document.getElementById('fusionSound');
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(() => playWebAudioTransform());
+                return;
+            }
+            playWebAudioTransform();
+        }
+
+        function playWebAudioTransform() {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            const ctx = new AudioCtx();
+            const now = ctx.currentTime;
+
+            const layer = (type, f0, f1, g0, g1, dur, delay = 0) => {
+                const osc  = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = type;
+                osc.frequency.setValueAtTime(f0, now + delay);
+                osc.frequency.exponentialRampToValueAtTime(f1, now + delay + dur);
+                gain.gain.setValueAtTime(g0, now + delay);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + delay + dur);
+                osc.start(now + delay);
+                osc.stop(now + delay + dur + 0.05);
+            };
+
+            // Montée de puissance (type Dragon Ball / Saint Seiya)
+            layer('sawtooth', 80,   600,  0.18, 0.001, 2.2);
+            layer('triangle', 160,  1200, 0.10, 0.001, 2.0, 0.1);
+            layer('sine',     320,  2000, 0.06, 0.001, 1.6, 0.2);
+
+            // Impact au flash (~1s)
+            layer('sine', 220, 55,  0.35, 0.001, 0.4, 1.0);
+            layer('sine', 180, 40,  0.20, 0.001, 0.35, 1.05);
+
+            // Shimmer final (~1.8s)
+            layer('sine', 1800, 3200, 0.04, 0.001, 0.6, 1.8);
+        }
+
+        /* ============================================================
+           PARTICULES D'ÉNERGIE
+        ============================================================ */
+        function spawnParticles(originEl, count = 18) {
+            const rect = originEl.getBoundingClientRect();
+            const cx = rect.left + rect.width  / 2;
+            const cy = rect.top  + rect.height / 2;
+            const colors = ['#FFD700', '#FF8C00', '#FFF', '#FF4500', '#FFE066'];
+
+            for (let i = 0; i < count; i++) {
+                const p   = document.createElement('div');
+                const ang = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+                const dist = 80 + Math.random() * 160;
+                const dur  = (0.5 + Math.random() * 0.6).toFixed(2);
+
+                p.className = 'energy-particle';
+                p.style.cssText = `
+                    left: ${cx}px; top: ${cy}px;
+                    background: ${colors[i % colors.length]};
+                    --tx: ${Math.cos(ang) * dist}px;
+                    --ty: ${Math.sin(ang) * dist}px;
+                    --dur: ${dur}s;
+                    width:  ${3 + Math.random() * 5}px;
+                    height: ${3 + Math.random() * 5}px;
+                `;
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), parseFloat(dur) * 1000 + 100);
+            }
+        }
+
+        /* ============================================================
+           ANIMATION DE TRANSFORMATION
+        ============================================================ */
+        const wait = ms => new Promise(r => setTimeout(r, ms));
+
+        async function playTransformAnimation(oldUrl, newUrl, newLevel, cardName) {
+            const overlay   = document.getElementById('transformOverlay');
+            const oldImg    = document.getElementById('transformOldImg');
+            const newImg    = document.getElementById('transformNewImg');
+            const flash     = document.getElementById('transformFlash');
+            const aura      = document.getElementById('transformAura');
+            const badge     = document.getElementById('transformBadge');
+            const title     = document.getElementById('transformTitle');
+            const cardFrame = document.querySelector('.transform-card-frame');
+
+            // Reset
+            oldImg.src   = oldUrl || '';
+            newImg.src   = newUrl || '';
+            badge.textContent = `⚡ NIVEAU ${newLevel}`;
+            oldImg.className  = 'transform-card-img';
+            newImg.className  = 'transform-card-img img-hide';
+            flash.className   = 'transform-flash';
+            aura.className    = 'transform-aura';
+            badge.className   = 'transform-badge';
+            title.className   = 'transform-title';
+
+            // Phase 1 — overlay + son
+            overlay.classList.add('active');
+            playTransformSound();
+
+            await wait(700);
+
+            // Phase 2 — aura s'intensifie + particules
+            aura.classList.add('intense');
+            spawnParticles(cardFrame, 20);
+
+            await wait(500);
+
+            // Phase 3 — flash + disparition ancienne image + particules
+            flash.classList.add('anim-flash');
+            oldImg.classList.add('anim-fade-out');
+            spawnParticles(cardFrame, 28);
+
+            await wait(320);
+
+            // Phase 4 — nouvelle image apparaît
+            newImg.classList.remove('img-hide');
+            newImg.classList.add('anim-fade-in');
+
+            await wait(600);
+
+            // Phase 5 — badge et titre
+            badge.classList.add('anim-pop');
+            await wait(150);
+            title.classList.add('anim-slide');
+
+            await wait(1600);
+
+            // Fin — fermer overlay
+            overlay.classList.remove('active');
+        }
+
+        /* ============================================================
+           FUSION
+        ============================================================ */
         async function performFusion(cardId) {
             const btn = document.querySelector('.fusion-btn');
             btn.disabled = true;
@@ -703,22 +1063,37 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    // Mettre a jour tous les soldes (navigation + page)
+                    // Fermer la modal pendant l'animation
+                    document.getElementById('fusionModal').classList.remove('active');
+
+                    // Jouer l'animation de transformation
+                    await playTransformAnimation(
+                        data.old_image_url,
+                        data.new_image_url,
+                        data.new_level,
+                        data.card_name
+                    );
+
+                    // Mettre à jour les soldes
                     updateAllBalances(data.new_balance);
 
-                    // Animation de succes
+                    // Afficher l'écran de succès dans la modal
                     const content = document.getElementById('modalContent');
                     content.innerHTML = `
                         <div class="text-center py-8">
-                            <div class="text-6xl mb-4">&#127881;</div>
-                            <h4 class="text-2xl font-bold text-green-400 mb-2">Fusion reussie !</h4>
-                            <p class="text-white">Niveau atteint: <span class="text-yellow-400 font-bold">${data.new_level}</span></p>
-                            <p class="text-gray-400 mt-2">Nouveau solde: ${data.new_balance.toLocaleString()} po</p>
+                            <div class="text-6xl mb-4">&#9889;</div>
+                            <h4 class="text-2xl font-bold text-yellow-400 mb-2">${data.card_name}</h4>
+                            <p class="text-white text-xl font-bold mb-1">
+                                Niveau <span class="text-yellow-400">${data.new_level}</span> atteint !
+                            </p>
+                            <p class="text-gray-400 mt-2">Nouveau solde : ${data.new_balance.toLocaleString()} po</p>
                             <button class="fusion-btn mt-6" onclick="location.reload()">
                                 Continuer
                             </button>
                         </div>
                     `;
+                    document.getElementById('fusionModal').classList.add('active');
+
                 } else {
                     alert(data.message || 'Erreur lors de la fusion');
                     btn.disabled = false;

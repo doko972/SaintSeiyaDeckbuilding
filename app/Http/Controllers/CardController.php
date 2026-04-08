@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Card;
+use App\Models\CardImage;
 use App\Models\Faction;
 use App\Models\Attack;
 use App\Services\FusionService;
@@ -85,9 +86,18 @@ class CardController extends Controller
             $query->where('power_type', $request->armor);
         }
 
-        $cards = $query->orderBy('name')->get();
+        $cards = $query->with('cardImages')->orderBy('name')->get();
 
-        return view('cards.index', compact('cards'));
+        // Niveaux de fusion de l'utilisateur connecté, indexés par card_id
+        $userFusionLevels = [];
+        if (auth()->check()) {
+            $userFusionLevels = auth()->user()
+                ->cards()
+                ->pluck('user_cards.fusion_level', 'cards.id')
+                ->toArray();
+        }
+
+        return view('cards.index', compact('cards', 'userFusionLevels'));
     }
 
     /**
@@ -135,19 +145,26 @@ class CardController extends Controller
             'main_attack_id' => 'required|exists:attacks,id',
             'secondary_attack_1_id' => 'nullable|exists:attacks,id',
             'secondary_attack_2_id' => 'nullable|exists:attacks,id',
-            'image_primary' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'image_secondary' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'images' => 'nullable|array',
+            'images.*.primary' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'images.*.secondary' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
 
-        if ($request->hasFile('image_primary')) {
-            $validated['image_primary'] = $request->file('image_primary')->store('cards', 'public');
-        }
+        $card = Card::create($validated);
 
-        if ($request->hasFile('image_secondary')) {
-            $validated['image_secondary'] = $request->file('image_secondary')->store('cards', 'public');
-        }
+        // Sauvegarde des images par niveau de fusion
+        for ($level = 1; $level <= 10; $level++) {
+            $primaryFile = $request->file("images.{$level}.primary");
+            $secondaryFile = $request->file("images.{$level}.secondary");
 
-        Card::create($validated);
+            if ($primaryFile || $secondaryFile) {
+                $card->cardImages()->create([
+                    'fusion_level'   => $level,
+                    'image_primary'   => $primaryFile?->store('cards', 'public'),
+                    'image_secondary' => $secondaryFile?->store('cards', 'public'),
+                ]);
+            }
+        }
 
         return redirect()->route('cards.index')
             ->with('success', 'Carte créée avec succès.');
@@ -158,7 +175,7 @@ class CardController extends Controller
      */
     public function show(Card $card): View
     {
-        $card->load('faction', 'mainAttack', 'secondaryAttack1', 'secondaryAttack2');
+        $card->load('faction', 'mainAttack', 'secondaryAttack1', 'secondaryAttack2', 'cardImages');
 
         // Vérifier si l'utilisateur connecté possède cette carte
         $fusionLevel = 1;
@@ -177,7 +194,9 @@ class CardController extends Controller
             }
         }
 
-        return view('cards.show', compact('card', 'fusionLevel', 'boostedStats', 'owned'));
+        $levelImage = $card->imageForLevel($fusionLevel);
+
+        return view('cards.show', compact('card', 'fusionLevel', 'boostedStats', 'owned', 'levelImage'));
     }
 
     /**
@@ -185,11 +204,13 @@ class CardController extends Controller
      */
     public function edit(Card $card): View
     {
+        $card->load('cardImages');
         $factions = Faction::orderBy('name')->get();
         $attacks = Attack::orderBy('name')->get();
         $powerTypes = self::getPowerTypes();
         $elements = self::getElements();
         $rarities = self::getRarities();
+        $cardImagesByLevel = $card->cardImages->keyBy('fusion_level');
 
         return view('cards.edit', compact(
             'card',
@@ -198,6 +219,7 @@ class CardController extends Controller
             'powerTypes',
             'elements',
             'rarities',
+            'cardImagesByLevel',
         ));
     }
 
@@ -226,25 +248,47 @@ class CardController extends Controller
             'main_attack_id' => 'required|exists:attacks,id',
             'secondary_attack_1_id' => 'nullable|exists:attacks,id',
             'secondary_attack_2_id' => 'nullable|exists:attacks,id',
-            'image_primary' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'image_secondary' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'images' => 'nullable|array',
+            'images.*.primary' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'images.*.secondary' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
 
-        if ($request->hasFile('image_primary')) {
-            if ($card->image_primary) {
-                Storage::disk('public')->delete($card->image_primary);
-            }
-            $validated['image_primary'] = $request->file('image_primary')->store('cards', 'public');
-        }
-
-        if ($request->hasFile('image_secondary')) {
-            if ($card->image_secondary) {
-                Storage::disk('public')->delete($card->image_secondary);
-            }
-            $validated['image_secondary'] = $request->file('image_secondary')->store('cards', 'public');
-        }
-
         $card->update($validated);
+
+        // Mise à jour des images par niveau de fusion
+        $existingImages = $card->cardImages()->get()->keyBy('fusion_level');
+
+        for ($level = 1; $level <= 10; $level++) {
+            $primaryFile   = $request->file("images.{$level}.primary");
+            $secondaryFile = $request->file("images.{$level}.secondary");
+
+            if (!$primaryFile && !$secondaryFile) {
+                continue;
+            }
+
+            $existing = $existingImages->get($level);
+            $imagePrimary   = $existing?->image_primary;
+            $imageSecondary = $existing?->image_secondary;
+
+            if ($primaryFile) {
+                if ($imagePrimary) {
+                    Storage::disk('public')->delete($imagePrimary);
+                }
+                $imagePrimary = $primaryFile->store('cards', 'public');
+            }
+
+            if ($secondaryFile) {
+                if ($imageSecondary) {
+                    Storage::disk('public')->delete($imageSecondary);
+                }
+                $imageSecondary = $secondaryFile->store('cards', 'public');
+            }
+
+            $card->cardImages()->updateOrCreate(
+                ['fusion_level' => $level],
+                ['image_primary' => $imagePrimary, 'image_secondary' => $imageSecondary]
+            );
+        }
 
         return redirect()->route('cards.index')
             ->with('success', 'Carte mise à jour avec succès.');
@@ -260,6 +304,16 @@ class CardController extends Controller
         }
         if ($card->image_secondary) {
             Storage::disk('public')->delete($card->image_secondary);
+        }
+
+        // Suppression des fichiers de toutes les images de niveaux
+        foreach ($card->cardImages as $cardImage) {
+            if ($cardImage->image_primary) {
+                Storage::disk('public')->delete($cardImage->image_primary);
+            }
+            if ($cardImage->image_secondary) {
+                Storage::disk('public')->delete($cardImage->image_secondary);
+            }
         }
 
         $card->delete();

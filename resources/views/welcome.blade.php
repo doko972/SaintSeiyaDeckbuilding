@@ -106,112 +106,6 @@
         </div>
     </section>
 
-    <!-- Section Factions -->
-    <section class="py-20 bg-gray-900 relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-                        Choisis ta Faction
-                    </span>
-                </h2>
-                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
-                    Chaque faction possède ses propres forces et stratégies. Quel univers choisiras-tu ?
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Chevaliers de Bronze -->
-                <div class="group relative bg-gradient-to-br from-orange-900/40 to-orange-700/20 rounded-2xl p-6 border border-orange-500/30 hover:border-orange-400 transition-all duration-300 hover:transform hover:scale-105">
-                    <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition"></div>
-                    <div class="relative z-10">
-                        <div class="text-5xl mb-4">🥉</div>
-                        <h3 class="text-2xl font-bold text-orange-400 mb-2">Chevaliers de Bronze</h3>
-                        <p class="text-gray-400">Les protecteurs d'Athéna. Leur détermination surpasse leur rang.</p>
-                        <div class="mt-4 flex gap-2">
-                            <span class="px-2 py-1 bg-orange-500/20 text-orange-300 text-xs rounded">Seiya</span>
-                            <span class="px-2 py-1 bg-orange-500/20 text-orange-300 text-xs rounded">Shiryu</span>
-                            <span class="px-2 py-1 bg-orange-500/20 text-orange-300 text-xs rounded">Hyōga</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chevaliers d'Argent -->
-                <div class="group relative bg-gradient-to-br from-gray-600/40 to-gray-500/20 rounded-2xl p-6 border border-gray-400/30 hover:border-gray-300 transition-all duration-300 hover:transform hover:scale-105">
-                    <div class="absolute inset-0 bg-gradient-to-br from-gray-400/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition"></div>
-                    <div class="relative z-10">
-                        <div class="text-5xl mb-4">🥈</div>
-                        <h3 class="text-2xl font-bold text-gray-300 mb-2">Chevaliers d'Argent</h3>
-                        <p class="text-gray-400">Les exécuteurs du Sanctuaire, redoutables et disciplinés.</p>
-                        <div class="mt-4 flex gap-2">
-                            <span class="px-2 py-1 bg-gray-500/20 text-gray-300 text-xs rounded">Misty</span>
-                            <span class="px-2 py-1 bg-gray-500/20 text-gray-300 text-xs rounded">Marin</span>
-                            <span class="px-2 py-1 bg-gray-500/20 text-gray-300 text-xs rounded">Shaina</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chevaliers d'Or -->
-                <div class="group relative bg-gradient-to-br from-yellow-900/40 to-yellow-600/20 rounded-2xl p-6 border border-yellow-500/30 hover:border-yellow-400 transition-all duration-300 hover:transform hover:scale-105">
-                    <div class="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition"></div>
-                    <div class="relative z-10">
-                        <div class="text-5xl mb-4">🥇</div>
-                        <h3 class="text-2xl font-bold text-yellow-400 mb-2">Chevaliers d'Or</h3>
-                        <p class="text-gray-400">L'élite du Sanctuaire, gardiens des 12 maisons du Zodiaque.</p>
-                        <div class="mt-4 flex gap-2">
-                            <span class="px-2 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded">Aiolia</span>
-                            <span class="px-2 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded">Saga</span>
-                            <span class="px-2 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded">Mū</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Spectres d'Hadès -->
-                <div class="group relative bg-gradient-to-br from-purple-900/40 to-purple-700/20 rounded-2xl p-6 border border-purple-500/30 hover:border-purple-400 transition-all duration-300 hover:transform hover:scale-105">
-                    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition"></div>
-                    <div class="relative z-10">
-                        <div class="text-5xl mb-4">💀</div>
-                        <h3 class="text-2xl font-bold text-purple-400 mb-2">Spectres d'Hadès</h3>
-                        <p class="text-gray-400">Les guerriers des Enfers, porteurs des Surplis maudits.</p>
-                        <div class="mt-4 flex gap-2">
-                            <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded">Rhadamanthe</span>
-                            <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded">Minos</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Marinas de Poséidon -->
-                <div class="group relative bg-gradient-to-br from-blue-900/40 to-blue-600/20 rounded-2xl p-6 border border-blue-500/30 hover:border-blue-400 transition-all duration-300 hover:transform hover:scale-105">
-                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition"></div>
-                    <div class="relative z-10">
-                        <div class="text-5xl mb-4">🌊</div>
-                        <h3 class="text-2xl font-bold text-blue-400 mb-2">Marinas de Poséidon</h3>
-                        <p class="text-gray-400">Les guerriers des océans, maîtres des profondeurs.</p>
-                        <div class="mt-4 flex gap-2">
-                            <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded">Kanon</span>
-                            <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded">Sorrento</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Guerriers Divins d'Asgard -->
-                <div class="group relative bg-gradient-to-br from-cyan-900/40 to-cyan-600/20 rounded-2xl p-6 border border-cyan-500/30 hover:border-cyan-400 transition-all duration-300 hover:transform hover:scale-105">
-                    <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition"></div>
-                    <div class="relative z-10">
-                        <div class="text-5xl mb-4">❄️</div>
-                        <h3 class="text-2xl font-bold text-cyan-400 mb-2">Guerriers d'Asgard</h3>
-                        <p class="text-gray-400">Les protecteurs du royaume nordique, bénis par Odin.</p>
-                        <div class="mt-4 flex gap-2">
-                            <span class="px-2 py-1 bg-cyan-500/20 text-cyan-300 text-xs rounded">Siegfried</span>
-                            <span class="px-2 py-1 bg-cyan-500/20 text-cyan-300 text-xs rounded">Hagen</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Section Gameplay -->
     <section class="py-20 bg-gradient-to-b from-gray-900 to-purple-900/30 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -382,7 +276,8 @@
                 </div>
 
                 <p class="text-gray-500 text-sm">
-                    © {{ date('Y') }} - Fan Project
+                    © {{ date('Y') }} - Fan Project - Doko972 - 
+                    <a href="https://github.com/doko972" target="_blank">Mon Github</a>
                 </p>
             </div>
         </div>

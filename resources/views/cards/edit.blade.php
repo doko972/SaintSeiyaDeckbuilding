@@ -325,45 +325,82 @@
                         </div>
                     </div>
 
-                    <!-- SECTION 5: Images -->
-                    <div class="space-y-6">
-                        <h4 class="text-lg font-bold text-white border-b border-white/20 pb-2">🖼️ Images</h4>
+                    <!-- SECTION 5: Images par niveau de fusion -->
+                    <div class="space-y-4" x-data="{ openLevel: 1 }">
+                        <h4 class="text-lg font-bold text-white border-b border-white/20 pb-2">🖼️ Images par niveau de fusion</h4>
+                        <p class="text-sm text-gray-400">Uploader une nouvelle image remplace l'existante. Laisser vide conserve l'image actuelle.</p>
 
-                        <!-- Images actuelles -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            @if ($card->image_primary)
-                                <div class="bg-white/5 rounded-xl p-4">
-                                    <p class="text-sm text-gray-400 mb-2">Image principale actuelle</p>
-                                    <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}"
-                                        class="w-32 h-40 object-cover rounded-lg border-2 border-white/30">
+                        @for ($level = 1; $level <= 10; $level++)
+                            @php
+                                $levelLabel = $level === 1 ? 'Niveau 1 — Base' : 'Niveau ' . $level . ' — Fusion +' . ($level - 1);
+                                $existing   = $cardImagesByLevel->get($level);
+                                $hasPrimary   = $existing && $existing->image_primary;
+                                $hasSecondary = $existing && $existing->image_secondary;
+                            @endphp
+                            <div class="border border-white/10 rounded-xl overflow-hidden">
+                                <button type="button"
+                                    @click="openLevel = openLevel === {{ $level }} ? null : {{ $level }}"
+                                    class="w-full flex items-center justify-between px-5 py-3 bg-white/5 hover:bg-white/10 transition text-left">
+                                    <span class="font-semibold text-white flex items-center gap-3">
+                                        <span class="inline-flex w-6 h-6 rounded-full text-xs font-bold items-center justify-center
+                                            {{ $level === 1 ? 'bg-purple-500' : ($level >= 8 ? 'bg-red-500' : ($level >= 5 ? 'bg-amber-500' : 'bg-indigo-500')) }}">
+                                            {{ $level }}
+                                        </span>
+                                        {{ $levelLabel }}
+                                        @if ($hasPrimary || $hasSecondary)
+                                            <span class="text-xs text-emerald-400 font-normal">
+                                                ✓ {{ $hasPrimary ? '1' : '0' }}/2 images
+                                                {{ $hasSecondary ? '+ alt' : '' }}
+                                            </span>
+                                        @endif
+                                    </span>
+                                    <svg class="w-4 h-4 text-gray-400 transition-transform"
+                                         :class="openLevel === {{ $level }} ? 'rotate-180' : ''"
+                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </button>
+
+                                <div x-show="openLevel === {{ $level }}" x-collapse class="p-5 bg-white/5 space-y-4">
+                                    <!-- Aperçu des images actuelles -->
+                                    @if ($hasPrimary || $hasSecondary)
+                                        <div class="flex gap-4 flex-wrap">
+                                            @if ($hasPrimary)
+                                                <div>
+                                                    <p class="text-xs text-gray-400 mb-1">Principale actuelle</p>
+                                                    <img src="{{ Storage::url($existing->image_primary) }}" alt="{{ $card->name }}"
+                                                        class="w-24 h-32 object-cover rounded-lg border-2 border-white/30">
+                                                </div>
+                                            @endif
+                                            @if ($hasSecondary)
+                                                <div>
+                                                    <p class="text-xs text-gray-400 mb-1">Alternative actuelle</p>
+                                                    <img src="{{ Storage::url($existing->image_secondary) }}" alt="{{ $card->name }}"
+                                                        class="w-24 h-32 object-cover rounded-lg border-2 border-white/30">
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endif
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                                {{ $hasPrimary ? 'Remplacer l\'image principale' : 'Image principale' }}
+                                            </label>
+                                            <input type="file" name="images[{{ $level }}][primary]" accept="image/*"
+                                                class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white hover:file:bg-purple-700">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                                {{ $hasSecondary ? 'Remplacer l\'image alternative' : 'Image alternative' }}
+                                            </label>
+                                            <input type="file" name="images[{{ $level }}][secondary]" accept="image/*"
+                                                class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white hover:file:bg-purple-700">
+                                        </div>
+                                    </div>
                                 </div>
-                            @endif
-                            @if ($card->image_secondary)
-                                <div class="bg-white/5 rounded-xl p-4">
-                                    <p class="text-sm text-gray-400 mb-2">Image alternative actuelle</p>
-                                    <img src="{{ Storage::url($card->image_secondary) }}" alt="{{ $card->name }}"
-                                        class="w-32 h-40 object-cover rounded-lg border-2 border-white/30">
-                                </div>
-                            @endif
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="image_primary"
-                                    class="block text-sm font-medium text-gray-300 mb-2">Nouvelle image
-                                    principale</label>
-                                <input type="file" name="image_primary" id="image_primary" accept="image/*"
-                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white hover:file:bg-purple-700">
                             </div>
-
-                            <div>
-                                <label for="image_secondary"
-                                    class="block text-sm font-medium text-gray-300 mb-2">Nouvelle image
-                                    alternative</label>
-                                <input type="file" name="image_secondary" id="image_secondary" accept="image/*"
-                                    class="w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white hover:file:bg-purple-700">
-                            </div>
-                        </div>
+                        @endfor
                     </div>
 
                     <!-- Submit -->

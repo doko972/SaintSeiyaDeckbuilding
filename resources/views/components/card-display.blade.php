@@ -22,6 +22,11 @@
     $displayPwr = $boostedStats ? $boostedStats['power'] : $card->power;
     $displayCos = $card->cosmos; // Cosmos is never boosted
     $hasFusion = $fusionLevel > 1;
+
+    // Résolution de l'image selon le niveau de fusion
+    $levelImage = $card->relationLoaded('cardImages') ? $card->imageForLevel($fusionLevel) : null;
+    $imagePrimary   = $levelImage?->image_primary   ?? $card->image_primary;
+    $imageSecondary = $levelImage?->image_secondary ?? $card->image_secondary;
 @endphp
 
 <style>
@@ -555,8 +560,8 @@
         <div class="pro-card-content">
             <!-- Image de fond -->
             <div class="pro-card-image">
-                @if($card->image_primary)
-                    <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}">
+                @if($imagePrimary)
+                    <img src="{{ Storage::url($imagePrimary) }}" alt="{{ $card->name }}">
                 @else
                     <div class="pro-card-placeholder">🃏</div>
                 @endif

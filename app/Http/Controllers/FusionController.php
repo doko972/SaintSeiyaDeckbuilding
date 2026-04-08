@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Card;
 use App\Services\FusionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class FusionController extends Controller
@@ -25,7 +27,9 @@ class FusionController extends Controller
         $user = auth()->user();
 
         $fusionableCards = $this->fusionService->getFusionableCards($user);
+        $fusionableCards->load('cardImages');
         $upgradedCards = $this->fusionService->getUpgradedCards($user);
+        $upgradedCards->load('cardImages');
 
         // Calculer les stats boostées pour chaque carte améliorée
         $upgradedCards = $upgradedCards->map(function ($card) {
@@ -86,13 +90,28 @@ class FusionController extends Controller
         // Mission journalière : fusionner 1 carte
         app(\App\Services\DailyMissionService::class)->complete($user, 'fusion');
 
+        // Charger les images pour l'animation de transformation
+        $card = Card::with('cardImages')->find($request->card_id);
+        $oldLevel = $result['new_level'] - 1;
+
+        $resolveImageUrl = function (int $level) use ($card): ?string {
+            $levelImage = $card->imageForLevel($level);
+            if ($levelImage?->image_primary) {
+                return Storage::url($levelImage->image_primary);
+            }
+            return $card->image_primary ? Storage::url($card->image_primary) : null;
+        };
+
         return response()->json([
-            'success' => true,
-            'message' => 'Fusion réussie !',
-            'new_level' => $result['new_level'],
-            'stats' => $result['stats'],
-            'cost_paid' => $result['cost_paid'],
-            'new_balance' => $result['new_balance'],
+            'success'       => true,
+            'message'       => 'Fusion réussie !',
+            'new_level'     => $result['new_level'],
+            'stats'         => $result['stats'],
+            'cost_paid'     => $result['cost_paid'],
+            'new_balance'   => $result['new_balance'],
+            'old_image_url' => $resolveImageUrl($oldLevel),
+            'new_image_url' => $resolveImageUrl($result['new_level']),
+            'card_name'     => $card->name,
         ]);
     }
 }

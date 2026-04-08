@@ -290,15 +290,6 @@ Attaques :
 
 ### IDEES
 
-Engagement quotidien ┌──────────────────────────┬──────────────────────────────────────────────────────────────────────────────────────────┐
-│ Idée │ Description │  
- ├──────────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────┤  
- │ Missions journalières │ 3 missions/jour (gagner 1 combat, acheter 1 booster, fusionner 1 carte) avec récompenses │ ok
-├──────────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────┤
-│ Série de connexion │ Bonus croissant si connexion plusieurs jours d'affilée (jour 7 = carte rare garantie) │
-├──────────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────┤
-│ Roue de la fortune hebdo │ Une fois par semaine, roue avec cartes/pièces/boosters ok│
-└──────────────────────────┴──────────────────────────────────────────────────────────────────────────────────────────┘
 Gameplay
 ┌──────────────────┬──────────────────────────────────────────────────────────────────────────────────┐
 │ Idée │ Description │
@@ -335,18 +326,6 @@ Collection & Économie
 ├───────────────────┼────────────────────────────────────────────────────┤
 │ Système d'amis │ Ajouter des amis, voir leur activité │
 └───────────────────┴────────────────────────────────────────────────────┘
-Qualité de vie
-┌────────────────────────┬───────────────────────────────────────────────────────────┐
-│ Idée │ Description │
-├────────────────────────┼───────────────────────────────────────────────────────────┤
-│ Historique des combats │ Revoir ses dernières parties │
-├────────────────────────┼───────────────────────────────────────────────────────────┤
-│ Stats détaillées │ Win rate par deck, carte la plus jouée, etc. │
-├────────────────────────┼───────────────────────────────────────────────────────────┤
-│ Tutoriel interactif │ Guide pour les nouveaux joueurs │
-├────────────────────────┼───────────────────────────────────────────────────────────┤
-│ Mode sombre/clair │ Option de thème (même si le thème actuel est déjà sombre) │
-└────────────────────────┴───────────────────────────────────────────────────────────┘
 
 # Option au déploiement :
 
@@ -356,3 +335,5 @@ php artisan view:clear
 php artisan cache:clear
 composer dump-autoload
 ```
+# Ajouter un son de 'Up skill' 
+public/sounds/fusion-transform.mp3

@@ -165,12 +165,15 @@
                         </div>
                     @endif
 
-                    <!-- Image Alternative -->
-                    @if ($card->image_secondary)
+                    <!-- Image Alternative du niveau actuel -->
+                    @php $secondaryImage = $levelImage?->image_secondary ?? $card->image_secondary; @endphp
+                    @if ($secondaryImage)
                         <div class="bg-white/10 backdrop-blur-md rounded-xl overflow-hidden border border-white/20">
                             <div class="p-5">
-                                <p class="text-xs text-gray-400 uppercase tracking-wider mb-3">Image Alternative</p>
-                                <img src="{{ Storage::url($card->image_secondary) }}" alt="{{ $card->name }} - Alt"
+                                <p class="text-xs text-gray-400 uppercase tracking-wider mb-3">
+                                    Image Alternative{{ $fusionLevel > 1 ? ' — Fusion +' . ($fusionLevel - 1) : '' }}
+                                </p>
+                                <img src="{{ Storage::url($secondaryImage) }}" alt="{{ $card->name }} - Alt"
                                     class="w-full rounded-lg shadow-lg">
                             </div>
                         </div>
