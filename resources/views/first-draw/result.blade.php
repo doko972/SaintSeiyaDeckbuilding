@@ -137,15 +137,18 @@
         }
 
         .flip-card-front {
-            background: linear-gradient(145deg, #1a1a2e, #16213e);
             border: 3px solid rgba(168, 85, 247, 0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             box-shadow: 0 0 30px rgba(168, 85, 247, 0.3), 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
+        .flip-card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Reflet lumineux sur le dos */
         .flip-card-front::before {
             content: '';
             position: absolute;
@@ -153,26 +156,15 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.1) 50%, transparent 60%);
+            background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.12) 50%, transparent 60%);
             animation: shine 3s infinite;
+            z-index: 1;
+            pointer-events: none;
         }
 
         @keyframes shine {
             0% { transform: translateX(-100%) rotate(45deg); }
             100% { transform: translateX(100%) rotate(45deg); }
-        }
-
-        .card-back-logo {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-            animation: pulse-logo 2s infinite;
-            position: relative;
-            z-index: 1;
-        }
-
-        @keyframes pulse-logo {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
         }
 
         .card-back-text {
@@ -187,7 +179,7 @@
         .click-hint {
             position: absolute;
             bottom: 15px;
-            color: rgba(168, 85, 247, 0.8);
+            color: rgba(253, 253, 253, 0.8);
             font-size: 0.7rem;
             animation: bounce 1s infinite;
         }
@@ -611,9 +603,8 @@
                 <div class="flip-card" data-rarity="{{ $card->rarity }}" onclick="flipCard(this)">
                     <div class="flip-card-inner">
                         <div class="flip-card-front">
-                            <div class="card-back-logo">&#127156;</div>
-                            <div class="card-back-text">Saint Seiya</div>
-                            <div class="click-hint">Cliquez pour reveler</div>
+                            <img src="{{ asset('images/card-back.webp') }}" alt="Dos de carte">
+                            <div class="click-hint"></div>
                         </div>
 
                         <div class="flip-card-back rarity-{{ $card->rarity }}"

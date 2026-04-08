@@ -814,9 +814,13 @@
                                  style="--color1: {{ $card->faction->color_primary ?? '#6366f1' }}; --color2: {{ $card->faction->color_secondary ?? '#8b5cf6' }};">
                                 <div class="card-mini-content">
                                     <!-- Image de fond -->
+                                    @php
+                                        $colLevelImg = $card->imageForLevel($card->fusion_level ?? 1);
+                                        $colImgSrc   = $colLevelImg?->image_primary ?? $card->image_primary;
+                                    @endphp
                                     <div class="card-mini-image">
-                                        @if($card->image_primary)
-                                            <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}" loading="lazy">
+                                        @if($colImgSrc)
+                                            <img src="{{ Storage::url($colImgSrc) }}" alt="{{ $card->name }}" loading="lazy">
                                         @else
                                             <div class="card-mini-placeholder">🃏</div>
                                         @endif

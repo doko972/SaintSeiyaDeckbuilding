@@ -305,11 +305,21 @@ class TournamentService
      */
     private function prepareDeck(Deck $deck): array
     {
-        $deck->load('cards.faction', 'cards.mainAttack', 'cards.secondaryAttack1', 'cards.secondaryAttack2');
+        $deck->load('cards.faction', 'cards.mainAttack', 'cards.secondaryAttack1', 'cards.secondaryAttack2', 'cards.cardImages');
+
+        // Niveaux de fusion du propriétaire du deck
+        $fusionLevels = DB::table('user_cards')
+            ->where('user_id', $deck->user_id)
+            ->pluck('fusion_level', 'card_id')
+            ->toArray();
 
         $cards = [];
         foreach ($deck->cards as $card) {
-            $quantity = $card->pivot->quantity ?? 1;
+            $quantity    = $card->pivot->quantity ?? 1;
+            $fusionLevel = $fusionLevels[$card->id] ?? 1;
+            $levelImage  = $card->imageForLevel($fusionLevel);
+            $imagePath   = $levelImage?->image_primary ?? $card->image_primary;
+
             for ($i = 0; $i < $quantity; $i++) {
                 $cards[] = [
                     'id' => $card->id,
@@ -322,7 +332,7 @@ class TournamentService
                     'current_endurance' => $card->endurance,
                     'defense' => $card->defense,
                     'power' => $card->power,
-                    'image' => $card->image_primary ? Storage::url($card->image_primary) : null,
+                    'image' => $imagePath ? Storage::url($imagePath) : null,
                     'faction' => $card->faction ? [
                         'name' => $card->faction->name,
                         'color_primary' => $card->faction->color_primary,

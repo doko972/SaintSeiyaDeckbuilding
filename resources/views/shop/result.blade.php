@@ -725,7 +725,7 @@
                         <!-- Dos de la carte -->
                         <div class="flip-card-front">
                             <div class="card-back-logo">🎴</div>
-                            <div class="card-back-text">Saint Seiya</div>
+                            <div class="card-back-text">Legendes</div>
                             <div class="click-hint">Cliquez pour révéler</div>
                         </div>
 

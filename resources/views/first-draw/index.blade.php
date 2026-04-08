@@ -29,7 +29,7 @@
                         Premier Tirage Gratuit
                     </h1>
                     <p class="text-xl text-gray-300">
-                        Bienvenue, jeune Chevalier ! Tirez vos {{ $drawCount }} premieres cartes de base.
+                        Bienvenue, jeune Guerrier ! Tirez vos {{ $drawCount }} premieres cartes de base.
                     </p>
                 </div>
 
@@ -47,8 +47,10 @@
                 <!-- Animation de cartes -->
                 <div class="flex justify-center gap-2 mb-8">
                     @for($i = 0; $i < $drawCount; $i++)
-                        <div class="w-16 h-24 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-lg shadow-lg transform hover:scale-110 transition-all duration-300 flex items-center justify-center text-2xl animate-pulse" style="animation-delay: {{ $i * 0.1 }}s;">
-                            ?
+                        <div class="w-16 h-24 rounded-lg shadow-lg transform hover:scale-110 transition-all duration-300 animate-pulse overflow-hidden"
+                             style="animation-delay: {{ $i * 0.1 }}s;">
+                            <img src="{{ asset('images/card-back.webp') }}" alt="Carte"
+                                 class="w-full h-full object-cover">
                         </div>
                     @endfor
                 </div>

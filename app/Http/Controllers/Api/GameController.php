@@ -20,7 +20,7 @@ class GameController extends Controller
             'opponent_type' => 'required|in:ai,player',
         ]);
 
-        $deck = Deck::with(['cards.faction', 'cards.mainAttack', 'cards.secondaryAttack1', 'cards.secondaryAttack2'])
+        $deck = Deck::with(['cards.faction', 'cards.mainAttack', 'cards.secondaryAttack1', 'cards.secondaryAttack2', 'cards.cardImages'])
             ->findOrFail($request->deck_id);
 
         // Vérifier que le deck appartient à l'utilisateur
@@ -40,7 +40,7 @@ class GameController extends Controller
         }
 
         // Préparer les cartes du joueur (avec leurs stats de combat)
-        $playerCards = $this->prepareCardsForBattle($deck->cards);
+        $playerCards = $this->prepareCardsForBattle($deck->cards, $request->user()->id);
 
         // Générer l'adversaire IA
         $opponentCards = $this->generateAIOpponent(count($playerCards));
@@ -331,11 +331,24 @@ class GameController extends Controller
     /**
      * Prépare les cartes pour le combat
      */
-    private function prepareCardsForBattle($cards): array
+    private function prepareCardsForBattle($cards, ?int $userId = null): array
     {
         $battleCards = [];
 
+        // Récupérer les niveaux de fusion du joueur en une seule requête
+        $fusionLevels = [];
+        if ($userId) {
+            $fusionLevels = \DB::table('user_cards')
+                ->where('user_id', $userId)
+                ->pluck('fusion_level', 'card_id')
+                ->toArray();
+        }
+
         foreach ($cards as $card) {
+            $fusionLevel = $fusionLevels[$card->id] ?? 1;
+            $levelImage  = $card->imageForLevel($fusionLevel);
+            $imagePath   = $levelImage?->image_primary ?? $card->image_primary;
+
             for ($i = 0; $i < $card->pivot->quantity; $i++) {
                 $battleCards[] = [
                     'id' => $card->id,
@@ -387,7 +400,7 @@ class GameController extends Controller
                         'name' => $card->passive_ability_name,
                         'description' => $card->passive_ability_description,
                     ],
-                    'image' => $card->image_primary ? asset('storage/' . $card->image_primary) : null,
+                    'image' => $imagePath ? asset('storage/' . $imagePath) : null,
                     'has_attacked' => false,
                     'status_effects' => [],
                 ];

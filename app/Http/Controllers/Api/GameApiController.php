@@ -138,7 +138,7 @@ class GameApiController extends Controller
             'deck_id' => 'required|exists:decks,id',
         ]);
 
-        $deck = Deck::with('cards.faction', 'cards.mainAttack', 'cards.secondaryAttack1', 'cards.secondaryAttack2')
+        $deck = Deck::with('cards.faction', 'cards.mainAttack', 'cards.secondaryAttack1', 'cards.secondaryAttack2', 'cards.cardImages')
             ->findOrFail($request->deck_id);
 
         // Vérifier que le deck appartient à l'utilisateur
@@ -686,7 +686,11 @@ class GameApiController extends Controller
                     'passive_effect_type'  => $card->passive_effect_type  ?? 'none',
                     'passive_effect_value' => $card->passive_effect_value ?? 0,
                     'status_effects' => [],
-                    'image' => $card->image_primary ? Storage::url($card->image_primary) : null,
+                    'image' => (function () use ($card, $fusionLevel) {
+                        $li = $card->imageForLevel($fusionLevel);
+                        $path = $li?->image_primary ?? $card->image_primary;
+                        return $path ? Storage::url($path) : null;
+                    })(),
                     'faction' => $card->faction ? [
                         'name' => $card->faction->name,
                         'color_primary' => $card->faction->color_primary,

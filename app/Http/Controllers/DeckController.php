@@ -95,9 +95,14 @@ public function create(): View
         // Vérifier que le deck appartient à l'utilisateur
         $this->authorize('view', $deck);
         
-        $deck->load('cards.faction', 'cards.mainAttack');
-        
-        return view('decks.show', compact('deck'));
+        $deck->load('cards.faction', 'cards.mainAttack', 'cards.cardImages');
+
+        $fusionLevels = \DB::table('user_cards')
+            ->where('user_id', auth()->id())
+            ->pluck('fusion_level', 'card_id')
+            ->toArray();
+
+        return view('decks.show', compact('deck', 'fusionLevels'));
     }
 
     /**

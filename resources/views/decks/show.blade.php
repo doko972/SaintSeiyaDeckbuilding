@@ -715,9 +715,14 @@
                                 style="--color1: {{ $card->faction->color_primary ?? '#6366f1' }}; --color2: {{ $card->faction->color_secondary ?? '#8b5cf6' }};">
                                 <div class="card-mini-content">
                                     <!-- Image de fond -->
+                                    @php
+                                        $fusionLevel = $fusionLevels[$card->id] ?? 1;
+                                        $levelImg    = $card->imageForLevel($fusionLevel);
+                                        $imgSrc      = $levelImg?->image_primary ?? $card->image_primary;
+                                    @endphp
                                     <div class="card-mini-image">
-                                        @if ($card->image_primary)
-                                            <img src="{{ Storage::url($card->image_primary) }}" alt="{{ $card->name }}">
+                                        @if ($imgSrc)
+                                            <img src="{{ Storage::url($imgSrc) }}" alt="{{ $card->name }}">
                                         @else
                                             <div class="card-mini-placeholder">🃏</div>
                                         @endif

@@ -30,7 +30,7 @@ class CollectionController extends Controller
             ->keyBy('id');
 
         // Récupérer TOUTES les cartes du jeu
-        $allCards = Card::with(['faction', 'mainAttack'])
+        $allCards = Card::with(['faction', 'mainAttack', 'cardImages'])
             ->orderBy('name')
             ->get();
 
@@ -112,7 +112,7 @@ class CollectionController extends Controller
         // Vérifier si le joueur possède cette carte
         $owned = $user->cards()->where('card_id', $card->id)->first();
 
-        $card->load(['faction', 'mainAttack', 'secondaryAttack1', 'secondaryAttack2']);
+        $card->load(['faction', 'mainAttack', 'secondaryAttack1', 'secondaryAttack2', 'cardImages']);
 
         // Calculer les stats boostées si possédée
         $fusionLevel = 1;
