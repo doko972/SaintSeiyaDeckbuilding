@@ -25,6 +25,7 @@ class AttackController extends Controller
             'buff_defense' => 'Boost Défense',
             'debuff' => 'Affaiblissement',
             'drain' => 'Drain de vie',
+            'regen' => 'Régénération (alliés)',
         ];
     }
 

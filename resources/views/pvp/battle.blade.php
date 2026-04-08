@@ -4238,7 +4238,14 @@
                         animations.showDamage(targetCard, data.damage, 'damage');
                     }
 
-                    addLogEntry(`⚔️ ${data.message}`, 'damage');
+                    // Animation regen : +PV sur toutes les cartes alliées
+                    if (data.effect_type === 'regen' && data.effect_value > 0) {
+                        document.querySelectorAll('.battle-card[data-owner="player"]').forEach(card => {
+                            animations.showDamage(card, data.effect_value, 'heal');
+                        });
+                    }
+
+                    addLogEntry(`⚔️ ${data.message}`, data.effect_type === 'regen' ? 'heal' : 'damage');
 
                     // Vérifier si la carte cible est morte (avant mise à jour du state)
                     cardWasDestroyed = data.target_destroyed === true;

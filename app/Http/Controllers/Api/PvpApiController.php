@@ -393,6 +393,8 @@ class PvpApiController extends Controller
             'battle_ended' => $battleEnded,
             'winner' => $winner,
             'rank_promotion' => $rankPromotion ?? null,
+            'effect_type' => $attack['effect_type'] ?? 'none',
+            'effect_value' => $attack['effect_value'] ?? 0,
             'battle_state' => $state,
         ]);
     }

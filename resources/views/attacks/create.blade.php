@@ -97,6 +97,8 @@
                                 </option>
                                 <option value="debuff" {{ old('effect_type') == 'debuff' ? 'selected' : '' }}>📉 Debuff
                                 </option>
+                                <option value="regen" {{ old('effect_type') == 'regen' ? 'selected' : '' }}>💚✨ Régénération (alliés)
+                                </option>
                             </select>
                         </div>
                         <div>

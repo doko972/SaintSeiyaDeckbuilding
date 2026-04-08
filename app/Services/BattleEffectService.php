@@ -152,6 +152,22 @@ class BattleEffectService
                 $messages[] = "🛡️ {$attackerName} gagne +{$effectValue} Défense ! (3 tours)";
                 break;
 
+            // ── REGEN : soigne l'attaquant ET tous ses alliés sur le terrain ─
+            case 'regen':
+                $totalHealed = 0;
+                foreach ($state[$attackerSide]['field'] as &$ally) {
+                    $maxHp  = $ally['health_points'];
+                    $before = $ally['current_hp'];
+                    $gain   = min($effectValue, $maxHp - $before);
+                    $ally['current_hp'] += $gain;
+                    $totalHealed += $gain;
+                }
+                unset($ally);
+                if ($totalHealed > 0) {
+                    $messages[] = "💚 {$attackerName} canalise le Cosmos ! Toutes les cartes alliées récupèrent {$effectValue} PV !";
+                }
+                break;
+
             // ── DÉBUFF : réduire la puissance de la cible ────────────────
             case 'debuff':
                 if ($targetDied) break;

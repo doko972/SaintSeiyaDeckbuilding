@@ -450,6 +450,8 @@ class GameApiController extends Controller
             'message' => $message,
             'battle_ended' => $battleEnded,
             'winner' => $winner,
+            'effect_type' => $attack['effect_type'] ?? 'none',
+            'effect_value' => $attack['effect_value'] ?? 0,
             'battle_state' => $this->normalizeState($state),
         ]);
     }
