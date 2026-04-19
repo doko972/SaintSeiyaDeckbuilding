@@ -5,15 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', "L'Arène des Légendes") }}</title>
+    <title>@yield('title', "L'Arène des Légendes – Jeu de Cartes Animé Saint Seiya Gratuit")</title>
+
+    <!-- SEO -->
+    <meta name="description" content="@yield('description', 'L\'Arène des Légendes est un jeu de cartes à collectionner (TCG) gratuit inspiré de l\'animé Saint Seiya. Constituez votre deck, affrontez d\'autres joueurs et devenez le meilleur chevalier !')">
+    <meta name="keywords" content="@yield('keywords', 'Saint Seiya, jeu de cartes, TCG, animé, deck building, combat de cartes, chevaliers du zodiaque, jeu gratuit, card game, collecte de cartes')">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="L'Arène des Légendes">
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    <!-- Open Graph / Réseaux sociaux -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="@yield('og_title', 'L\'Arène des Légendes – TCG Animé Saint Seiya Gratuit')">
+    <meta property="og:description" content="@yield('og_description', 'Jeu de cartes à collectionner gratuit inspiré de l\'animé Saint Seiya. Collectez vos cartes, construisez votre deck et affrontez d\'autres joueurs en combat !')">
+    <meta property="og:image" content="{{ asset('images/icons/icon-512.png') }}">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:site_name" content="L'Arène des Légendes">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('og_title', 'L\'Arène des Légendes – TCG Animé Saint Seiya Gratuit')">
+    <meta name="twitter:description" content="@yield('og_description', 'Jeu de cartes à collectionner gratuit inspiré de l\'animé Saint Seiya. Collectez vos cartes, construisez votre deck et affrontez d\'autres joueurs en combat !')">
+    <meta name="twitter:image" content="{{ asset('images/icons/icon-512.png') }}">
+
+    <!-- Données structurées JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "L'Arène des Légendes",
+        "alternateName": "L'Arène des Légendes TCG",
+        "description": "Jeu de cartes à collectionner (TCG) gratuit inspiré de l'animé Saint Seiya. Collectez des cartes, construisez votre deck et affrontez d'autres joueurs.",
+        "url": "https://arenedeslegendes.eu",
+        "applicationCategory": "GameApplication",
+        "genre": "Card Game",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EUR"
+        },
+        "inLanguage": "fr",
+        "keywords": "Saint Seiya, jeu de cartes, TCG, animé, gratuit, chevaliers du zodiaque"
+    }
+    </script>
 
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#8B5CF6">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="ArènaLeg">
+    <meta name="apple-mobile-web-app-title" content="Arène des Légendes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="ArènaLeg">
+    <meta name="application-name" content="Arène des Légendes">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/images/icons/icon-192.png">
 

@@ -1,2 +1,57 @@
+# ============================================================
+#  L'Arène des Légendes – TCG Animé Saint Seiya
+#  robots.txt
+# ============================================================
+
 User-agent: *
-Disallow:
+
+# ----- Pages publiques indexées (pas de règle = autorisé) -----
+# /               → Accueil
+# /login          → Connexion
+# /register       → Inscription
+# /cards          → Catalogue des cartes
+# /attacks        → Catalogue des attaques
+# /factions       → Factions / Chevaliers
+# /leaderboard    → Classement des joueurs
+# /tournaments    → Liste des tournois publics
+# /shop           → Boutique
+# /marketplace    → Marché entre joueurs
+
+# ----- Administration -----
+Disallow: /admin/
+Disallow: /_ignition/
+
+# ----- API (données brutes, pas de contenu lisible) -----
+Disallow: /api/
+Disallow: /sanctum/
+
+# ----- Pages authentifiées / personnelles -----
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /collection
+Disallow: /decks
+Disallow: /mailbox
+Disallow: /achievements
+Disallow: /rewards
+Disallow: /daily-bonus
+
+# ----- Actions de jeu (sessions actives, résultats temporaires) -----
+Disallow: /game/
+Disallow: /pvp/
+Disallow: /fusion
+Disallow: /sell
+Disallow: /first-draw
+Disallow: /starter-pack
+Disallow: /shop/result
+
+# ----- Authentification (inutile à indexer) -----
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /confirm-password
+Disallow: /verify-email
+
+# ----- Marketplace : création uniquement (liste publique ok) -----
+Disallow: /marketplace/create
+
+# ----- Sitemap -----
+Sitemap: https://arenedeslegendes.eu/sitemap.xml

@@ -27,9 +27,17 @@ use App\Http\Controllers\DailyMissionController;
 use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\MailboxController;
 use App\Http\Controllers\MarketplaceController;
+use App\Http\Controllers\SitemapController;
 use App\Services\DailyMissionService;
 use App\Services\AchievementService;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Sitemap
+|--------------------------------------------------------------------------
+*/
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 /*
 |--------------------------------------------------------------------------
