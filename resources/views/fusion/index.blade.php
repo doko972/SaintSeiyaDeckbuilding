@@ -744,7 +744,7 @@
         <div id="transformBadge" class="transform-badge"></div>
 
         <!-- Titre -->
-        <div id="transformTitle" class="transform-title">Transformation accomplie !</div>
+        <div id="transformTitle" class="transform-title">Fusion accomplie!</div>
     </div>
 
     <!-- Son de fusion (remplace par ton fichier MP3 dans public/sounds/) -->

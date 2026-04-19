@@ -382,7 +382,7 @@
         <img src="{{ asset('images/baniere.webp') }}" alt="" class="absolute inset-0 w-full h-full object-cover opacity-[0.10]">
     </div>
 
-    <div class="min-h-screen relative z-10 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen relative py-8 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             <!-- Header -->
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -390,7 +390,7 @@
                     <h1 class="text-3xl font-black text-white flex items-center gap-3">
                         <span class="text-4xl">&#128176;</span> Vente de Cartes
                     </h1>
-                    <p class="mt-2">Revendez vos cartes contre des pieces d'or</p>
+                    <p class="mt-2 text-white">Revendez vos cartes contre des pieces d'or</p>
 
                     <!-- Prix par rarete -->
                     <div class="price-table mt-4">
